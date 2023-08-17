@@ -25,13 +25,13 @@ function isLwakiNze(currentTime) {
   const currentHour = currentTime.getHours();
   const currentMinute = currentTime.getMinutes();
 
-  return currentHour === 21 && currentMinute >= 45;
+  return currentHour === 18 && currentMinute >= 45;
 }
 function lwakiNzeStop(currentTime){
   const currentHour = currentTime.getHours();
   const currentMinute = currentTime.getMinutes();
 
-  return currentHour === 23 && currentMinute >= 15;
+  return currentHour === 20 && currentMinute >= 15;
 }
 
 programCheck = setInterval(() => {
