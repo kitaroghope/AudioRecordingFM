@@ -75,7 +75,7 @@ function fetchAndRecordChunk() {
       interval = setInterval(() => {
         if(record){
           console.log(`Bytes written: ${bytesRead}`);
-          if (bytesRead >= 300 * 1024) {
+          if (bytesRead >= 1000 * 1024) {
             console.log(`Chunk ${chunkIndex} recorded: ${chunkFilePath}`);
             clearInterval(interval); // Clear the interval when done
             outputStream.end();
