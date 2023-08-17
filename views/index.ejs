@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FM Stream App</title>
+</head>
+<body>
+  <h1>Prime Radio</h1>
+  <audio controls src="<%= streamUrl %>"></audio>
+  <button id="recordButton">Record</button>
+  <button id="stopRecordButton">Stop Recording</button>
+
+  <script>
+    const recordButton = document.getElementById('recordButton');
+    const stopRecordButton = document.getElementById('stopRecordButton');
+
+    recordButton.addEventListener('click', async () => {
+      try {
+        await fetch('/record', { method: 'POST' });
+        console.log('Recording started');
+      } catch (error) {
+        console.error('Error starting recording:', error);
+      }
+    });
+
+    stopRecordButton.addEventListener('click', async () => {
+      try {
+        await fetch('/stop-record', { method: 'POST' });
+        console.log('Recording stopped');
+      } catch (error) {
+        console.error('Error stopping recording:', error);
+      }
+    });
+  </script>
+</body>
+</html>

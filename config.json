@@ -1,0 +1,22 @@
+{
+    "mongoDB":{
+        "url":"mongodb+srv://kitaroghope:kitasrog@cluster0.9uort.mongodb.net/?retryWrites=true&w=majority"
+    },
+    "mySQL":{
+        "host": "sql311.epizy.com",
+        "user": "epiz_34259151",
+        "password": "eZbstto3xgVPuTS",
+        "database": "epiz_34259151_newlugandahymnal"
+    },
+    "ftp":{
+        "host":"ftpupload.net",
+        "password":"eZbstto3xgVPuTS",
+        "port":"21",
+        "username":"epiz_34259151"
+    },
+    "mailer":{
+        "user": "kitahope@yandex.ru",
+        "pass": "0757@Janerogz"
+      },
+    "sessionSecret": "huddypro"
+}
