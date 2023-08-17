@@ -36,6 +36,7 @@ function lwakiNzeStop(currentTime){
 
 programCheck = setInterval(() => {
   const time = new Date();
+  console.log(time.toDateString())
   if (record == false && isLwakiNze(time)) {
     startRecording("Lwaki Nze");
   } else if(record == true && lwakiNzeStop(time)) {
