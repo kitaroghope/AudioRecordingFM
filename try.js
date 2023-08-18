@@ -136,7 +136,7 @@ function fetchAndRecordChunk() {
             currentBytePosition = bytesRead;
             setTimeout(ftp.uploadToFTP2(tempFolderPath,progName,[fileName]),10000);
             // Fetch and record the next chunk
-            fetchAndRecordChunk(); // Close the response stream
+            fetchAndRecordChunk(); // calling new chunk
           }
         }
         else{
