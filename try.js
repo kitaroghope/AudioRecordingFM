@@ -21,28 +21,78 @@ let record = false;
 
 // var programs = {"Lwaki Nze":{"start":[21,43],"stop":[]}}
 
-function isLwakiNze(currentTime) {
-  const currentHour = currentTime.getHours();
-  const currentMinute = currentTime.getMinutes();
-
-  return currentHour === 18 && currentMinute >= 45;
+// Lwakinze Wednesday or Thursday
+function isLwakiNze(HH, MM, DD) {
+  return DD === 'Wednesday' || DD === 'Thursday' && HH === 9 && MM >= 17;
 }
-function lwakiNzeStop(currentTime){
-  const currentHour = currentTime.getHours();
-  const currentMinute = currentTime.getMinutes();
+function lwakiNzeStop(HH, MM){
+  return HH === 11 && MM >= 21;
+}
 
-  return currentHour === 20 && currentMinute >= 15;
+// Kasismuka everyday
+function isKasisimuka(HH, MM){
+  return HH === 2 && MM >= 45;
+}
+function kasisimukaStop(HH, MM){
+  return HH === 3 && MM >= 0;
+}
+
+// Sokka ononye on Sarturday
+function isSabbath(HH, MM, DD){
+  return DD === 'Saturday' && HH === 7 && MM >= 0;
+}
+function sabbathStop(HH, MM){
+  return HH === 8 && MM >= 0;
+}
+
+// function to test server
+function test1(HH, MM, DD){
+  return HH === 13 && MM >= 0;
+}
+function stopTest1(HH, MM){
+  return HH === 14 && MM >= 0;
 }
 
 programCheck = setInterval(() => {
   const time = new Date();
+  const HH = time.getHours();
+  const MM = time.getMinutes();
+  const options = { weekday: 'long'}  //, timeZone: 'Africa/Nairobi' };
+  const DD = time.toLocaleDateString('en-US', options);
+  // console.log(DD)
   // console.log(time.toTimeString())
-  if (record == false && isLwakiNze(time)) {
-    startRecording("Lwaki Nze");
-  } else if(record == true && lwakiNzeStop(time)) {
-    stopRecording("Lwaki Nze");
+
+  // logic to start recording
+  if(!record){
+    if(isLwakiNze(HH,MM, DD)){
+      startRecording("Lwaki Nze");
+    }
+    else if(isKasisimuka(HH,MM)){
+      startRecording("Kasisimuka");
+    }
+    else if(isSabbath(HH, MM, DD)){
+      startRecording("Sokka ononye");
+    }
+    else if(test1(HH, MM, DD)){
+      startRecording('Test RUn');
+    }
   }
-}, 10000); // Log progress every second
+  // logic to stop reecording
+  else{
+    if(lwakiNzeStop(HH,MM)){
+      stopRecording("Lwaki Nze");
+    }
+    else if(kasisimukaStop(HH,MM)){
+      stopRecording("Kasisimuka");
+    }
+    else if(sabbathStop(HH,MM)){
+      stopRecording("Sokka ononye");
+    }
+    else if(stopTest1(HH,MM)){
+      stopRecording("test Run")
+    }
+  }
+}, 10000); // Run every 10 seconds
 
 function startRecording(prog){
   record = true;
@@ -65,24 +115,26 @@ function fetchAndRecordChunk() {
       let interval = null;
 
       // Declaring name of files to save and saving
-      const chunkFilePath = path.join(tempFolderPath, `${dayOfRec}_recording_${progName}_${chunkIndex}.mp3`);
+      const fileName = `${dayOfRec}_recording_${progName}_${chunkIndex}.mp3`
+      const chunkFilePath = path.join(tempFolderPath, fileName);
+      console.log("File Path: "+chunkFilePath);
       const outputStream = fs.createWriteStream(chunkFilePath).on("finish",()=>{
-        console.log('Those is written');
+        console.log('Chunk written successfully');
       });
       
-      recordedList.push(`${dayOfRec}_recording_${progName}_${chunkIndex}.mp3`);
+      recordedList.push(fileName);
       // Timer to check size of recorded file.
       interval = setInterval(() => {
         if(record){
-          console.log(`Bytes written: ${bytesRead}`);
+          // console.log(`Bytes written: ${bytesRead}`);
           if (bytesRead >= 1000 * 1024) {
             console.log(`Chunk ${chunkIndex} recorded: ${chunkFilePath}`);
             clearInterval(interval); // Clear the interval when done
             outputStream.end();
-            
             response.body.destroy();
             chunkIndex++;
             currentBytePosition = bytesRead;
+            setTimeout(ftp.uploadToFTP2(tempFolderPath,progName,[fileName]),10000);
             // Fetch and record the next chunk
             fetchAndRecordChunk(); // Close the response stream
           }
@@ -92,7 +144,7 @@ function fetchAndRecordChunk() {
           outputStream.end();
           response.body.destroy();
           setTimeout(() => {
-            ftp.uploadToFTP2(tempFolderPath,progName,recordedList);
+            ftp.uploadToFTP2(tempFolderPath,progName,[fileName]) // uploading last chunk
             db.updateRow2({program: progName, files: recordedList},{program: progName, files: recordedList, Day:dayOfRec},'radio','recordings');
             progName = "";
           },10000);
@@ -127,8 +179,10 @@ function dateOfRec(){
   const day = currentDate.getDate();
   const month = currentDate.getMonth() + 1; // Adding 1 to match human-readable month representation (1 to 12)
   const year = currentDate.getFullYear();
+  const hh = currentDate.getHours();
+  const mm = currentDate.getMinutes();
 
-  return `${day} ${month} ${year}`;
+  return `${day}-${month}-${year}[${hh} ${mm}]`;
 }
 // Start fetching and recording chunks from the beginning
 

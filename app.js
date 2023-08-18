@@ -16,16 +16,21 @@ app.listen(port, () => {
 let checkProg = recorder;
 
 app.get('/', (req, res) => {
-    res.render('index', { streamUrl: 'https://media2.streambrothers.com:8118/stream' });
-  });
-  
-  app.post('/record', (req, res) => {
-    // Start recording logic
-    res.sendStatus(200);
-  });
-  
-  app.post('/stop-record', (req, res) => {
-    // Stop recording logic
-    res.sendStatus(200);
-  });
+  res.render('index', { streamUrl: 'https://media2.streambrothers.com:8118/stream' });
+});
+
+app.get('/keepAlive',(req, res) => {
+  console.log('status checked');
+  res.sendStatus(200);
+});
+
+app.post('/record', (req, res) => {
+  // Start recording logic
+  res.sendStatus(200);
+});
+
+app.post('/stop-record', (req, res) => {
+  // Stop recording logic
+  res.sendStatus(200);
+});
   
