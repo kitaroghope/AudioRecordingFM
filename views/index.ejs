@@ -18,8 +18,8 @@
       <div class="row">
         <h2><%= el.program %></h2>
         <% el.files.forEach(file => { %>
-          <p>recording <%= el.files.indexOf(file) %></p>
-          <audio controls src="lugandahymnalnew.infinityfreeapp.com/uploads/<%= el.program %>/<%= file %>"></audio>
+          <p>recording <%= el.files.indexOf(file) + 1 %></p>
+          <audio controls src="uploads/<%= el.program %>/<%= file %>"></audio>
         <% }) %>
       </div>
     <% }) %>
