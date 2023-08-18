@@ -19,7 +19,7 @@
         <h2><%= el.program %></h2>
         <% el.files.forEach(file => { %>
           <p>recording <%= el.files.indexOf(file) + 1 %></p>
-          <audio controls src="uploads/<%= el.program %>/<%= file %>"></audio>
+          <audio controls preload="metadata" src="uploads/<%= el.program %>/<%= file %>"></audio>
         <% }) %>
       </div>
     <% }) %>
