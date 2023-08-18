@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const app = express();
 const recorder = require('./try');
+const db = require('./modules/mongoDBApi');
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -15,8 +16,14 @@ app.listen(port, () => {
 // ... Previous code
 let checkProg = recorder;
 
-app.get('/', (req, res) => {
-  res.render('index', { streamUrl: 'https://media2.streambrothers.com:8118/stream' });
+app.get('/', async (req, res) => {
+  try {
+    const recs = await db.readRows({program:"Test Run"},'radio','recordings');
+    recs
+    res.render('index', { streamUrl: 'https://media2.streambrothers.com:8118/stream', recs:recs.listings});
+  } catch (error) {
+    
+  }
 });
 
 app.get('/keepAlive',(req, res) => {

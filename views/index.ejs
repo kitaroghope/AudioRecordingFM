@@ -10,7 +10,19 @@
   <audio controls src="<%= streamUrl %>"></audio>
   <button id="recordButton">Record</button>
   <button id="stopRecordButton">Stop Recording</button>
-
+  <% if (typeof recs !== 'undefined') { %>
+    <h1>Recorded programs</h1>
+      <br>
+      <br>
+    <% recs.forEach(el => { %>
+      <div class="row">
+        <h2><%= el.program %></h2>
+        <% el.files.forEach(file => { %>
+          <audio controls src="https://lugandahymnalnew.infinityfreeapp.com/uploads/<%= el.program %>/<%= file %>"></audio>
+        <% }) %>
+      </div>
+    <% }) %>
+  <% } %>
   <script>
     const recordButton = document.getElementById('recordButton');
     const stopRecordButton = document.getElementById('stopRecordButton');

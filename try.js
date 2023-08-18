@@ -8,7 +8,6 @@ const chunkDurationInSeconds = 6; // 1 minute
 const tempFolderPath = 'temp_stream_chunks';
 
 let chunkIndex = 1;
-let currentBytePosition = 0;
 let programCheck = null;
 var recordedList = [];
 let progName = "";
@@ -47,10 +46,10 @@ function sabbathStop(HH, MM){
 
 // function to test server
 function test1(HH, MM, DD){
-  return HH === 14 && MM >= 0 && DD === 'Friday';
+  return HH === 15 && MM >= 0 && DD === 'Friday';
 }
 function stopTest1(HH, MM){
-  return HH === 15 && MM >= 0;
+  return HH === 17 && MM >= 0;
 }
 
 programCheck = setInterval(() => {
@@ -144,6 +143,25 @@ function fetchAndRecordChunk() {
           response.body.destroy();
           setTimeout(() => {
             db.updateRow2({program: progName, files: recordedList},{program: progName, files: recordedList, Day:dayOfRec},'radio','recordings');
+            fs.readdir(tempFolderPath, (err, files) => {
+              if (err) {
+                // console.error('Error reading folder:', err);
+                return;
+              }
+            
+              files.forEach((file) => {
+                const filePath = path.join(tempFolderPath, file);
+                fs.unlink(filePath, (unlinkErr) => {
+                  if (unlinkErr) {
+                    return;
+                    // console.error('Error deleting file:', unlinkErr);
+                  } else {
+                    return;
+                    // console.log(`File ${file} deleted successfully.`);
+                  }
+                });
+              });
+            });       
           },10000);
         }
       }, 1000); // Log progress every second
