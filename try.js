@@ -74,7 +74,7 @@ programCheck = setInterval(() => {
       startRecording("Sokka ononye");
     }
     else if(test1(HH, MM, DD)){
-      startRecording('Test RUn');
+      startRecording('Test Run');
     }
   }
   // logic to stop reecording
@@ -117,7 +117,7 @@ function fetchAndRecordChunk() {
       // Declaring name of files to save and saving
       const fileName = `${dayOfRec}_recording_${progName}_${chunkIndex}.mp3`
       const chunkFilePath = path.join(tempFolderPath, fileName);
-      console.log("File Path: "+chunkFilePath);
+      // console.log("File Path: "+chunkFilePath);
       const outputStream = fs.createWriteStream(chunkFilePath).on("finish",()=>{
         console.log('Chunk written successfully');
       });
@@ -134,7 +134,7 @@ function fetchAndRecordChunk() {
             response.body.destroy();
             chunkIndex++;
             currentBytePosition = bytesRead;
-            setTimeout(ftp.uploadToFTP2(tempFolderPath,progName,[fileName]),10000);
+            setTimeout(()=>{ftp.uploadToFTP2(tempFolderPath,progName,[fileName]);},10000);
             // Fetch and record the next chunk
             fetchAndRecordChunk(); // calling new chunk
           }
