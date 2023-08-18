@@ -72,9 +72,9 @@ programCheck = setInterval(() => {
     else if(isSabbath(HH, MM, DD)){
       startRecording("Sokka ononye");
     }
-    else if(test1(HH, MM, DD)){
-      startRecording('Test Run');
-    }
+    // else if(test1(HH, MM, DD)){
+    //   startRecording('Test Run');
+    // }
   }
   // logic to stop reecording
   else{
@@ -87,9 +87,9 @@ programCheck = setInterval(() => {
     else if(sabbathStop(HH,MM)){
       stopRecording("Sokka ononye");
     }
-    else if(stopTest1(HH,MM)){
-      stopRecording("test Run")
-    }
+    // else if(stopTest1(HH,MM)){
+    //   stopRecording("test Run")
+    // }
   }
 }, 10000); // Run every 10 seconds
 

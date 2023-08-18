@@ -18,11 +18,10 @@ let checkProg = recorder;
 
 app.get('/', async (req, res) => {
   try {
-    const recs = await db.readRows({program:"Test Run"},'radio','recordings');
-    recs
+    const recs = await db.readRows({},'radio','recordings');
     res.render('index', { streamUrl: 'https://media2.streambrothers.com:8118/stream', recs:recs.listings});
   } catch (error) {
-    
+    res.send(error.message);
   }
 });
 

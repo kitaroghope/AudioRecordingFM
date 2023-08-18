@@ -15,13 +15,15 @@
       <br>
       <br>
     <% recs.forEach(el => { %>
-      <div class="row">
-        <h2><%= el.program %></h2>
-        <% el.files.forEach(file => { %>
-          <p>recording <%= el.files.indexOf(file) + 1 %></p>
-          <audio controls preload="metadata" src="uploads/<%= el.program %>/<%= file %>"></audio>
-        <% }) %>
-      </div>
+      <details>
+        <summary><h2><%= el.program %> - <%= el.Day %></h2></summary>
+        <div class="row">
+          <% el.files.forEach(file => { %>
+            <p>recording <%= el.files.indexOf(file) + 1 %></p>
+            <audio controls preload="metadata" src="uploads/<%= el.program %>/<%= file %>"></audio>
+          <% }) %>
+        </div>
+      </details>
     <% }) %>
   <% } %>
   <script>
