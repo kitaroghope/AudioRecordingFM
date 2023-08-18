@@ -47,10 +47,10 @@ function sabbathStop(HH, MM){
 
 // function to test server
 function test1(HH, MM, DD){
-  return HH === 13 && MM >= 0;
+  return HH === 14 && MM >= 0 && DD === 'Friday';
 }
 function stopTest1(HH, MM){
-  return HH === 14 && MM >= 0;
+  return HH === 15 && MM >= 0;
 }
 
 programCheck = setInterval(() => {
@@ -107,7 +107,6 @@ function stopRecording(prog){
 
 function fetchAndRecordChunk() {
   let dayOfRec = dateOfRec();
-  const startByte = currentBytePosition;
   fetch(streamUrl)
     .then(response => {
       // declaring fundamental variables 
@@ -119,22 +118,22 @@ function fetchAndRecordChunk() {
       const chunkFilePath = path.join(tempFolderPath, fileName);
       // console.log("File Path: "+chunkFilePath);
       const outputStream = fs.createWriteStream(chunkFilePath).on("finish",()=>{
-        console.log('Chunk written successfully');
+        setTimeout(()=>{
+          ftp.uploadToFTP2(tempFolderPath,progName,[fileName]);
+          recordedList.push(fileName);
+          console.log(`Chunk ${chunkIndex} recorded: ${fileName}`);
+        },9000);
       });
       
-      recordedList.push(fileName);
       // Timer to check size of recorded file.
       interval = setInterval(() => {
         if(record){
           // console.log(`Bytes written: ${bytesRead}`);
           if (bytesRead >= 1000 * 1024) {
-            console.log(`Chunk ${chunkIndex} recorded: ${chunkFilePath}`);
             clearInterval(interval); // Clear the interval when done
             outputStream.end();
             response.body.destroy();
             chunkIndex++;
-            currentBytePosition = bytesRead;
-            setTimeout(()=>{ftp.uploadToFTP2(tempFolderPath,progName,[fileName]);},10000);
             // Fetch and record the next chunk
             fetchAndRecordChunk(); // calling new chunk
           }
@@ -144,9 +143,7 @@ function fetchAndRecordChunk() {
           outputStream.end();
           response.body.destroy();
           setTimeout(() => {
-            ftp.uploadToFTP2(tempFolderPath,progName,[fileName]) // uploading last chunk
             db.updateRow2({program: progName, files: recordedList},{program: progName, files: recordedList, Day:dayOfRec},'radio','recordings');
-            progName = "";
           },10000);
         }
       }, 1000); // Log progress every second
@@ -163,7 +160,6 @@ function fetchAndRecordChunk() {
         clearInterval(interval); // Clear the interval when done
         outputStream.end();
         chunkIndex++;
-        currentBytePosition = bytesRead;
 
         // Fetch and record the next chunk
         fetchAndRecordChunk();
