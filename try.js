@@ -143,6 +143,8 @@ function fetchAndRecordChunk() {
           response.body.destroy();
           setTimeout(() => {
             db.updateRow2({program: progName, files: recordedList},{program: progName, files: recordedList, Day:dayOfRec},'radio','recordings');
+            recordedList = [];
+            chunkIndex = 1;
             fs.readdir(tempFolderPath, (err, files) => {
               if (err) {
                 // console.error('Error reading folder:', err);
