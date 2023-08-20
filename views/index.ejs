@@ -21,6 +21,7 @@
           <% el.files.forEach(file => { %>
             <p>recording <%= el.files.indexOf(file) + 1 %></p>
             <audio controls preload="metadata" src="uploads/<%= el.program %>/<%= file %>"></audio>
+            <a target="_blank" href="http://lugandahymnalnew.infinityfreeapp.com/uploads/<%= el.program %>/<%= file %>" download="<%= file %>"><button>download</button></a>
           <% }) %>
         </div>
       </details>
