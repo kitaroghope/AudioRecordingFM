@@ -94,14 +94,23 @@ programCheck = setInterval(() => {
 }, 10000); // Run every 10 seconds
 
 function startRecording(prog){
-  record = true;
-  progName = prog;
-  fetchAndRecordChunk();
-  console.log("Recording started - "+prog);
+  if(record){
+    return;
+  }else{
+    record = true;
+    progName = prog;
+    fetchAndRecordChunk();
+    console.log("Recording started - "+prog);
+  }
 }
 function stopRecording(prog){
-  record = false;
-  console.log("Recording stopped - "+prog);
+  if(record){
+    record = false;
+    console.log("Recording stopped - "+prog);
+  }
+  else{
+    return
+  }
 }
 
 function fetchAndRecordChunk() {
@@ -210,4 +219,8 @@ function dateOfRec(){
 //   }
 // });
 
-module.exports = programCheck;
+module.exports = {
+  programCheck,
+  startRecording,
+  stopRecording
+};

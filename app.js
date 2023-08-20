@@ -14,7 +14,7 @@ app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
 // ... Previous code
-let checkProg = recorder;
+let checkProg = recorder.programCheck;
 
 app.get('/', async (req, res) => {
   try {
@@ -27,16 +27,19 @@ app.get('/', async (req, res) => {
 
 app.get('/keepAlive',(req, res) => {
   console.log('status checked');
+
   res.sendStatus(200);
 });
 
 app.post('/record', (req, res) => {
   // Start recording logic
+  recorder.startRecording('user');
   res.sendStatus(200);
 });
 
 app.post('/stop-record', (req, res) => {
   // Stop recording logic
+  recorder.stopRecording("user")
   res.sendStatus(200);
 });
   
