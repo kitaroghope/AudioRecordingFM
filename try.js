@@ -23,18 +23,24 @@ let userRecord = false;
 
 // Lwakinze Wednesday or Thursday
 function isLwakiNze(HH, MM, DD) {
-  return DD === 'Wednesday' || DD === 'Thursday' && HH === 9 && MM >= 17;
+  return DD === 'Wednesday' || DD === 'Thursday' && HH === 18 && MM >= 25;
 }
 function lwakiNzeStop(HH, MM){
-  return HH === 11 && MM >= 21;
+  return HH === 20 && MM >= 15;
+}
+function isKweyita(HH, MM, DD) {
+  return DD === 'Monday' || DD === 'Tuesday' && HH === 18 && MM >= 25;
+}
+function kweyitaStop(HH, MM){
+  return HH === 20 && MM >= 15;
 }
 
 // Kasismuka everyday
 function isKasisimuka(HH, MM){
-  return HH === 2 && MM >= 45;
+  return HH === 2 && MM >= 0 && MM <= 44.5;
 }
 function kasisimukaStop(HH, MM){
-  return HH === 3 && MM >= 0;
+  return HH === 2 && MM >= 45;
 }
 
 // Sokka ononye on Sarturday
@@ -72,11 +78,14 @@ programCheck = setInterval(() => {
       startRecording("Kasisimuka");
     }
     else if(isSabbath(HH, MM, DD)){
-      startRecording("Sokka ononye");
+      startRecording("Zuula");
     }
-    else if(test1(HH, MM, DD)){
-      startRecording('Test Run');
+    else if(isKweyita(HH, MM, DD)){
+      startRecording("Kweyita Akatono");
     }
+    // else if(test1(HH, MM, DD)){
+    //   startRecording('Test Run');
+    // }
   }
   // logic to stop reecording
   else{
@@ -89,16 +98,14 @@ programCheck = setInterval(() => {
     else if(sabbathStop(HH,MM)){
       stopRecording("Sokka ononye");
     }
-    else if(stopTest1(HH,MM)){
-      stopRecording("test Run")
+    else if(kweyitaStop(HH,MM)){
+      stopRecording("Kweyita akatono");
     }
+    // else if(stopTest1(HH,MM)){
+    //   stopRecording("test Run")
+    // }
   }
 
-  if(isLwakiNze(HH,MM, DD) || isKasisimuka(HH,MM) || isSabbath(HH, MM, DD) && userRecord){
-    userRecord = false;
-    // console.log('hlo')
-    stopRecording('user');
-  }
 }, 10000); // Run every 10 seconds
 
 async function startRecording(prog, un = false){
@@ -239,6 +246,7 @@ function dateOfRec(){
 //     console.log(`file deleted successfully.`);
 //   }
 // });
+
 
 module.exports = {
   programCheck,
