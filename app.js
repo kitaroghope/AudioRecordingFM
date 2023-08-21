@@ -19,7 +19,7 @@ let checkProg = recorder.programCheck;
 app.get('/', async (req, res) => {
   try {
     const recs = await db.readRows({},'radio','recordings');
-    res.render('index', { streamUrl: 'https://media2.streambrothers.com:8118/stream', recs:recs.listings});
+    res.render('index', { streamUrl: 'https://media2.streambrothers.com:8118/stream', recs:recs.listings});//recs.listings
   } catch (error) {
     res.send(error.message);
   }
@@ -27,19 +27,27 @@ app.get('/', async (req, res) => {
 
 app.get('/keepAlive',(req, res) => {
   console.log('status checked');
-
   res.sendStatus(200);
 });
 
-app.post('/record', (req, res) => {
+app.post('/record', async (req, res) => {
   // Start recording logic
-  recorder.startRecording('user');
-  res.sendStatus(200);
+  try {
+    // console.log(recorder.record);
+    const jk = await recorder.startRecording("User", true);
+    res.json(jk);
+  } catch (error) {
+    res.json({message:error.message})
+  }
 });
 
-app.post('/stop-record', (req, res) => {
+app.post('/stop-record',async (req, res) => {
   // Stop recording logic
-  recorder.stopRecording("user")
-  res.sendStatus(200);
+  try {
+    const jk = await recorder.stopRecording("User",true);
+    res.json(jk);
+  } catch (error) {
+    res.json({message:error.message});
+  }
 });
   

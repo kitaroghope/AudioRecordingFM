@@ -3,51 +3,124 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="images/prime.jpg" type="image/x-icon">
+
+  <meta property="og:title" content="Prime Radio">
+  <meta property="og:description" content="Eweweza Omutima">
+  <meta property="og:image" content="https://audiorecorderfm.onrender.com/images/prime.jpg">
+  <meta property="og:url" content="https://audiorecorderfm.onrender.com/">
+
   <title>FM Stream App</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+  
 </head>
-<body>
-  <h1>Prime Radio</h1>
-  <audio controls src="<%= streamUrl %>"></audio>
-  <button id="recordButton">Record</button>
-  <button id="stopRecordButton">Stop Recording</button>
-  <% if (typeof recs !== 'undefined') { %>
-    <h1>Recorded programs</h1>
-      <br>
-      <br>
-    <% recs.forEach(el => { %>
-      <details>
-        <summary><h2><%= el.program %> - <%= el.Day %></h2></summary>
-        <div class="row">
-          <% el.files.forEach(file => { %>
-            <p><%= file %></p>
-            <!-- <audio controls preload="metadata" src="uploads/<%= el.program %>/<%= file %>"></audio> -->
-            <a target="_blank" href="https://lugandahymnalnew.infinityfreeapp.com/uploads/<%= el.program %>/<%= file %>" download="<%= file %>"><button>download</button></a>
-          <% }) %>
+<body style="background: rgb(241, 214, 214);">
+  <div class="container">
+    <div class="row">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+          <div class="container-fluid">
+            <!-- Logo on the far left -->
+            <a class="navbar-brand" href="/">
+              <img src="images/prime.jpg" class="rounded" alt="Logo" width="50" height="auto">
+            </a>
+      
+            <!-- Toggle button for small screens -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+              aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <!-- Links on the far right -->
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+              <ul class="navbar-nav">
+                <li class="nav-item">
+                  <a class="nav-link" href="/">Home</a>
+                </li>
+                <% if (typeof user !== 'undefined') { %>
+                  <li class="nav-item">
+                      <a class="nav-link" href="#">logout</a>
+                  </li>
+                <% } else {%>
+                  <li class="nav-item">
+                      <a class="nav-link" href="#">login</a>
+                  </li>
+                <% } %>
+              </ul>
+            </div>
+          </div>
+      </nav>
+    </div>
+    <h1 class="text-center">Prime Radio</h1>
+    <div class="row"><audio controls src="<%= streamUrl %>">Prime</audio></div>
+    <br>
+    <div class="row">
+      <button id="recordButton" class="btn btn-success">Record</button>
+      <button id="stopRecordButton" class="btn btn-danger">Stop Recording</button>
+    </div>
+    <br>
+    <div class="row">
+    <% if (typeof recs !== 'undefined') { %>
+      <h2>Recorded programs</h2>
+        <br>
+        <br>
+      <% recs.forEach(el => { %>
+        <details class="card p-1">
+          <summary class="bg-dark text-light p-1"><%= el.program %> - <%= el.Day %></summary>
+          <div class="row">
+            <% el.files.forEach(file => { %>
+              <p><%= file %></p>
+              <!-- <audio controls preload="metadata" src="uploads/<%= el.program %>/<%= file %>"></audio> -->
+              <a target="_blank" href="https://lugandahymnalnew.infinityfreeapp.com/uploads/<%= el.program %>/<%= file %>" download="<%= file %>"><button>download</button></a>
+            <% }) %>
+          </div>
+        </details>
+      <% }) %>
+    <% } %>
+    </div>
+    <br>
+        <div class="row bg-dark text-light text-align-center">
+          <br>
+          <p style="text-align: center;">Developed to stream and also record programs broadcasted on prime radio 91.9FM.</p>
+          <p style="text-align: center;">copyright &copy;kitaroghope 2023</p>
         </div>
-      </details>
-    <% }) %>
-  <% } %>
+  </div>
+  
   <script>
     const recordButton = document.getElementById('recordButton');
     const stopRecordButton = document.getElementById('stopRecordButton');
 
     recordButton.addEventListener('click', async () => {
       try {
-        await fetch('/record', { method: 'POST' });
-        console.log('Recording started');
+        const response = await fetch('/record', { method: 'POST' });
+        
+        if (response.ok) {
+          const data = await response.json();
+          alert(data.message);
+          console.log('Recording started');
+        } else {
+          console.error('Response not OK:', response.status);
+        }
       } catch (error) {
         console.error('Error starting recording:', error);
       }
     });
 
+
     stopRecordButton.addEventListener('click', async () => {
       try {
-        await fetch('/stop-record', { method: 'POST' });
-        console.log('Recording stopped');
+        const response = await fetch('/stop-record', { method: 'POST' });
+        if (response.ok) {
+          const data = await response.json();
+          alert(data.message);
+          console.log('Recording stopped');
+        } else {
+          console.error('Response not OK:', response.status);
+        }
       } catch (error) {
         console.error('Error stopping recording:', error);
       }
     });
+
   </script>
 </body>
 </html>

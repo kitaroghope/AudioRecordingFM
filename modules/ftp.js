@@ -180,9 +180,11 @@ async function uploadToFTP2(pathToFolderWithFiles, folderNameOnFtpServer, arrayO
             arrayOfFiles.forEach(fileName => {
               fs.unlink(path.join(__dirname, "../"+pathToFolderWithFiles+"/"+fileName), err => {
                 if (err) {
-                  console.error(`Error deleting ${fileName}:`, err);
+                  // console.error(`Error deleting ${fileName}:`, err);
+                  return;
                 } else {
-                  console.log(`${fileName} deleted successfully.`);
+                  // console.log(`${fileName} deleted successfully.`);
+                  return;
                 }
               });
             });

@@ -17,6 +17,7 @@ if (!fs.existsSync(tempFolderPath)) {
   fs.mkdirSync(tempFolderPath);
 }
 let record = false;
+let userRecord = false;
 
 // var programs = {"Lwaki Nze":{"start":[21,43],"stop":[]}}
 
@@ -46,10 +47,10 @@ function sabbathStop(HH, MM){
 
 // function to test server
 function test1(HH, MM, DD){
-  return HH === 15 && MM >= 0 && DD === 'Friday';
+  return HH === 20 && MM >= 4 && MM <= 5.5//=== 'Friday';
 }
 function stopTest1(HH, MM){
-  return HH === 17 && MM >= 0;
+  return HH === 20 && MM >= 6;
 }
 
 programCheck = setInterval(() => {
@@ -62,7 +63,8 @@ programCheck = setInterval(() => {
   // console.log(time.toTimeString())
 
   // logic to start recording
-  if(!record){
+  if(!record || userRecord){
+    // console.log(userRecord);
     if(isLwakiNze(HH,MM, DD)){
       startRecording("Lwaki Nze");
     }
@@ -72,9 +74,9 @@ programCheck = setInterval(() => {
     else if(isSabbath(HH, MM, DD)){
       startRecording("Sokka ononye");
     }
-    // else if(test1(HH, MM, DD)){
-    //   startRecording('Test Run');
-    // }
+    else if(test1(HH, MM, DD)){
+      startRecording('Test Run');
+    }
   }
   // logic to stop reecording
   else{
@@ -87,29 +89,48 @@ programCheck = setInterval(() => {
     else if(sabbathStop(HH,MM)){
       stopRecording("Sokka ononye");
     }
-    // else if(stopTest1(HH,MM)){
-    //   stopRecording("test Run")
-    // }
+    else if(stopTest1(HH,MM)){
+      stopRecording("test Run")
+    }
+  }
+
+  if(isLwakiNze(HH,MM, DD) || isKasisimuka(HH,MM) || isSabbath(HH, MM, DD) && userRecord){
+    userRecord = false;
+    // console.log('hlo')
+    stopRecording('user');
   }
 }, 10000); // Run every 10 seconds
 
-function startRecording(prog){
+async function startRecording(prog, un = false){
   if(record){
-    return;
+    if(userRecord && !un){
+      stopRecording('user', true);
+    }
+    return {message:`${progName} recording is already in progress`};
   }else{
     record = true;
     progName = prog;
+    if(un){
+      userRecord = true;
+    }
     fetchAndRecordChunk();
     console.log("Recording started - "+prog);
+    return {message:"Recording has started."}
   }
 }
-function stopRecording(prog){
+async function stopRecording(prog, un = false){
   if(record){
+    if(un !== userRecord){
+      // console.log('cant stop')
+      return {message:`Sorry, ${progName} recording is in progress. You did not start it.`};
+    }
     record = false;
+    userRecord = false;
     console.log("Recording stopped - "+prog);
+    return {message:"Recording stopped successfully"};
   }
   else{
-    return
+    return {message: "No Recording is in progress"}
   }
 }
 
@@ -154,25 +175,25 @@ function fetchAndRecordChunk() {
             db.updateRow2({program: progName, files: recordedList},{program: progName, files: recordedList, Day:dayOfRec},'radio','recordings');
             recordedList = [];
             chunkIndex = 1;
-            fs.readdir(tempFolderPath, (err, files) => {
-              if (err) {
-                // console.error('Error reading folder:', err);
-                return;
-              }
+            // fs.readdir(tempFolderPath, (err, files) => {
+            //   if (err) {
+            //     // console.error('Error reading folder:', err);
+            //     return;
+            //   }
             
-              files.forEach((file) => {
-                const filePath = path.join(tempFolderPath, file);
-                fs.unlink(filePath, (unlinkErr) => {
-                  if (unlinkErr) {
-                    return;
-                    // console.error('Error deleting file:', unlinkErr);
-                  } else {
-                    return;
-                    // console.log(`File ${file} deleted successfully.`);
-                  }
-                });
-              });
-            });       
+            //   files.forEach((file) => {
+            //     const filePath = path.join(tempFolderPath, file);
+            //     fs.unlink(filePath, (unlinkErr) => {
+            //       if (unlinkErr) {
+            //         return;
+            //         // console.error('Error deleting file:', unlinkErr);
+            //       } else {
+            //         return;
+            //         // console.log(`File ${file} deleted successfully.`);
+            //       }
+            //     });
+            //   });
+            // });       
           },10000);
         }
       }, 1000); // Log progress every second
@@ -222,5 +243,7 @@ function dateOfRec(){
 module.exports = {
   programCheck,
   startRecording,
-  stopRecording
+  stopRecording,
+  userRecord,
+  record
 };
