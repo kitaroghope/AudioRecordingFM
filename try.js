@@ -239,13 +239,37 @@ function fetchAndRecordChunk() {
 
 function dateOfRec(){
   const currentDate = new Date();
-  const day = currentDate.getDate();
-  const month = currentDate.getMonth() + 1; // Adding 1 to match human-readable month representation (1 to 12)
+  const day = numC(currentDate.getDate());
+  const month = numC(currentDate.getMonth() + 1); // Adding 1 to match human-readable month representation (1 to 12)
   const year = currentDate.getFullYear();
-  const hh = currentDate.getHours();
-  const mm = currentDate.getMinutes();
+  const hh = currentDate.getHours() + 3;
+  const mm = numC(currentDate.getMinutes());
+  let am;
 
-  return `${day}-${month}-${year}[${hh} ${mm}]`;
+  if(hh > 24){
+    hh = numC(24-hh);
+    am = "am";
+  }
+  else if(hh < 12){
+    am = "am";
+  }
+  else{
+    hh = numC(hh - 12);
+    am = "pm"
+  }
+
+
+  return `${day}-${month}-${year}[${hh} ${mm} ${am}]`;
+}
+
+function numC (num){
+  if(num < 10){
+    num = "0"+num
+    return num
+  }
+  else{
+    return num
+  }
 }
 // Start fetching and recording chunks from the beginning
 

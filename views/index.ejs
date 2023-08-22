@@ -55,7 +55,7 @@
     <br>
     <div class="row">
       <button id="recordButton" class="btn btn-success">Record</button>
-      <button id="stopRecordButton" class="btn btn-danger">Stop Recording</button>
+      <button id="stopRecordButton" class="btn btn-danger" disabled>Stop Recording</button>
     </div>
     <br>
     <div class="row">
@@ -90,6 +90,9 @@
     const stopRecordButton = document.getElementById('stopRecordButton');
 
     recordButton.addEventListener('click', async () => {
+      stopRecordButton.disabled = false;
+      // Enable the recordButton
+      recordButton.disabled = true;
       try {
         const response = await fetch('/record', { method: 'POST' });
         
@@ -107,6 +110,9 @@
 
 
     stopRecordButton.addEventListener('click', async () => {
+      stopRecordButton.disabled = true;
+      // Enable the recordButton
+      recordButton.disabled = false;
       try {
         const response = await fetch('/stop-record', { method: 'POST' });
         if (response.ok) {
