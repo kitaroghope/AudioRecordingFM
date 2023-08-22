@@ -23,23 +23,31 @@ let userRecord = false;
 
 // Lwakinze Wednesday or Thursday
 function isLwakiNze(HH, MM, DD) {
-  return DD === 'Wednesday' || DD === 'Thursday' && HH === 18 && MM >= 25;
+  if(DD === 'Wednesday' || DD === 'Thursday'){
+    return HH === 18 && MM >= 25;
+  }
 }
-function lwakiNzeStop(HH, MM){
-  return HH === 20 && MM >= 15;
+function lwakiNzeStop(HH, MM, DD){
+  if(DD === 'Wednesday' || DD === 'Thursday'){
+    return HH === 20 && MM >= 15;
+  }
 }
 function isKweyita(HH, MM, DD) {
-  return DD === 'Monday' || DD === 'Tuesday' && HH === 18 && MM >= 25;
+  if(DD === 'Monday' || DD === 'Tuesday'){
+    return HH === 18 && MM >= 45;
+  }
 }
-function kweyitaStop(HH, MM){
-  return HH === 20 && MM >= 15;
+function kweyitaStop(HH, MM, DD){
+  if(DD === 'Monday' || DD === 'Tuesday'){
+    return HH === 20 && MM >= 15;
+  }
 }
 
 // Kasismuka everyday
-function isKasisimuka(HH, MM){
+function isKasisimuka(HH, MM, DD){
   return HH === 2 && MM >= 0 && MM <= 44.5;
 }
-function kasisimukaStop(HH, MM){
+function kasisimukaStop(HH, MM, DD){
   return HH === 2 && MM >= 45;
 }
 
@@ -47,16 +55,16 @@ function kasisimukaStop(HH, MM){
 function isSabbath(HH, MM, DD){
   return DD === 'Saturday' && HH === 7 && MM >= 0;
 }
-function sabbathStop(HH, MM){
-  return HH === 8 && MM >= 0;
+function sabbathStop(HH, MM, DD){
+  return DD === 'Saturday' &&  HH === 8 && MM >= 0;
 }
 
 // function to test server
 function test1(HH, MM, DD){
-  return HH === 20 && MM >= 4 && MM <= 5.5//=== 'Friday';
+  return HH === 16 && MM >= 4 // && // MM <= 34.5; //=== 'Friday';
 }
-function stopTest1(HH, MM){
-  return HH === 20 && MM >= 6;
+function stopTest1(HH, MM, DD){
+  return HH === 17 && MM >= 5;
 }
 
 programCheck = setInterval(() => {
@@ -71,10 +79,10 @@ programCheck = setInterval(() => {
   // logic to start recording
   if(!record || userRecord){
     // console.log(userRecord);
-    if(isLwakiNze(HH,MM, DD)){
+    if(isLwakiNze(HH, MM, DD)){
       startRecording("Lwaki Nze");
     }
-    else if(isKasisimuka(HH,MM)){
+    else if(isKasisimuka(HH, MM, DD)){
       startRecording("Kasisimuka");
     }
     else if(isSabbath(HH, MM, DD)){
@@ -89,19 +97,19 @@ programCheck = setInterval(() => {
   }
   // logic to stop reecording
   else{
-    if(lwakiNzeStop(HH,MM)){
+    if(lwakiNzeStop(HH, MM, DD)){
       stopRecording("Lwaki Nze");
     }
-    else if(kasisimukaStop(HH,MM)){
+    else if(kasisimukaStop(HH, MM, DD)){
       stopRecording("Kasisimuka");
     }
-    else if(sabbathStop(HH,MM)){
+    else if(sabbathStop(HH, MM, DD)){
       stopRecording("Sokka ononye");
     }
-    else if(kweyitaStop(HH,MM)){
+    else if(kweyitaStop(HH, MM, DD)){
       stopRecording("Kweyita akatono");
     }
-    // else if(stopTest1(HH,MM)){
+    // else if(stopTest1(HH,MM,DD)){
     //   stopRecording("test Run")
     // }
   }
@@ -171,7 +179,9 @@ function fetchAndRecordChunk() {
             response.body.destroy();
             chunkIndex++;
             // Fetch and record the next chunk
-            fetchAndRecordChunk(); // calling new chunk
+            setTimeout(()=>{
+              fetchAndRecordChunk();
+            }, 4000);// calling new chunk
           }
         }
         else{
@@ -212,15 +222,15 @@ function fetchAndRecordChunk() {
         outputStream.write(chunk);
       });
 
-      response.body.on('end', () => {
-        console.log(`Chunk ${chunkIndex} recorded: ${chunkFilePath}`);
-        clearInterval(interval); // Clear the interval when done
-        outputStream.end();
-        chunkIndex++;
+      // response.body.on('end', () => {
+      //   console.log(`Chunk ${chunkIndex} recorded: ${chunkFilePath}`);
+      //   clearInterval(interval); // Clear the interval when done
+      //   outputStream.end();
+      //   chunkIndex++;
 
-        // Fetch and record the next chunk
-        fetchAndRecordChunk();
-      });
+      //   // Fetch and record the next chunk
+      //   fetchAndRecordChunk();
+      // });
     })
     .catch(error => {
       console.error(`Error fetching or recording chunk ${chunkIndex}:`, error);
