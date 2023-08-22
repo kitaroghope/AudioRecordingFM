@@ -34,7 +34,7 @@ function lwakiNzeStop(HH, MM, DD){
 }
 function isKweyita(HH, MM, DD) {
   if(DD === 'Monday' || DD === 'Tuesday'){
-    return HH === 18 && MM >= 45;
+    return HH === 18 && MM >= 30;
   }
 }
 function kweyitaStop(HH, MM, DD){
