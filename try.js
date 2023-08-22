@@ -126,7 +126,9 @@ async function startRecording(prog, un = false){
     record = true;
     progName = prog;
     if(un){
-      userRecord = true;
+      setTimeout(()=>{
+        userRecord = true;
+      },60000);
     }
     fetchAndRecordChunk();
     console.log("Recording started - "+prog);
@@ -137,7 +139,7 @@ async function stopRecording(prog, un = false){
   if(record){
     if(un !== userRecord){
       // console.log('cant stop')
-      return {message:`Sorry, ${progName} recording is in progress. You did not start it.`};
+      return {message:`Sorry, ${progName} recording is in progress. You did not start it Or recording has just started and has to record atleast for 1 minute.`};
     }
     record = false;
     userRecord = false;
