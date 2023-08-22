@@ -240,12 +240,12 @@ function fetchAndRecordChunk() {
 }
 
 function dateOfRec(){
-  const currentDate = new Date();
-  const day = numC(currentDate.getDate());
-  const month = numC(currentDate.getMonth() + 1); // Adding 1 to match human-readable month representation (1 to 12)
-  const year = currentDate.getFullYear();
-  const hh = currentDate.getHours() + 3;
-  const mm = numC(currentDate.getMinutes());
+  let currentDate = new Date();
+  let day = numC(currentDate.getDate());
+  let month = numC(currentDate.getMonth() + 1); // Adding 1 to match human-readable month representation (1 to 12)
+  let year = currentDate.getFullYear();
+  let hh = currentDate.getHours() + 3;
+  let mm = numC(currentDate.getMinutes());
   let am;
 
   if(hh > 24){
