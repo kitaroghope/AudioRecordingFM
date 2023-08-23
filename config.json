@@ -18,5 +18,13 @@
         "user": "kitahope@yandex.ru",
         "pass": "0757@Janerogz"
       },
-    "sessionSecret": "huddypro"
+    "sessionSecret": "huddypro",
+    "radios":{
+        "cbs":"https://s5.voscast.com:9909/EYOBUJJAJJA",
+        "prime":"https://media2.streambrothers.com:8118/stream",
+        "galaxy":"https://sc.galaxyfm.co.ug/stream/1/",
+        "powerFM":"https://securestreams5.autopo.st:1941/stream/1/",
+        "bukedde":"https://stream.hydeinnovations.com:2020/stream/bukeddefm/stream",
+        "pearlFM":"https://dc4.serverse.com/proxy/pearlfm/stream/1/"
+    }
 }
