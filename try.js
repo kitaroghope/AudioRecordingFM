@@ -4,7 +4,7 @@ const path = require('path');
 const ftp = require('./modules/ftp');
 const db = require('./modules/mongoDBApi');
 const con = require('./config.json');
-const streamUrl = con.radios.avento;
+const streamUrl = con.radios.prime;
 const chunkDurationInSeconds = 6; // 1 minute
 const tempFolderPath = 'temp_stream_chunks';
 
