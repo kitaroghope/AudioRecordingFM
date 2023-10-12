@@ -3,7 +3,8 @@ const fs = require('fs');
 const path = require('path');
 const ftp = require('./modules/ftp');
 const db = require('./modules/mongoDBApi');
-const streamUrl = 'https://radio1.avventohome.org/listen/avventoradio/radio64.mp3';
+const con = require('./config.json');
+const streamUrl = con.radios.avento;
 const chunkDurationInSeconds = 6; // 1 minute
 const tempFolderPath = 'temp_stream_chunks';
 
