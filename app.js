@@ -4,7 +4,7 @@ const app = express();
 const recorder = require('./try');
 const db = require('./modules/mongoDBApi');
 const con = require('./config.json');
-const streamUrl = con.radios.avento;
+const streamUrl = con.radios.prime;
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
