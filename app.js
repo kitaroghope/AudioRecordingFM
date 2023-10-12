@@ -3,6 +3,8 @@ const path = require('path');
 const app = express();
 const recorder = require('./try');
 const db = require('./modules/mongoDBApi');
+const con = require('./config.json');
+const streamUrl = con.radios.avento;
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -19,7 +21,7 @@ let checkProg = recorder.programCheck;
 app.get('/', async (req, res) => {
   try {
     const recs = await db.readRows({},'radio','recordings');
-    res.render('index', { streamUrl: 'https://media2.streambrothers.com:8118/stream', recs:recs.listings});//recs.listings
+    res.render('index', { streamUrl: streamUrl, recs:recs.listings});//recs.listings
   } catch (error) {
     res.send(error.message);
   }
