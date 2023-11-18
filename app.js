@@ -1,17 +1,17 @@
 const express = require('express');
 const path = require('path');
 const app = express();
-const cors = require('cors');
+//const cors = require('cors');
 const recorder = require('./try');
 const db = require('./modules/mongoDBApi');
 const con = require('./config.json');
 const streamUrl = con.radios.prime;
 
-app.use(cors({
-    origin: "*",
-    methods: "*",
-   allowedHeaders:"*"
-}));
+//app.use(cors({
+    //origin: "*",
+    //methods: "*",
+   //allowedHeaders:"*"
+//}));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
