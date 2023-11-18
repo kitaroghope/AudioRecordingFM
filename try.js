@@ -287,7 +287,7 @@ function numC (num){
 
 
 function executeTaskEvery10Minutes() {
-  // Task to execute
+  function keepChecker(){// Task to execute
   fetch("https://newlugandahymnal.onrender.com")
   .then(res=>{
     if(!res.ok){
