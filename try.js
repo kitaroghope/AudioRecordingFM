@@ -285,6 +285,58 @@ function numC (num){
 // });
 
 
+
+function executeTaskEvery10Minutes() {
+  // Task to execute
+  fetch("https://newlugandahymnal.onrender.com")
+  .then(res=>{
+    if(!res.ok){
+      throw new Error ("failed - recorder");
+    }
+      return res;
+  }).then(res => {
+    console.log("connection clear - recorder")
+  }).catch(error => {
+    // Handle any errors gracefully
+    console.log('Error:', error);
+    // Take alternative actions or provide appropriate feedback
+  })
+  .finally(() => {
+    // Call the function again after 10 minutes, regardless of success or error
+    setTimeout(keepChecker, 600000);
+});
+}
+  function performFetch() {
+fetch("https://hiweightechsystemsltd.onrender.com/keepAlive")
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response;
+      })
+  .then(responseData => {
+    // Process the response data
+    console.log("Response clear");
+  })
+  .catch(error => {
+        // Handle any errors gracefully
+        console.log('Error:', error);
+        // Take alternative actions or provide appropriate feedback
+      })
+      .finally(() => {
+        // Call the function again after 10 minutes, regardless of success or error
+        setTimeout(performFetch, 600000);
+  });
+  }
+
+  // Initial fetch request
+  performFetch();
+  keepChecker();
+}
+
+// Call the function to start executing the task every 10 minutes
+executeTaskEvery10Minutes();
+
 module.exports = {
   programCheck,
   startRecording,
