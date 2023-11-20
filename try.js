@@ -291,11 +291,11 @@ function executeTaskEvery10Minutes() {
   fetch("https://newlugandahymnal.onrender.com/keepAlive")
   .then(res=>{
     if(!res.ok){
-      throw new Error ("failed - recorder");
+      console.log("Connection not clear - Hymnal");
     }
       return res;
   }).then(res => {
-    console.log("connection clear - Hymnal")
+    console.log("connection clear - Hymnal");
   }).catch(error => {
     // Handle any errors gracefully
     console.log('Error:', error);
@@ -310,13 +310,13 @@ function executeTaskEvery10Minutes() {
 fetch("https://hiweightechsystemsltd.onrender.com/keepAlive")
       .then(response => {
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          console.log('Connection not clear - Hiweigh');
         }
         return response;
       })
   .then(responseData => {
     // Process the response data
-    console.log("Response clear");
+    console.log("Response clear - Hiweigh");
   })
   .catch(error => {
         // Handle any errors gracefully
