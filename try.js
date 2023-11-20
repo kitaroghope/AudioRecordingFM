@@ -48,6 +48,15 @@ function kweyitaStop(HH, MM, DD){
 function isKasisimuka(HH, MM, DD){
   return HH === 2 && MM >= 0 && MM <= 44.5;
 }
+
+// olukya
+function isOlukya(HH, MM, DD){
+  return HH === 3 && MM >= 0 && MM <= 45;
+}
+function olukyaStop(HH, MM, DD){
+  return HH === 4 && MM >= 0 && MM >= 1;
+}
+
 function kasisimukaStop(HH, MM, DD){
   return HH === 2 && MM >= 45;
 }
@@ -92,6 +101,9 @@ programCheck = setInterval(() => {
     else if(isKweyita(HH, MM, DD)){
       startRecording("Kweyita Akatono");
     }
+    else if(isOlukya(HH, MM, DD)){
+      startRecording("Olukya");
+    }
     // else if(test1(HH, MM, DD)){
     //   startRecording('Test Run');
     // }
@@ -109,6 +121,9 @@ programCheck = setInterval(() => {
     }
     else if(kweyitaStop(HH, MM, DD)){
       stopRecording("Kweyita akatono");
+    }
+    else if(olukyaStop(HH, MM, DD)){
+      stopRecording("Olukya");
     }
     // else if(stopTest1(HH,MM,DD)){
     //   stopRecording("test Run")
