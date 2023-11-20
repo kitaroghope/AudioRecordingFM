@@ -288,14 +288,14 @@ function numC (num){
 
 function executeTaskEvery10Minutes() {
   function keepChecker(){// Task to execute
-  fetch("https://newlugandahymnal.onrender.com")
+  fetch("https://newlugandahymnal.onrender.com/keepAlive")
   .then(res=>{
     if(!res.ok){
       throw new Error ("failed - recorder");
     }
       return res;
   }).then(res => {
-    console.log("connection clear - recorder")
+    console.log("connection clear - Hymnal")
   }).catch(error => {
     // Handle any errors gracefully
     console.log('Error:', error);
