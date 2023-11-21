@@ -51,10 +51,10 @@ function isKasisimuka(HH, MM, DD){
 
 // olukya
 function isOlukya(HH, MM, DD){
-  return HH === 3 && MM >= 0 && MM <= 45;
+  return HH === 4 && MM >= 0 && MM <= 45;
 }
 function olukyaStop(HH, MM, DD){
-  return HH === 4 && MM >= 0 && MM >= 1;
+  return HH === 5 && MM >= 1;
 }
 
 function kasisimukaStop(HH, MM, DD){
