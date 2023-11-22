@@ -30,7 +30,7 @@ function isLwakiNze(HH, MM, DD) {
 }
 function lwakiNzeStop(HH, MM, DD){
   if(DD === 'Wednesday' || DD === 'Thursday'){
-    return HH === 20 && MM >= 15;
+    return HH === 20 && MM >= 15 && MM < 16;
   }
 }
 function isKweyita(HH, MM, DD) {
@@ -40,7 +40,7 @@ function isKweyita(HH, MM, DD) {
 }
 function kweyitaStop(HH, MM, DD){
   if(DD === 'Monday' || DD === 'Tuesday'){
-    return HH === 20 && MM >= 15;
+    return HH === 20 && MM >= 15 && MM < 16;
   }
 }
 
@@ -51,14 +51,14 @@ function isKasisimuka(HH, MM, DD){
 
 // olukya
 function isOlukya(HH, MM, DD){
-  return HH === 4 && MM >= 0 && MM <= 45;
+  return HH === 4 && MM >= 45;
 }
 function olukyaStop(HH, MM, DD){
-  return HH === 5 && MM >= 1;
+  return HH === 5 && MM <= 1;
 }
 
 function kasisimukaStop(HH, MM, DD){
-  return HH === 2 && MM >= 45;
+  return HH === 2 && MM >= 45 && MM < 46;
 }
 
 // Sokka ononye on Sarturday
@@ -66,7 +66,7 @@ function isSabbath(HH, MM, DD){
   return DD === 'Saturday' && HH === 7 && MM >= 0;
 }
 function sabbathStop(HH, MM, DD){
-  return DD === 'Saturday' &&  HH === 8 && MM >= 0;
+  return DD === 'Saturday' &&  HH === 8 && MM >= 15  && MM < 16;
 }
 
 // function to test server
