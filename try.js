@@ -74,7 +74,7 @@ programCheck = setInterval(async () => {
               // checking if the program runs in a portion of an hour
               if (prog[1][0] == prog[2][0]) {
                   for (const day of prog[0]) {
-                      if (DD == day && HH == prog[2][0] && MM >= prog[2][1] + 1) {
+                      if (DD == day && HH == prog[2][0] && MM == prog[2][1]) {
                           stopRecording(prog[3]);
                       }
                   }
