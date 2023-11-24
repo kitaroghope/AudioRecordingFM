@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Program Data Form</title>
+    <!-- Bootstrap CSS CDN -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+
+    <div class="container mt-4">
+        <form id="programForm">
+            <div class="form-group">
+                <label for="days">Days when the program is hosted:</label>
+                <div class="form-check days">
+                    <!-- Add data-day attribute to identify repeated input -->
+                    
+                </div>
+                <!-- Clone the checkbox for other days -->
+            </div>
+
+            <div class="form-group">
+                <label for="startTime">Program start time:</label>
+                <div class="row">
+                    <div class="col-md-4">
+                        <select class="form-control hourSelect" id="startHour">
+                            <!-- Populate options for hours -->
+                        </select>
+                    </div>:
+                    <div class="col-md-4">
+                        <select class="form-control minuteSelect" id="startMinute">
+                            <!-- Populate options for minutes -->
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="endTime">Program end time:</label>
+                <div class="row">
+                    <div class="col-md-4">
+                        <select class="form-control hourSelect" id="endHour">
+                            <!-- Populate options for hours -->
+                        </select>
+                    </div>:
+                    <div class="col-md-4">
+                        <select class="form-control minuteSelect" id="endMinute">
+                            <!-- Populate options for minutes -->
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="programName">Program name:</label>
+                <input type="text" class="form-control" id="programName" placeholder="Enter program name">
+            </div>
+
+            <button type="button" class="btn btn-primary" onclick="captureData()">Capture Data</button>
+        </form>
+    </div>
+
+    <!-- Bootstrap JS and Popper.js CDN -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+    <script>
+        // Function to populate hours and minutes
+        function populateHoursAndMinutes() {
+            for (let i = 0; i < 24; i++) {
+				var am, hh;
+				if(i == 0){
+					am = "am";
+					hh = 12;
+				}
+				else if(i <= 12){
+					am = "am";
+					hh = i;
+				}
+				else{
+					am = "pm";
+					hh = (i - 12);
+				}
+				if(hh < 10){
+					hh = "0"+hh
+				}
+                $(".hourSelect").append(`<option value="${i}">${hh} ${am}</option>`);
+            }
+
+            for (let i = 0; i < 60; i ++) {
+				var min = i;
+				if (min < 10){
+					min = "0"+min;
+				}
+                $(".minuteSelect").append(`<option value="${i}">${min} </option>`);
+            }
+        }
+
+        // Function to clone and populate days
+        function populateDays() {
+            const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            
+            days.forEach(function (day) {
+                $('.days').append(`<input type="checkbox" class="form-check-input dayCheckbox" data-day="${day}" value="${day}">
+                    <label class="form-check-label" for="${day}">${day}</label><br>`);
+            });
+        }
+
+        $(document).ready(function () {
+            populateDays();
+            populateHoursAndMinutes();
+        });
+
+        function captureData() {
+            var selectedDays = [];
+            document.querySelectorAll('input[type=checkbox]:checked').forEach(function (checkbox) {
+                selectedDays.push(checkbox.value);
+            });
+
+            var startHour = document.getElementById("startHour").value;
+            var startMinute = document.getElementById("startMinute").value;
+            var endHour = document.getElementById("endHour").value;
+            var endMinute = document.getElementById("endMinute").value;
+
+            if (startHour > endHour) {
+                alert("The program can't run through the next day");
+                return;
+            } else if (startHour == endHour && startMinute > endMinute) {
+                alert("The program cannot run backward, make sure the end minute is higher than the start minute");
+                return;
+            } else {
+                // Send program data to the server
+                var programName = document.getElementById("programName").value;
+                var programData = {
+                    days: selectedDays,
+                    start: [startHour, startMinute],
+                    end: [endHour, endMinute],
+                    prog: programName
+                };
+
+                fetch('/newProgram', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(programData),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                    // Handle the response as needed
+                })
+                .catch(error => {
+                    Alert('Error:', error);
+                    // Handle errors
+                });
+
+                console.log("Captured Program Data:", programData);
+        // You can use 'programData' as needed, e.g., send it to a server, perform further actions, etc.
+        }
+}
+
+    </script>
+
+</body>
+</html>

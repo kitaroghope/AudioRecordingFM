@@ -7,11 +7,13 @@ const con = require('./config.json');
 const streamUrl = con.radios.prime;
 const chunkDurationInSeconds = 6; // 1 minute
 const tempFolderPath = 'temp_stream_chunks';
+const timeChecker = require('./timeChecker');
 
 let chunkIndex = 1;
 let programCheck = null;
 var recordedList = [];
 let progName = "";
+let existingPrograms = [];
 
 // Create the temp folder if it doesn't exist
 if (!fs.existsSync(tempFolderPath)) {
@@ -20,117 +22,74 @@ if (!fs.existsSync(tempFolderPath)) {
 let record = false;
 let userRecord = false;
 
-// var programs = {"Lwaki Nze":{"start":[21,43],"stop":[]}}
 
-// Lwakinze Wednesday or Thursday
-function isLwakiNze(HH, MM, DD) {
-  if(DD === 'Wednesday' || DD === 'Thursday'){
-    return HH === 18 && MM >= 25;
+
+programCheck = setInterval(async () => {
+  try {
+      if (existingPrograms.length == 0) {
+          const progs = await db.readRows({}, 'radio', 'programs');
+          progs.listings.forEach(async (prog) => {
+              existingPrograms.push([prog.days, prog.start, prog.end, prog.prog]);
+          });
+          console.log(existingPrograms);
+          return;
+      }
+          console.log(existingPrograms.length);
+      const time = new Date();
+      const HH = time.getHours() + 3;
+      const MM = time.getMinutes();
+      const options = { weekday: 'long' }  //, timeZone: 'Africa/Nairobi' };
+      const DD = time.toLocaleDateString('en-US', options);
+      // console.log(DD)
+      // console.log(time.toTimeString())
+
+      // logic to start recording
+      if (!record || userRecord) {
+          // console.log(userRecord);
+          for (const prog of existingPrograms) {
+              // checking if the program runs in a portion of an hour
+              if (eval(prog[1][0]) == eval(prog[2][0])) {
+                  for (const day of prog[0]) {
+                      if (DD == day && HH == eval(prog[1][0]) && MM >= eval(prog[1][1]) && MM < eval(prog[2][1])) {
+                          startRecording(prog[3]);
+                      }
+                  }
+              }
+              // if the program runs into a different hour
+              else {
+                  for (const day of prog[0]) {
+                      if (DD == day && HH == eval(prog[1][0]) && MM >= eval(prog[1][1])) {
+                          console.log(prog[3]);
+                      }
+                  }
+              }
+          }
+      }
+      // logic to stop recording
+      else {
+          for (const prog of existingPrograms) {
+              // checking if the program runs in a portion of an hour
+              if (eval(prog[1][0]) == eval(prog[2][0])) {
+                  for (const day of prog[0]) {
+                      if (DD == day && HH == eval(prog[2][0]) && MM >= eval(prog[2][1]) + 1) {
+                          stopRecording(prog[3]);
+                      }
+                  }
+              }
+              // if the program runs into a different hour
+              else {
+                  for (const day of prog[0]) {
+                      if (DD == day && HH == eval(prog[2][0]) && MM == eval(prog[2][1])) {
+                          stopRecording(prog[3]);
+                      }
+                  }
+              }
+          }
+      }
+  } catch (error) {
+      console.log(error.message);
   }
-}
-function lwakiNzeStop(HH, MM, DD){
-  if(DD === 'Wednesday' || DD === 'Thursday'){
-    return HH === 20 && MM >= 15 && MM < 16;
-  }
-}
-function isKweyita(HH, MM, DD) {
-  if(DD === 'Monday' || DD === 'Tuesday'){
-    return HH === 18 && MM >= 30;
-  }
-}
-function kweyitaStop(HH, MM, DD){
-  if(DD === 'Monday' || DD === 'Tuesday'){
-    return HH === 20 && MM >= 15 && MM < 16;
-  }
-}
-
-// Kasismuka everyday
-function isKasisimuka(HH, MM, DD){
-  return HH === 2 && MM >= 0 && MM <= 44.5;
-}
-
-// olukya
-function isOlukya(HH, MM, DD){
-  return HH === 4 && MM >= 45;
-}
-function olukyaStop(HH, MM, DD){
-  return HH === 5 && MM <= 1;
-}
-
-function kasisimukaStop(HH, MM, DD){
-  return HH === 2 && MM >= 45 && MM < 46;
-}
-
-// Sokka ononye on Sarturday
-function isSabbath(HH, MM, DD){
-  return DD === 'Saturday' && HH === 7 && MM >= 0;
-}
-function sabbathStop(HH, MM, DD){
-  return DD === 'Saturday' &&  HH === 8 && MM >= 15  && MM < 16;
-}
-
-// function to test server
-function test1(HH, MM, DD){
-  return HH === 16 && MM >= 4 // && // MM <= 34.5; //=== 'Friday';
-}
-function stopTest1(HH, MM, DD){
-  return HH === 17 && MM >= 5;
-}
-
-programCheck = setInterval(() => {
-  const time = new Date();
-  const HH = time.getHours();
-  const MM = time.getMinutes();
-  const options = { weekday: 'long'}  //, timeZone: 'Africa/Nairobi' };
-  const DD = time.toLocaleDateString('en-US', options);
-  // console.log(DD)
-  // console.log(time.toTimeString())
-
-  // logic to start recording
-  if(!record || userRecord){
-    // console.log(userRecord);
-    if(isLwakiNze(HH, MM, DD)){
-      startRecording("Lwaki Nze");
-    }
-    else if(isKasisimuka(HH, MM, DD)){
-      startRecording("Kasisimuka");
-    }
-    else if(isSabbath(HH, MM, DD)){
-      startRecording("Zuula");
-    }
-    else if(isKweyita(HH, MM, DD)){
-      startRecording("Kweyita Akatono");
-    }
-    else if(isOlukya(HH, MM, DD)){
-      startRecording("Olukya");
-    }
-    // else if(test1(HH, MM, DD)){
-    //   startRecording('Test Run');
-    // }
-  }
-  // logic to stop reecording
-  else{
-    if(lwakiNzeStop(HH, MM, DD)){
-      stopRecording("Lwaki Nze");
-    }
-    else if(kasisimukaStop(HH, MM, DD)){
-      stopRecording("Kasisimuka");
-    }
-    else if(sabbathStop(HH, MM, DD)){
-      stopRecording("Sokka ononye");
-    }
-    else if(kweyitaStop(HH, MM, DD)){
-      stopRecording("Kweyita akatono");
-    }
-    else if(olukyaStop(HH, MM, DD)){
-      stopRecording("Olukya");
-    }
-    // else if(stopTest1(HH,MM,DD)){
-    //   stopRecording("test Run")
-    // }
-  }
-
-}, 10000); // Run every 10 seconds
+}, 15000); // Run every 15 seconds
 
 async function startRecording(prog, un = false){
   if(record){
@@ -210,25 +169,6 @@ function fetchAndRecordChunk() {
             db.updateRow2({program: progName, files: recordedList},{program: progName, files: recordedList, Day:dayOfRec},'radio','recordings');
             recordedList = [];
             chunkIndex = 1;
-            // fs.readdir(tempFolderPath, (err, files) => {
-            //   if (err) {
-            //     // console.error('Error reading folder:', err);
-            //     return;
-            //   }
-            
-            //   files.forEach((file) => {
-            //     const filePath = path.join(tempFolderPath, file);
-            //     fs.unlink(filePath, (unlinkErr) => {
-            //       if (unlinkErr) {
-            //         return;
-            //         // console.error('Error deleting file:', unlinkErr);
-            //       } else {
-            //         return;
-            //         // console.log(`File ${file} deleted successfully.`);
-            //       }
-            //     });
-            //   });
-            // });       
           },10000);
         }
       }, 1000); // Log progress every second
@@ -352,10 +292,64 @@ fetch("https://hiweightechsystemsltd.onrender.com/keepAlive")
 // Call the function to start executing the task every 10 minutes
 executeTaskEvery10Minutes();
 
+const addProgram = async (req, res) => {
+  try {
+    var man = req.body;
+    var message = "program added successfully";
+    var coli = true; // collision states
+    // Turning program to array format
+    const newProg = [man.days, man.start, man.end, man.prog];
+
+    // Turning existing programs to array format
+    let oldPrograms = existingPrograms;
+
+    // Now checking if the new program doesn't conflict with existing programs
+    // if programs are not yet loaded
+    if(oldPrograms.length == 0){
+      message = "Server is still loading data, try again later. Program was not added";
+    }
+    // if they already loaded
+    else{
+      for (const oldProg of oldPrograms) {
+        const ck = await timeChecker(newProg, oldProg);
+        if (ck.collision) {
+          message = ck.scenario + " , Program affected: " + ck.conflictingProgram;
+          break; // Exit the loop if there is a collision
+        }
+        else{
+          coli = false;
+        }
+      }
+    }
+
+    // If there is no collision
+    if (!coli) {
+      await db.createListing(man, 'radio', 'programs');
+      existingPrograms.push(newProg);
+    }
+
+    res.json({ message: message });
+  } catch (error) {
+    console.log(error);
+    res.json({ message: error.message });
+  }
+};
+
+const deleteProgram = async (req, res)=>{
+  try {
+    await db.createListing({prog:req.params.prog},'radio','programs');
+    res.json({'message':'Deleted successfully'})
+  } catch (error) {
+    res.json({message:error.message})
+  }
+}
+
 module.exports = {
   programCheck,
   startRecording,
   stopRecording,
   userRecord,
-  record
+  record,
+  addProgram,
+  deleteProgram
 };

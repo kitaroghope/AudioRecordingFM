@@ -13,8 +13,10 @@ app.use(cors({
    allowedHeaders:"*"
 }));
 app.set('view engine', 'ejs');
+app.use(express.json());
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
+// app.use(express.urlencoded({extended:true}));
 
 const port = 3300;
 
@@ -58,3 +60,6 @@ app.post('/stop-record',async (req, res) => {
     res.json({message:error.message});
   }
 });
+
+app.post('/newProgram', recorder.addProgram);
+app.post('/deleteProgram', recorder.deleteProgram);
