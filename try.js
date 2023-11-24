@@ -36,7 +36,10 @@ programCheck = setInterval(async () => {
       }
           // console.log(existingPrograms.length);
       const time = new Date();
-      const HH = time.getHours() + 3;
+      var HH = time.getHours() + 3;
+      if (HH > 23){
+        HH = 24 - HH;
+      }
       const MM = time.getMinutes();
       const options = { weekday: 'long' }  //, timeZone: 'Africa/Nairobi' };
       const DD = time.toLocaleDateString('en-US', options);
