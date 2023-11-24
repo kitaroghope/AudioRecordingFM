@@ -31,10 +31,10 @@ programCheck = setInterval(async () => {
           progs.listings.forEach(async (prog) => {
               existingPrograms.push([prog.days, prog.start, prog.end, prog.prog]);
           });
-          console.log(existingPrograms);
+          // console.log(existingPrograms);
           return;
       }
-          console.log(existingPrograms.length);
+          // console.log(existingPrograms.length);
       const time = new Date();
       const HH = time.getHours() + 3;
       const MM = time.getMinutes();
@@ -48,9 +48,9 @@ programCheck = setInterval(async () => {
           // console.log(userRecord);
           for (const prog of existingPrograms) {
               // checking if the program runs in a portion of an hour
-              if (eval(prog[1][0]) == eval(prog[2][0])) {
+              if (prog[1][0] == prog[2][0]) {
                   for (const day of prog[0]) {
-                      if (DD == day && HH == eval(prog[1][0]) && MM >= eval(prog[1][1]) && MM < eval(prog[2][1])) {
+                      if (DD == day && HH == prog[1][0] && MM >= prog[1][1] && MM < prog[2][1]) {
                           startRecording(prog[3]);
                       }
                   }
@@ -58,7 +58,7 @@ programCheck = setInterval(async () => {
               // if the program runs into a different hour
               else {
                   for (const day of prog[0]) {
-                      if (DD == day && HH == eval(prog[1][0]) && MM >= eval(prog[1][1])) {
+                      if (DD == day && HH == prog[1][0] && MM >= prog[1][1]) {
                           console.log(prog[3]);
                       }
                   }
@@ -69,9 +69,9 @@ programCheck = setInterval(async () => {
       else {
           for (const prog of existingPrograms) {
               // checking if the program runs in a portion of an hour
-              if (eval(prog[1][0]) == eval(prog[2][0])) {
+              if (prog[1][0] == prog[2][0]) {
                   for (const day of prog[0]) {
-                      if (DD == day && HH == eval(prog[2][0]) && MM >= eval(prog[2][1]) + 1) {
+                      if (DD == day && HH == prog[2][0] && MM >= prog[2][1] + 1) {
                           stopRecording(prog[3]);
                       }
                   }
@@ -79,7 +79,7 @@ programCheck = setInterval(async () => {
               // if the program runs into a different hour
               else {
                   for (const day of prog[0]) {
-                      if (DD == day && HH == eval(prog[2][0]) && MM == eval(prog[2][1])) {
+                      if (DD == day && HH == prog[2][0] && MM == prog[2][1]) {
                           stopRecording(prog[3]);
                       }
                   }
@@ -313,7 +313,7 @@ const addProgram = async (req, res) => {
       for (const oldProg of oldPrograms) {
         const ck = await timeChecker(newProg, oldProg);
         if (ck.collision) {
-          message = ck.scenario + " , Program affected: " + ck.conflictingProgram;
+          message = ck.scenario + " , Program affected: " + ck.conflictingProgram + "which starts at "+ ck.start +" and ends at "+ ck.end +" on one of the days.";
           break; // Exit the loop if there is a collision
         }
         else{
