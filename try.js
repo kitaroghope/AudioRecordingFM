@@ -314,6 +314,7 @@ const addProgram = async (req, res) => {
         const ck = await timeChecker(newProg, oldProg);
         if (ck.collision) {
           message = ck.scenario + " , Program affected: " + ck.conflictingProgram + " which starts at "+ ck.start +" and ends at "+ ck.end +" on one of the days.";
+          coli = true;
           break; // Exit the loop if there is a collision
         }
         else{
@@ -324,7 +325,7 @@ const addProgram = async (req, res) => {
 
     // If there is no collision
     if (!coli) {
-      await db.updateRow2(man, 'radio', 'programs');
+      await db.createListing(man, 'radio', 'programs');
       existingPrograms.push(newProg);
     }
 
