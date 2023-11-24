@@ -6,14 +6,14 @@
   <link rel="icon" href="images/prime.jpg" type="image/x-icon">
 
   <meta property="og:title" content="Prime Radio">
-  <meta property="og:description" content="Eweweza Omutima">
-  <meta property="og:image" content="https://audiorecorderfm.onrender.com/images/prime.jpg">
-  <meta property="og:url" content="https://audiorecorderfm.onrender.com/">
+  <meta property="og:description" content="Eweweza Omutima, Open link to listen both to live and recorded programs">
+  <meta property="og:image" content="https://audiorecordingfm.onrender.com/images/prime.jpg">
+  <meta property="og:url" content="https://audiorecordingfm.onrender.com/">
 
   <title>FM Stream App</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body style="background: rgb(241, 214, 214);">
   <div class="container">
@@ -54,8 +54,23 @@
     <div class="row"><audio controls src="<%= streamUrl %>">Prime</audio></div>
     <br>
     <div class="row">
-      <button id="recordButton" class="btn btn-success">Record</button>
-      <button id="stopRecordButton" class="btn btn-danger" disabled>Stop Recording</button>
+      <!-- <button id="recordButton" class="btn btn-success">Record</button>
+      <button id="stopRecordButton" class="btn btn-danger" disabled>Stop Recording</button> -->
+      <h2>User custom recording coming soon!</h2>
+      <p><a href="/try.html">click here</a> to schedule your favourite program for recording.</p>
+      <p>Contact <a href="mailto:kitarogz@gmail.com">developer</a> for any assistance.</p>
+      <p>or <a href="https://wa.me/256757035774"><i class="fa fa-whatsapp" aria-hidden="true"></i>
+        <a href="https://t.me/EnnyimbaZaKristo"><i class="fa fa-telegram" aria-hidden="true"></i>
+        </a>
+      </a>
+      </p>
+      <p>
+        <b>Note:</b>
+        <li>Most recorded programs are broken into more than 1 file.</li>
+        <li>look at the name of the audio</li>
+        <li>The one which ends with 1 eg. 'lwaki nze 1'</li>
+        <li>Listen to them in order</li>
+      </p>
     </div>
     <br>
     <div class="row">
@@ -70,7 +85,7 @@
             <% el.files.forEach(file => { %>
               <p><%= file %></p>
               <!-- <audio controls preload="metadata" src="uploads/<%= el.program %>/<%= file %>"></audio> -->
-              <a target="_blank" href="https://lugandahymnalnew.infinityfreeapp.com/uploads/<%= el.program %>/<%= file %>" download="<%= file %>"><button>download</button></a>
+              <a target="_blank" href="https://lugandahymnalnew.infinityfreeapp.com/uploads/<%= el.program %>/<%= file %>" download="<%= file %>"><button>Play in new tab</button></a>
             <% }) %>
           </div>
         </details>
