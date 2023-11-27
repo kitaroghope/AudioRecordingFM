@@ -62,7 +62,7 @@ programCheck = setInterval(async () => {
               else {
                   for (const day of prog[0]) {
                       if (DD == day && HH == prog[1][0] && MM >= prog[1][1]) {
-                          console.log(prog[3]);
+                          startRecording(prog[3]);
                       }
                   }
               }
