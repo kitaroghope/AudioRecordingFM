@@ -1,238 +1,111 @@
-# BSON parser
+text-encoding
+==============
 
-BSON is short for "Binary JSON," and is the binary-encoded serialization of JSON-like documents.
-You can learn more about it in [the specification](http://bsonspec.org).
+This is a polyfill for the [Encoding Living
+Standard](https://encoding.spec.whatwg.org/) API for the Web, allowing
+encoding and decoding of textual data to and from Typed Array buffers
+for binary data in JavaScript.
 
-### Table of Contents
-- [Usage](#usage)
-- [Bugs/Feature Requests](#bugs--feature-requests)
-- [Installation](#installation)
-- [Documentation](#documentation)
-- [FAQ](#faq)
+By default it adheres to the spec and does not support *encoding* to
+legacy encodings, only *decoding*. It is also implemented to match the
+specification's algorithms, rather than for performance. The intended
+use is within Web pages, so it has no dependency on server frameworks
+or particular module schemes.
 
-## Bugs / Feature Requests
+Basic examples and tests are included.
 
-Think you've found a bug? Want to see a new feature in `bson`? Please open a case in our issue management tool, JIRA:
+### Install ###
 
-1. Create an account and login: [jira.mongodb.org](https://jira.mongodb.org)
-2. Navigate to the NODE project: [jira.mongodb.org/browse/NODE](https://jira.mongodb.org/browse/NODE)
-3. Click **Create Issue** - Please provide as much information as possible about the issue and how to reproduce it.
+There are a few ways you can get and use the `text-encoding` library.
 
-Bug reports in JIRA for all driver projects (i.e. NODE, PYTHON, CSHARP, JAVA) and the Core Server (i.e. SERVER) project are **public**.
+### HTML Page Usage ###
 
-## Usage
-
-To build a new version perform the following operations:
-
-```
-npm install
-npm run build
-```
-
-### Node.js or Bundling Usage
-
-When using a bundler or Node.js you can import bson using the package name:
-
-```js
-import { BSON, EJSON, ObjectId } from 'bson';
-// or:
-// const { BSON, EJSON, ObjectId } = require('bson');
-
-const bytes = BSON.serialize({ _id: new ObjectId() });
-console.log(bytes);
-const doc = BSON.deserialize(bytes);
-console.log(EJSON.stringify(doc));
-// {"_id":{"$oid":"..."}}
-```
-
-### Browser Usage
-
-If you are working directly in the browser without a bundler please use the `.mjs` bundle like so:
+Clone the repo and include the files directly:
 
 ```html
-<script type="module">
-  import { BSON, EJSON, ObjectId } from './lib/bson.mjs';
+  <!-- Required for non-UTF encodings -->
+  <script src="encoding-indexes.js"></script>
+  <script src="encoding.js"></script>
+```
 
-  const bytes = BSON.serialize({ _id: new ObjectId() });
-  console.log(bytes);
-  const doc = BSON.deserialize(bytes);
-  console.log(EJSON.stringify(doc));
-  // {"_id":{"$oid":"..."}}
+This is the only use case the developer cares about. If you want those
+fancy module and/or package manager things that are popular these days
+you should probably use a different library.
+
+#### Package Managers ####
+
+The package is published to **npm** and **bower** as `text-encoding`.
+Use through these is not really supported, since they aren't used by
+the developer of the library. Using `require()` in interesting ways
+probably breaks. Patches welcome, as long as they don't break the
+basic use of the files via `<script>`.
+
+### API Overview ###
+
+Basic Usage
+
+```js
+  var uint8array = new TextEncoder().encode(string);
+  var string = new TextDecoder(encoding).decode(uint8array);
+```
+
+Streaming Decode
+
+```js
+  var string = "", decoder = new TextDecoder(encoding), buffer;
+  while (buffer = next_chunk()) {
+    string += decoder.decode(buffer, {stream:true});
+  }
+  string += decoder.decode(); // finish the stream
+```
+
+### Encodings ###
+
+All encodings from the Encoding specification are supported:
+
+utf-8 ibm866 iso-8859-2 iso-8859-3 iso-8859-4 iso-8859-5 iso-8859-6
+iso-8859-7 iso-8859-8 iso-8859-8-i iso-8859-10 iso-8859-13 iso-8859-14
+iso-8859-15 iso-8859-16 koi8-r koi8-u macintosh windows-874
+windows-1250 windows-1251 windows-1252 windows-1253 windows-1254
+windows-1255 windows-1256 windows-1257 windows-1258 x-mac-cyrillic
+gb18030 hz-gb-2312 big5 euc-jp iso-2022-jp shift_jis euc-kr
+replacement utf-16be utf-16le x-user-defined
+
+(Some encodings may be supported under other names, e.g. ascii,
+iso-8859-1, etc. See [Encoding](https://encoding.spec.whatwg.org/) for
+additional labels for each encoding.)
+
+Encodings other than **utf-8**, **utf-16le** and **utf-16be** require
+an additional `encoding-indexes.js` file to be included. It is rather
+large (596kB uncompressed, 188kB gzipped); portions may be deleted if
+support for some encodings is not required.
+
+### Non-Standard Behavior ###
+
+As required by the specification, only encoding to **utf-8** is
+supported. If you want to try it out, you can force a non-standard
+behavior by passing the `NONSTANDARD_allowLegacyEncoding` option to
+TextEncoder and a label. For example:
+
+```js
+var uint8array = new TextEncoder(
+  'windows-1252', { NONSTANDARD_allowLegacyEncoding: true }).encode(text);
+```
+
+But note that the above won't work if you're using the polyfill in a
+browser that natively supports the TextEncoder API natively, since the
+polyfill won't be used!
+
+You can force the polyfill to be used by using this before the polyfill:
+
+```html
+<script>
+window.TextEncoder = window.TextDecoder = null;
 </script>
 ```
 
-## Installation
-
-```sh
-npm install bson
-```
-
-## Documentation
-
-### BSON 
-
-[API documentation](https://mongodb.github.io/node-mongodb-native/Next/modules/BSON.html)
-
-<a name="EJSON"></a>
-
-### EJSON
-
-* [EJSON](#EJSON)
-
-    * [.parse(text, [options])](#EJSON.parse)
-
-    * [.stringify(value, [replacer], [space], [options])](#EJSON.stringify)
-
-    * [.serialize(bson, [options])](#EJSON.serialize)
-
-    * [.deserialize(ejson, [options])](#EJSON.deserialize)
-
-
-<a name="EJSON.parse"></a>
-
-#### *EJSON*.parse(text, [options])
-
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| text | <code>string</code> |  |  |
-| [options] | <code>object</code> |  | Optional settings |
-| [options.relaxed] | <code>boolean</code> | <code>true</code> | Attempt to return native JS types where possible, rather than BSON types (if true) |
-
-Parse an Extended JSON string, constructing the JavaScript value or object described by that
-string.
-
-**Example**
-```js
-const { EJSON } = require('bson');
-const text = '{ "int32": { "$numberInt": "10" } }';
-
-// prints { int32: { [String: '10'] _bsontype: 'Int32', value: '10' } }
-console.log(EJSON.parse(text, { relaxed: false }));
-
-// prints { int32: 10 }
-console.log(EJSON.parse(text));
-```
-<a name="EJSON.stringify"></a>
-
-#### *EJSON*.stringify(value, [replacer], [space], [options])
-
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| value | <code>object</code> |  | The value to convert to extended JSON |
-| [replacer] | <code>function</code> \| <code>array</code> |  | A function that alters the behavior of the stringification process, or an array of String and Number objects that serve as a whitelist for selecting/filtering the properties of the value object to be included in the JSON string. If this value is null or not provided, all properties of the object are included in the resulting JSON string |
-| [space] | <code>string</code> \| <code>number</code> |  | A String or Number object that's used to insert white space into the output JSON string for readability purposes. |
-| [options] | <code>object</code> |  | Optional settings |
-| [options.relaxed] | <code>boolean</code> | <code>true</code> | Enabled Extended JSON's `relaxed` mode |
-| [options.legacy] | <code>boolean</code> | <code>true</code> | Output in Extended JSON v1 |
-
-Converts a BSON document to an Extended JSON string, optionally replacing values if a replacer
-function is specified or optionally including only the specified properties if a replacer array
-is specified.
-
-**Example**
-```js
-const { EJSON } = require('bson');
-const Int32 = require('mongodb').Int32;
-const doc = { int32: new Int32(10) };
-
-// prints '{"int32":{"$numberInt":"10"}}'
-console.log(EJSON.stringify(doc, { relaxed: false }));
-
-// prints '{"int32":10}'
-console.log(EJSON.stringify(doc));
-```
-<a name="EJSON.serialize"></a>
-
-#### *EJSON*.serialize(bson, [options])
-
-| Param | Type | Description |
-| --- | --- | --- |
-| bson | <code>object</code> | The object to serialize |
-| [options] | <code>object</code> | Optional settings passed to the `stringify` function |
-
-Serializes an object to an Extended JSON string, and reparse it as a JavaScript object.
-
-<a name="EJSON.deserialize"></a>
-
-#### *EJSON*.deserialize(ejson, [options])
-
-| Param | Type | Description |
-| --- | --- | --- |
-| ejson | <code>object</code> | The Extended JSON object to deserialize |
-| [options] | <code>object</code> | Optional settings passed to the parse method |
-
-Deserializes an Extended JSON object into a plain JavaScript object with native/BSON types
-
-## Error Handling
-
-It is our recommendation to use `BSONError.isBSONError()` checks on errors and to avoid relying on parsing `error.message` and `error.name` strings in your code. We guarantee `BSONError.isBSONError()` checks will pass according to semver guidelines, but errors may be sub-classed or their messages may change at any time, even patch releases, as we see fit to increase the helpfulness of the errors.
-
-Any new errors we add to the driver will directly extend an existing error class and no existing error will be moved to a different parent class outside of a major release.
-This means `BSONError.isBSONError()` will always be able to accurately capture the errors that our BSON library throws.
-
-Hypothetical example: A collection in our Db has an issue with UTF-8 data:
-
-```ts
-let documentCount = 0;
-const cursor = collection.find({}, { utf8Validation: true });
-try {
-  for await (const doc of cursor) documentCount += 1;
-} catch (error) {
-  if (BSONError.isBSONError(error)) {
-    console.log(`Found the troublemaker UTF-8!: ${documentCount} ${error.message}`);
-    return documentCount;
-  }
-  throw error;
-}
-```
-
-## React Native
-
-BSON vendors the required polyfills for `TextEncoder`, `TextDecoder`, `atob`, `btoa` imported from React Native and therefore doesn't expect users to polyfill these. One additional polyfill, `crypto.getRandomValues` is recommended and can be installed with the following command:
-
-```sh
-npm install --save react-native-get-random-values
-```
-
-The following snippet should be placed at the top of the entrypoint (by default this is the root `index.js` file) for React Native projects using the BSON library.  These lines must be placed for any code that imports `BSON`.
-
-```typescript
-// Required Polyfills For ReactNative
-import 'react-native-get-random-values';
-```
-
-Finally, import the `BSON` library like so:
-
-```typescript
-import { BSON, EJSON } from 'bson';
-```
-
-This will cause React Native to import the `node_modules/bson/lib/bson.rn.cjs` bundle (see the `"react-native"` setting we have in the `"exports"` section of our [package.json](./package.json).)
-
-### Technical Note about React Native module import
-
-The `"exports"` definition in our `package.json` will result in BSON's CommonJS bundle being imported in a React Native project instead of the ES module bundle.  Importing the CommonJS bundle is necessary because BSON's ES module bundle of BSON uses top-level await, which is not supported syntax in [React Native's runtime hermes](https://hermesengine.dev/).
-
-## FAQ
-
-#### Why does `undefined` get converted to `null`?
-
-The `undefined` BSON type has been [deprecated for many years](http://bsonspec.org/spec.html), so this library has dropped support for it. Use the `ignoreUndefined` option (for example, from the [driver](http://mongodb.github.io/node-mongodb-native/2.2/api/MongoClient.html#connect) ) to instead remove `undefined` keys.
-
-#### How do I add custom serialization logic?
-
-This library looks for `toBSON()` functions on every path, and calls the `toBSON()` function to get the value to serialize.
-
-```javascript
-const BSON = require('bson');
-
-class CustomSerialize {
-  toBSON() {
-    return 42;
-  }
-}
-
-const obj = { answer: new CustomSerialize() };
-// "{ answer: 42 }"
-console.log(BSON.deserialize(BSON.serialize(obj)));
-```
+To support the legacy encodings (which may be stateful), the
+TextEncoder `encode()` method accepts an optional dictionary and
+`stream` option, e.g. `encoder.encode(string, {stream: true});` This
+is not needed for standard encoding since the input is always in
+complete code points.
