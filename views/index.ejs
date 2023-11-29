@@ -64,7 +64,7 @@
         <br>
         <br>
       <% recs.forEach(el => { %>
-        <details class="card p-1">
+        <details class="card p-1" onclick="openInNewTab(this)">
           <summary class="bg-dark text-light p-1"><%= el.program %> - <%= el.Day %></summary>
           <div class="row">
             <% el.files.forEach(file => { %>
@@ -84,7 +84,7 @@
           <p style="text-align: center;">copyright &copy;kitaroghope 2023</p>
         </div>
   </div>
-  
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
   <script>
     const recordButton = document.getElementById('recordButton');
     const stopRecordButton = document.getElementById('stopRecordButton');
@@ -126,6 +126,31 @@
         console.error('Error stopping recording:', error);
       }
     });
+    function openInNewTab(x) {
+      var count = $(x).find('a').length;
+      let songs = [];
+      for (i = 0; i < count; i++) {
+        songs.push($(x).find('a').eq(i).attr('href'));
+      }
+      let l = 'https://lugandahymnalnew.infinityfreeapp.com/player.html?prog='+$(x).find('summary').text()+'&songs='+encodeArrayToUrlData(songs);
+      console.log(l)
+      const con = confirm("Do you want to play the program?");
+      if(con){
+        openInNewTab1(l);
+      }
+      else{
+        console.log('nada');
+      }
+    }
+    function openInNewTab1(url) {
+      var newTab = window.open(url, '_blank');
+      newTab.focus();
+    }
+    function encodeArrayToUrlData(array) {
+      const jsonString = JSON.stringify(array);
+      const encodedData = encodeURIComponent(jsonString);
+      return encodedData;
+    }
 
   </script>
 </body>

@@ -24,7 +24,7 @@ let userRecord = false;
 // Lwakinze Wednesday or Thursday
 function isLwakiNze(HH, MM, DD) {
   if(DD === 'Wednesday' || DD === 'Thursday'){
-    return HH === 18 && MM >= 25;
+    return HH === 18 && MM >= 45 || HH === 19;
   }
 }
 function lwakiNzeStop(HH, MM, DD){
@@ -56,15 +56,15 @@ function isSabbath(HH, MM, DD){
   return DD === 'Saturday' && HH === 7 && MM >= 0;
 }
 function sabbathStop(HH, MM, DD){
-  return DD === 'Saturday' &&  HH === 8 && MM >= 0;
+  return DD === 'Saturday' &&  HH === 8 && MM >= 0 && MM <= 2;
 }
 
 // function to test server
 function test1(HH, MM, DD){
-  return HH === 16 && MM >= 4 // && // MM <= 34.5; //=== 'Friday';
+  return HH === 11 && MM >= 4 && MM <= 33.5; // && // //=== 'Friday';
 }
 function stopTest1(HH, MM, DD){
-  return HH === 17 && MM >= 5;
+  return HH === 11 && MM >= 38 && MM < 40;
 }
 
 programCheck = setInterval(() => {
@@ -91,9 +91,9 @@ programCheck = setInterval(() => {
     else if(isKweyita(HH, MM, DD)){
       startRecording("Kweyita Akatono");
     }
-    // else if(test1(HH, MM, DD)){
-    //   startRecording('Test Run');
-    // }
+    else if(test1(HH, MM, DD)){
+      startRecording('Test Run');
+    }
   }
   // logic to stop reecording
   else{
@@ -109,9 +109,9 @@ programCheck = setInterval(() => {
     else if(kweyitaStop(HH, MM, DD)){
       stopRecording("Kweyita akatono");
     }
-    // else if(stopTest1(HH,MM,DD)){
-    //   stopRecording("test Run")
-    // }
+    else if(stopTest1(HH,MM,DD)){
+      stopRecording("test Run")
+    }
   }
 
 }, 10000); // Run every 10 seconds
@@ -175,15 +175,15 @@ function fetchAndRecordChunk() {
       interval = setInterval(() => {
         if(record){
           // console.log(`Bytes written: ${bytesRead}`);
-          if (bytesRead >= 1000 * 1024) {
-            clearInterval(interval); // Clear the interval when done
+          if (bytesRead >= 250 * 1024) {
+            clearInterval(interval);
             outputStream.end();
             response.body.destroy();
-            chunkIndex++;
+            // chunkIndex++;
             // Fetch and record the next chunk
-            setTimeout(()=>{
-              fetchAndRecordChunk();
-            }, 4000);// calling new chunk
+            // setTimeout(()=>{
+            //   fetchAndRecordChunk();
+            // }, 4000);// calling new chunk
           }
         }
         else{
@@ -224,15 +224,15 @@ function fetchAndRecordChunk() {
         outputStream.write(chunk);
       });
 
-      // response.body.on('end', () => {
-      //   console.log(`Chunk ${chunkIndex} recorded: ${chunkFilePath}`);
-      //   clearInterval(interval); // Clear the interval when done
-      //   outputStream.end();
-      //   chunkIndex++;
+      response.body.on('end', () => {
+        console.log(`Chunk ${chunkIndex} recorded: ${chunkFilePath}`);
+        // clearInterval(interval); // Clear the interval when done
+        // outputStream.end();
+        chunkIndex++;
 
-      //   // Fetch and record the next chunk
-      //   fetchAndRecordChunk();
-      // });
+        // Fetch and record the next chunk
+        fetchAndRecordChunk();
+      });
     })
     .catch(error => {
       console.error(`Error fetching or recording chunk ${chunkIndex}:`, error);
@@ -253,6 +253,7 @@ function dateOfRec(){
     am = "am";
   }
   else if(hh < 12){
+    hh = numC(hh)
     am = "am";
   }
   else{
