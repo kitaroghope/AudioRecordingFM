@@ -62,7 +62,7 @@ programCheck = setInterval(async () => {
               else {
                   for (const day of prog[0]) {
                       if (DD == day && HH == prog[1][0] && MM >= prog[1][1]) {
-                          startRecording(prog[3]);
+                          console.log(prog[3]);
                       }
                   }
               }
@@ -157,11 +157,11 @@ function fetchAndRecordChunk() {
             clearInterval(interval); // Clear the interval when done
             outputStream.end();
             response.body.destroy();
-            // chunkIndex++;
+            chunkIndex++;
             // Fetch and record the next chunk
-            // setTimeout(()=>{
-            //   fetchAndRecordChunk();
-            // }, 4000);// calling new chunk
+            setTimeout(()=>{
+              fetchAndRecordChunk();
+            }, 4000);// calling new chunk
           }
         }
         else{
@@ -183,15 +183,15 @@ function fetchAndRecordChunk() {
         outputStream.write(chunk);
       });
 
-      response.body.on('end', () => {
-        console.log(`Chunk ${chunkIndex} recorded: ${chunkFilePath}`);
-        // clearInterval(interval); // Clear the interval when done
-        // outputStream.end();
-        chunkIndex++;
+      // response.body.on('end', () => {
+      //   console.log(`Chunk ${chunkIndex} recorded: ${chunkFilePath}`);
+      //   clearInterval(interval); // Clear the interval when done
+      //   outputStream.end();
+      //   chunkIndex++;
 
-        // Fetch and record the next chunk
-        fetchAndRecordChunk();
-      });
+      //   // Fetch and record the next chunk
+      //   fetchAndRecordChunk();
+      // });
     })
     .catch(error => {
       console.error(`Error fetching or recording chunk ${chunkIndex}:`, error);
@@ -212,7 +212,6 @@ function dateOfRec(){
     am = "am";
   }
   else if(hh < 12){
-    hh = numC(hh)
     am = "am";
   }
   else{
