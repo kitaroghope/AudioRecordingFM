@@ -1,14 +1,24 @@
 const express = require('express');
 const path = require('path');
 const app = express();
+const cors = require('cors');
 const recorder = require('./try');
 const db = require('./modules/mongoDBApi');
+const con = require('./config.json');
+const streamUrl = con.radios.prime;
 
+app.use(cors({
+    origin: "*",
+    methods: "*",
+   allowedHeaders:"*"
+}));
 app.set('view engine', 'ejs');
+app.use(express.json());
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
+// app.use(express.urlencoded({extended:true}));
 
-const port = 3000;
+const port = 3300;
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
@@ -19,7 +29,7 @@ let checkProg = recorder.programCheck;
 app.get('/', async (req, res) => {
   try {
     const recs = await db.readRows({},'radio','recordings');
-    res.render('index', { streamUrl: 'https://media2.streambrothers.com:8118/stream', recs:recs.listings});//recs.listings
+    res.render('index', { streamUrl: streamUrl, recs:recs.listings});//recs.listings
   } catch (error) {
     res.send(error.message);
   }
@@ -50,4 +60,6 @@ app.post('/stop-record',async (req, res) => {
     res.json({message:error.message});
   }
 });
-  
+
+app.post('/newProgram', recorder.addProgram);
+app.post('/deleteProgram', recorder.deleteProgram);
