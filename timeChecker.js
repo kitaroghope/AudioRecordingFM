@@ -6,7 +6,7 @@
  */
 async function isTimeCollision(newProgram, existingProgram) {
     // Check if there is a day overlap
-    const dayOverlap = newProgram[0].some( async (day) => existingProgram[0].includes(day));
+    const dayOverlap = newProgram[0].some((day) => existingProgram[0].includes(day));
 
     // If there is a day overlap, check for time overlap
     if (dayOverlap) {
