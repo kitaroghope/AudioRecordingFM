@@ -25,10 +25,22 @@ app.listen(port, () => {
 });
 // ... Previous code
 let checkProg = recorder.programCheck;
+let progS = {};
+
+setInterval(async()=>{
+  progS = await db.readRows({},'radio','recordings');
+}, 3600000)
 
 app.get('/', async (req, res) => {
   try {
-    const recs = await db.readRows({},'radio','recordings');
+    let recs = {};
+    if(progS.hasOwnProperty("listings")){
+      recs = progS;
+    }
+    else{
+      recs = await db.readRows({},'radio','recordings');
+      progS = recs;
+    }
     res.render('index', { streamUrl: streamUrl, recs:recs.listings});//recs.listings
   } catch (error) {
     res.send(error.message);
