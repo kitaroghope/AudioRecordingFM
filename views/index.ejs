@@ -186,7 +186,11 @@
     function openInNewTab1(url) {
       // var newTab = window.open(url, '_blank');
       // newTab.focus();
-      window.location.href = url;
+      try {
+        B4A.CallSub('Open_web', true, url)
+      } catch (error) {
+        window.location.href = url;  
+      }
     }
     function encodeArrayToUrlData(array) {
       const jsonString = JSON.stringify(array);
