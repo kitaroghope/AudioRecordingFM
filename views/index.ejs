@@ -55,7 +55,8 @@
     <div class="row"><audio controls src="<%= streamUrl %>">Prime</audio></div>
     <br>
     <div class="container-fluid d-flex align-items-center justify-content-center">
-      <iframe width="560" height="315" src="adv.html" frameborder="0" scrolling="no" allowfullscreen></iframe>
+      <iframe id="iframe" width="350" height="480px" src="adv.html" frameborder="0"  scrolling="no" allowfullscreen></iframe>
+      <div style="display: block; height: 480px; width: 350px; background: rgba(0, 0, 255, 0); position: absolute; margin: 0 auto;"  onclick="adv()"></div>
   </div>
     <div class="row">
       
@@ -126,46 +127,47 @@
   <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
   <script src="script.js"></script>
   <script>
-    const recordButton = document.getElementById('recordButton');
-    const stopRecordButton = document.getElementById('stopRecordButton');
+    // const recordButton = document.getElementById('recordButton');
+    // const stopRecordButton = document.getElementById('stopRecordButton');
 
-    recordButton.addEventListener('click', async () => {
-      stopRecordButton.disabled = false;
-      // Enable the recordButton
-      recordButton.disabled = true;
-      try {
-        const response = await fetch('/record', { method: 'POST' });
+    // recordButton.addEventListener('click', async () => {
+    //   stopRecordButton.disabled = false;
+    //   // Enable the recordButton
+    //   recordButton.disabled = true;
+    //   try {
+    //     const response = await fetch('/record', { method: 'POST' });
         
-        if (response.ok) {
-          const data = await response.json();
-          alert(data.message);
-          console.log('Recording started');
-        } else {
-          console.error('Response not OK:', response.status);
-        }
-      } catch (error) {
-        console.error('Error starting recording:', error);
-      }
-    });
+    //     if (response.ok) {
+    //       const data = await response.json();
+    //       alert(data.message);
+    //       console.log('Recording started');
+    //     } else {
+    //       console.error('Response not OK:', response.status);
+    //     }
+    //   } catch (error) {
+    //     console.error('Error starting recording:', error);
+    //   }
+    // });
 
 
-    stopRecordButton.addEventListener('click', async () => {
-      stopRecordButton.disabled = true;
-      // Enable the recordButton
-      recordButton.disabled = false;
-      try {
-        const response = await fetch('/stop-record', { method: 'POST' });
-        if (response.ok) {
-          const data = await response.json();
-          alert(data.message);
-          console.log('Recording stopped');
-        } else {
-          console.error('Response not OK:', response.status);
-        }
-      } catch (error) {
-        console.error('Error stopping recording:', error);
-      }
-    });
+    // stopRecordButton.addEventListener('click', async () => {
+    //   stopRecordButton.disabled = true;
+    //   // Enable the recordButton
+    //   recordButton.disabled = false;
+    //   try {
+    //     const response = await fetch('/stop-record', { method: 'POST' });
+    //     if (response.ok) {
+    //       const data = await response.json();
+    //       alert(data.message);
+    //       console.log('Recording stopped');
+    //     } else {
+    //       console.error('Response not OK:', response.status);
+    //     }
+    //   } catch (error) {
+    //     console.error('Error stopping recording:', error);
+    //   }
+    // });
+    
     async function openInNewTab(x) {
       var count = $(x).find('a').length;
       let songs = [];
@@ -184,12 +186,11 @@
       }
     }
     function openInNewTab1(url) {
-      // var newTab = window.open(url, '_blank');
-      // newTab.focus();
       try {
-        B4A.CallSub('Open_web', true, url)
+        B4A.CallSub('Open_web', true, url);
       } catch (error) {
-        window.location.href = url;  
+        var newTab = window.open(url, '_blank');
+        newTab.focus(); 
       }
     }
     function encodeArrayToUrlData(array) {
@@ -197,7 +198,18 @@
       const encodedData = encodeURIComponent(jsonString);
       return encodedData;
     }
-   
+    
+    async function adv(){
+      let con = await customConfirm('Do you wish to view the details of the advert?');
+      if(con){
+        try {
+          B4A.CallSub('Open_web', true, 'https://lugandahymnalnew.infinityfreeapp.com/adv.html');
+        } catch (error) {
+          window.location.href = '/adv.html';
+        }
+      }
+    }
+
   </script>
 </body>
 </html>
