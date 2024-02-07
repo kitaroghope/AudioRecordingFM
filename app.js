@@ -27,9 +27,9 @@ app.listen(port, () => {
 let checkProg = recorder.programCheck;
 let progS = {};
 
-setInterval(async()=>{
-  progS = await db.readRows({},'radio','recordings');
-}, 3600000)
+setInterval(()=>{
+  progS = db.readRows({},'radio','recordings');
+}, 3600000);
 
 app.get('/', async (req, res) => {
   try {
@@ -75,3 +75,22 @@ app.post('/stop-record',async (req, res) => {
 
 app.post('/newProgram', recorder.addProgram);
 app.post('/deleteProgram', recorder.deleteProgram);
+
+
+// async function renameDates(){
+//   try {
+//     var recs = await db.readRows({},'radio','recordings');
+//     for(i of recs.listings){
+//       if(i.hasOwnProperty('pm')){
+//         console.log(i.program + " on " + i.Day);
+//       }
+//       else{
+//         await db.deleteRow(i,"radio","recordings");
+//       }
+//       // console.log(n);
+//     }
+//   } catch (error) {
+//     console.log(error.message)
+//   }
+// }
+// renameDates();

@@ -138,9 +138,9 @@ function fetchAndRecordChunk() {
       let interval = null;
 
       // Declaring name of files to save and saving
-      const fileName = `${dayOfRec}_recording_${progName}_${chunkIndex}.mp3`
+      const fileName = `${dayOfRec[0]}[${dayOfRec[1]+" "+dayOfRec[2]}]_recording_${progName}_${chunkIndex}.mp3`
       const chunkFilePath = path.join(tempFolderPath, fileName);
-      // console.log("File Path: "+chunkFilePath);
+      console.log("File Path: "+fileName);
       const outputStream = fs.createWriteStream(chunkFilePath).on("finish",()=>{
         setTimeout(()=>{
           ftp.uploadToFTP2(tempFolderPath,progName,[fileName]);
@@ -169,7 +169,19 @@ function fetchAndRecordChunk() {
           outputStream.end();
           response.body.destroy();
           setTimeout(() => {
-            db.updateRow2({program: progName, files: recordedList},{program: progName, files: recordedList, Day:dayOfRec},'radio','recordings');
+            db.updateRow2(
+              {
+                program: progName, 
+                files: recordedList
+              },
+              {
+                program: progName, 
+                files: recordedList, 
+                Day:dayOfRec[0],
+                Time:dayOfRec[1].replace(' ',':'),
+                pm:dayOfRec[2]
+              },
+              'radio','recordings');
             recordedList = [];
             chunkIndex = 1;
           },10000);
@@ -220,7 +232,8 @@ function dateOfRec(){
   }
 
 
-  return `${day}-${month}-${year}[${hh} ${mm} ${am}]`;
+  // return `${day}-${month}-${year}[${hh} ${mm} ${am}]`;
+  return [`${day}-${month}-${year}`,`${hh+' '+mm}`,`${am}`];
 }
 
 function numC (num){
