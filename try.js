@@ -226,6 +226,9 @@ function dateOfRec(){
   else if(hh < 12){
     am = "am";
   }
+  else if(hh == 12){
+    am == "pm"
+  }
   else{
     hh = numC(hh - 12);
     am = "pm"
