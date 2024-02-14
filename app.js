@@ -27,23 +27,57 @@ app.listen(port, () => {
 let checkProg = recorder.programCheck;
 let progS = {};
 
-setInterval(()=>{
-  progS = db.readRows({},'radio','recordings');
+function viewDate(n){
+  
+  const [day, month, year] = n.split('-').map(Number);
+  const date1 =  new Date(year, month - 1, day);
+
+  const options = { month: 'short', year: 'numeric' };  // day: '2-digit',
+  return date1.toLocaleDateString('en-US', options);
+
+}
+
+setInterval(async ()=>{
+  progS = await recordings1();
 }, 3600000);
+
+async function recordings1(){
+  let recs = {};
+  recs = await db.readRows({},'radio','recordings');
+  const days = {}
+  var count = 0
+  var count1 = 0
+  for(i of recs.listings){
+    if(viewDate(i.Day) == "Invalid Date"){
+      console.log(i.Day);
+    }
+    
+    if(days.hasOwnProperty(viewDate(i.Day))){
+      days[`${viewDate(i.Day)}`].push(i)
+      count++
+    }
+    else{
+      days[`${viewDate(i.Day)}`] = [i];
+      count1++
+    }
+  }
+  console.log("Months are "+count1+" out of "+count+" recordings.")
+  return days;
+}
 
 app.get('/', async (req, res) => {
   try {
-    let recs = {};
-    if(progS.hasOwnProperty("listings")){
-      recs = progS;
-    }
+    if(Object.keys(progS).length < 1){
+      progS = await recordings1();
+      res.render('index', { streamUrl: streamUrl, recs:progS});
+      // console.log(progS)
+    }//recs.listings
     else{
-      recs = await db.readRows({},'radio','recordings');
-      progS = recs;
+      res.render('index', { streamUrl: streamUrl, recs:progS});
+      // console.log(progS)
     }
-    res.render('index', { streamUrl: streamUrl, recs:recs.listings});//recs.listings
   } catch (error) {
-    res.send(error.message);
+    res.send(error.message);s
   }
 });
 

@@ -211,6 +211,7 @@
                     await customAlert("Please enter program name");
                     return
                 }
+                programName = programName.trim();
 
                 var programData = {
                     days: selectedDays,

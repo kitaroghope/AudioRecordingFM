@@ -54,9 +54,9 @@
     <h1 class="text-center">Prime Radio</h1>
     <div class="row"><audio controls src="<%= streamUrl %>">Prime</audio></div>
     <br>
-    <div class="container-fluid d-flex align-items-center justify-content-center">
-      <iframe id="iframe" width="350" height="480px" src="adv.html" frameborder="0"  scrolling="no" allowfullscreen></iframe>
-      <div style="display: block; height: 480px; width: 350px; background: rgba(0, 0, 255, 0); position: absolute; margin: 0 auto;"  onclick="adv()"></div>
+    <div class="container-fluid d-flex align-items-center justify-content-center"  style="min-height: fit-content;">
+      <iframe id="iframe" width="350" height="480" src="adv.html" frameborder="0"  scrolling="yes" allowfullscreen></iframe>
+      <div style="height: 480px; width: 250px; background: rgba(61, 61, 133, 0); position: absolute; margin: 0 auto;"  onclick="adv()"></div>
   </div>
     <div class="row">
       
@@ -77,23 +77,29 @@
     </div>
     <br>
     <div class="row">
-    <% if (typeof recs !== 'undefined') { %>
-      <h2>Recorded programs</h2>
+      <% if (typeof recs !== 'undefined') { %>
+        <h2>Recorded programs</h2>
         <br>
         <br>
-      <% recs.reverse().forEach(el => { %>
-        <details class="card p-1" onclick="openInNewTab(this)">
-          <summary class="bg-dark text-light p-1"><%= el.program %> - <%= el.Day %></summary>
-          <div class="row">
-            <% el.files.forEach(file => { %>
-              <p><%= file %></p>
-              <!-- <audio controls preload="metadata" src="uploads/<%= el.program %>/<%= file %>"></audio> -->
-              <a target="_blank" href="https://lugandahymnalnew.infinityfreeapp.com/uploads/<%= el.program %>/<%= file %>" download="<%= file %>"><button>download</button></a>
+        <% Object.keys(recs).forEach(function (key) { %>
+          <details  class="card p-1" >
+            <summary><%= key %></summary>
+            <% recs[`${key}`].forEach(el => { %>
+              <details class="card p-1" onclick="openInNewTab(this)">
+                <summary class="bg-dark text-light p-1"><%= el.program %> - <%= el.Day %></summary>
+                <div class="row">
+                  <% el.files.forEach(file => { %>
+                    <p><%= file %></p>
+                    <!-- <audio controls preload="metadata" src="uploads/<%= el.program %>/<%= file %>"></audio> -->
+                    <a target="_blank" href="https://lugandahymnalnew.infinityfreeapp.com/uploads/<%= el.program %>/<%= file %>" download="<%= file %>"><button>download</button></a>
+                  <% }) %>
+                </div>
+              </details>
             <% }) %>
-          </div>
-        </details>
-      <% }) %>
-    <% } %>
+          </details>
+        <% }); %>
+      <% } %>
+      <br>
 <!-- Custom Dialog Box -->
 <div id="custom-dialog-box" class="modal">
   <div class="modal-dialog">
