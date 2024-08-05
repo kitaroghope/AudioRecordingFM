@@ -26,6 +26,7 @@ app.listen(port, () => {
 // ... Previous code
 let checkProg = recorder.programCheck;
 let progS = {};
+let recordedPrograms = {};
 
 function viewDate(n){
   
@@ -48,20 +49,34 @@ async function recordings1(){
   var count = 0
   var count1 = 0
   for(i of recs.listings){
-    if(viewDate(i.Day) == "Invalid Date"){
-      console.log(i.Day);
-    }
+    // if(viewDate(i.Day) == "Invalid Date"){
+    //   console.log(i.Day);
+    // }
     
-    if(days.hasOwnProperty(viewDate(i.Day))){
-      days[`${viewDate(i.Day)}`].push(i)
+    // if(days.hasOwnProperty(viewDate(i.Day))){
+    //   days[`${viewDate(i.Day)}`].push(i)
+    //   count++
+    // }
+    // else{
+    //   days[`${viewDate(i.Day)}`] = [i];
+    //   count1++
+    // }
+    // if(viewDate(i.Day) == "Invalid Date"){
+    //   console.log(i.Day);
+    // }
+    
+    if(days.hasOwnProperty(i.program)){
+      days[`${i.program}`].push(i)
       count++
     }
     else{
-      days[`${viewDate(i.Day)}`] = [i];
+      days[`${i.program}`] = [i];
       count1++
     }
   }
-  console.log("Months are "+count1+" out of "+count+" recordings.")
+  console.log("Months are "+count1+" out of "+count+" recordings.");
+  recordedPrograms = await db.readRows({},'radio','programs');
+  console.log(days);
   return days;
 }
 
@@ -80,6 +95,14 @@ app.get('/', async (req, res) => {
     res.send(error.message);s
   }
 });
+
+app.get("/recordedPrograms",async (req, res)=>{
+  try {
+    res.json(recordedPrograms)
+  } catch (error) {
+    res.json({})
+  }
+})
 
 app.get('/keepAlive',(req, res) => {
   console.log('status checked');

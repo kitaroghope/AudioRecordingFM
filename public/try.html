@@ -2,18 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-  <link rel="icon" href="images/prime.jpg" type="image/x-icon">
-
+    <link rel="icon" href="images/prime.jpg" type="image/x-icon">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <meta property="og:title" content="Prime Radio">
     <meta property="og:description" content="Do you want to record your favourite program on prime radio, schedule it for recording here.">
     <meta property="og:image" content="https://audiorecordingfm.onrender.com/images/prime.jpg">
     <meta property="og:url" content="https://audiorecordingfm.onrender.com/try.html">
-
     <title>Program Data Form</title>
     <!-- Bootstrap CSS CDN -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -25,7 +22,6 @@
                 <a class="navbar-brand" href="/">
                     <img src="images/prime.jpg" class="rounded" alt="Logo" width="50" height="auto">
                 </a>
-            
                 <!-- Toggle button for small screens -->
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                     aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -41,7 +37,15 @@
                 </div>
                 </div>
             </nav>
+        </div>
+
+        <!-- Section to display recorded programs -->
+        <div class="container mt-4">
+            <h2>Recorded Programs</h2>
+            <div id="recordedProgramsList" class="list-group">
+                <!-- Recorded programs will be dynamically added here -->
             </div>
+        </div>
         <div class="container mt-4">
             <h2>Schedule program for recording</h2>
             <form id="programForm">
@@ -49,11 +53,8 @@
                     <label for="days">Days when the program is hosted:</label>
                     <div class="form-check days">
                         <!-- Add data-day attribute to identify repeated input -->
-                        
                     </div>
-                    <!-- Clone the checkbox for other days -->
                 </div>
-
                 <div class="form-group">
                     <label for="startTime">Program start time:</label>
                     <div class="row">
@@ -69,7 +70,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label for="endTime">Program end time:</label>
                     <div class="row">
@@ -85,48 +85,45 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="form-group">
                     <div class="col-8">
                         <label for="programName">Program name:</label>
                         <input type="text" class="form-control" id="programName" placeholder="Enter program name">
                     </div>
                 </div>
-
                 <button type="button" class="btn btn-primary btnAdd" onclick="captureData()">Add Program</button>
             </form>
         </div>
         <!-- Custom Dialog Box -->
-<div id="custom-dialog-box" class="modal" >
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <!-- Modal Header -->
-        <div class="modal-header">
-          <h5 class="modal-title" id="textH">Confirm</h5>
-          <button type="button" class="close btn-danger" data-dismiss="modal" aria-label="Close" onclick="resolveDialogPromise(false)">
-            <span aria-hidden="true">&times;</span>
-          </button>
+        <div id="custom-dialog-box" class="modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="textH">Confirm</h5>
+                        <button type="button" class="close btn-danger" data-dismiss="modal" aria-label="Close" onclick="resolveDialogPromise(false)">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <!-- Modal Body -->
+                    <div class="modal-body" id="textB">
+                        Are you sure you want to proceed?
+                    </div>
+                    <!-- Modal Footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" id="btnClo" data-dismiss="modal" onclick="resolveDialogPromise(false)">No</button>
+                        <button type="button" class="btn btn-primary" id="btnAcc" onclick="resolveDialogPromise(true)">Yes</button>
+                    </div>
+                </div>
+            </div>
         </div>
-        <!-- Modal Body -->
-        <div class="modal-body" id="textB">
-          Are you sure you want to proceed?
-        </div>
-        <!-- Modal Footer -->
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" id="btnClo" data-dismiss="modal" onclick="resolveDialogPromise(false)">No</button>
-          <button type="button" class="btn btn-primary" id="btnAcc" onclick="resolveDialogPromise(true)">Yes</button>
-        </div>
-      </div>
-    </div>
-  </div>
         <br>
         <div class="row bg-dark text-light text-align-center">
-          <br>
-          <p style="text-align: center;">Developed to stream and also record programs broadcasted on prime radio 91.9FM.</p>
-          <p style="text-align: center;">copyright &copy;kitaroghope 2023</p>
+            <br>
+            <p style="text-align: center;">Developed to stream and also record programs broadcasted on prime radio 91.9FM.</p>
+            <p style="text-align: center;">copyright &copy;kitaroghope 2023</p>
         </div>
     </div>
-
     <!-- Bootstrap JS and Popper.js CDN -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
@@ -135,34 +132,31 @@
         // Function to populate hours and minutes
         function populateHoursAndMinutes() {
             for (let i = 0; i < 24; i++) {
-				var am, hh;
-				if(i == 0){
-					am = "midnight";
-					hh = "";
-				}
-				else if(i < 12){
-					am = "am";
-					hh = i;
-				}
-                else if(i == 12){
+                var am, hh;
+                if (i == 0) {
+                    am = "midnight";
+                    hh = "";
+                } else if (i < 12) {
+                    am = "am";
+                    hh = i;
+                } else if (i == 12) {
                     am = "noon";
                     hh = "";
+                } else {
+                    am = "pm";
+                    hh = (i - 12);
                 }
-				else{
-					am = "pm";
-					hh = (i - 12);
-				}
-				if(hh < 10 && hh !== ""){
-					hh = "0"+hh
-				}
+                if (hh < 10 && hh !== "") {
+                    hh = "0" + hh
+                }
                 $(".hourSelect").append(`<option value="${i}">${hh} ${am}</option>`);
             }
 
-            for (let i = 0; i < 59; i ++) {
-				var min = i;
-				if (min < 10){
-					min = "0"+min;
-				}
+            for (let i = 0; i < 59; i++) {
+                var min = i;
+                if (min < 10) {
+                    min = "0" + min;
+                }
                 $(".minuteSelect").append(`<option value="${i}">${min} </option>`);
             }
         }
@@ -170,16 +164,37 @@
         // Function to clone and populate days
         function populateDays() {
             const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-            
             days.forEach(function (day) {
                 $('.days').append(`<input type="checkbox" class="form-check-input dayCheckbox" data-day="${day}" value="${day}">
                     <label class="form-check-label" for="${day}">${day}</label><br>`);
             });
         }
 
-        $(document).ready(function () {
+        // Function to fetch and display recorded programs
+        async function fetchRecordedPrograms() {
+            try {
+                const response = await fetch("/recordedPrograms");
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                const data = await response.json();
+                const programsList = document.getElementById("recordedProgramsList");
+                programsList.innerHTML = ""; // Clear any existing content
+                data.listings.forEach(program => {
+                    const programItem = document.createElement("div");
+                    programItem.className = "list-group-item";
+                    programItem.innerHTML = `<strong>${program.prog}</strong><br>Days: ${program.days.join(", ")}<br>Start: ${gT(program.start[0]).h}:${gM(program.start[1])}${gT(program.start[0]).am}<br>End: ${gT(program.end[0]).h}:${gM(program.end[1])}${gT(program.end[0]).am}`;
+                    programsList.appendChild(programItem);
+                });
+            } catch (error) {
+                console.error("Failed to fetch recorded programs:", error);
+            }
+        }
+
+        $(document).ready(async function () {
             populateDays();
             populateHoursAndMinutes();
+            await fetchRecordedPrograms();
         });
 
         async function captureData() {
@@ -187,7 +202,7 @@
             document.querySelectorAll('input[type=checkbox]:checked').forEach(function (checkbox) {
                 selectedDays.push(checkbox.value);
             });
-            if (selectedDays.length == 0){
+            if (selectedDays.length == 0) {
                 customAlert("Please, select the days the program is hosted");
                 return;
             }
@@ -201,13 +216,12 @@
                 await customAlert("You selected end time which is less than start time, program can't run beyond midnight.");
                 return;
             } else if (startHour == endHour && (startMinute > endMinute || startMinute == endMinute)) {
-                 await customAlert("Program is runing in the same hour so end minute must be greater than startMinute");
+                await customAlert("Program is runing in the same hour so end minute must be greater than startMinute");
                 return;
             } else {
                 // Send program data to the server
                 var programName = document.getElementById("programName").value;
-
-                if(programName == ""){
+                if (programName == "") {
                     await customAlert("Please enter program name");
                     return
                 }
@@ -219,9 +233,9 @@
                     end: [endHour, endMinute],
                     prog: programName
                 };
-                const con = await customConfirm("Confirm details:\n"+programName+" will run from "+gT(startHour).h+":"+gM(startMinute)+""+gT(startHour).am+" and ends at "+gT(endHour).h+":"+gM(endMinute)+""+gT(endHour).am);
+                const con = await customConfirm("Confirm details:\n" + programName + " will run from " + gT(startHour).h + ":" + gM(startMinute) + "" + gT(startHour).am + " and ends at " + gT(endHour).h + ":" + gM(endMinute) + "" + gT(endHour).am);
 
-                if(con){
+                if (con) {
                     $(".btnAdd").text("loading data on server ...");
                     $(".btnAdd").prop("disabled", true);
                     fetch('/newProgram', {
@@ -235,58 +249,51 @@
                     .then(async (data) => {
                         await customAlert(data.message);
                         const con = await customConfirm('Would you like to edit the program?');
-                        if(con){
+                        if (con) {
                             await customAlert("Edit the program.")
                             $(".btnAdd").text("Add Program");
                             $(".btnAdd").prop("disabled", false);
-                        }
-                        else{
+                        } else {
                             window.location.href = '/try.html'
                         }
-                        // Handle the response as needed
                     })
                     .catch(async (error) => {
-                        await customAlert(error, "There was an error");
+                        await customAlert("There was an error: " + error.message);
                         $(".btnAdd").text("Add Program");
                         $(".btnAdd").prop("disabled", false);
-                        // Handle errors
                     });
-                }
-                else{
-                    await ("You can make more changes in the program until your sure.", "Hint")
+                } else {
+                    await customAlert("You can make more changes in the program until you're sure.", "Hint");
                 }
 
                 console.log("Captured Program Data:", programData);
-        // You can use 'programData' as needed, e.g., send it to a server, perform further actions, etc.
+            }
         }
-}
-function gT(h){
-    var am;
-    if(h == 0){
-        h = 12
-        am = "midnight";
-    }
-    else if(h >12){
-        h = h-12
-        am = "pm"
-    }
-    else if(h == 12){
-        h = h
-        am = "noon"
-    }
-    else{
-        h = h
-        am = "am"
-    }
-    return {h:h,am:am};
-}
-function gM(m){
-    if(m < 10){
-        m = "0"+m
-    }
-    return m
-}
-    </script>
 
+        function gT(h) {
+            var am;
+            if (h == 0) {
+                h = 12;
+                am = "midnight";
+            } else if (h > 12) {
+                h = h - 12;
+                am = "pm";
+            } else if (h == 12) {
+                h = h;
+                am = "noon";
+            } else {
+                h = h;
+                am = "am";
+            }
+            return { h: h, am: am };
+        }
+
+        function gM(m) {
+            if (m < 10) {
+                m = "0" + m;
+            }
+            return m;
+        }
+    </script>
 </body>
 </html>

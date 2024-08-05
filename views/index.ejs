@@ -1,215 +1,156 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" href="images/prime.jpg" type="image/x-icon">
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9573317572304824"
-     crossorigin="anonymous"></script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9573317572304824" crossorigin="anonymous"></script>
   <meta property="og:title" content="Prime Radio">
   <meta property="og:description" content="Eweweza Omutima">
   <meta property="og:image" content="https://audiorecordingfm.onrender.com/images/prime.jpg">
-  <meta property="og:url" content="https://audiorecording.onrender.com/">
-
+  <meta property="og:url" content="https://audiorecordingfm.onrender.com/">
   <title>FM Stream App</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="stylesheet" href="style.css">
 </head>
 <body style="background: rgb(241, 214, 214);">
   <div class="container">
-    <div class="row">
-      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-          <div class="container-fluid">
-            <!-- Logo on the far left -->
-            <a class="navbar-brand" href="/">
-              <img src="images/prime.jpg" class="rounded" alt="Logo" width="50" height="auto">
-            </a>
-      
-            <!-- Toggle button for small screens -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-              aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
-            </button>
-            <!-- Links on the far right -->
-            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-              <ul class="navbar-nav">
-                <li class="nav-item">
-                  <a class="nav-link" href="/">Home</a>
-                </li>
-                <% if (typeof user !== 'undefined') { %>
-                  <li class="nav-item">
-                      <a class="nav-link" href="#">logout</a>
-                  </li>
-                <% } else {%>
-                  <li class="nav-item">
-                      <a class="nav-link" href="#">login</a>
-                  </li>
-                <% } %>
-              </ul>
-            </div>
-          </div>
-      </nav>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/">
+          <img src="images/prime.jpg" class="rounded" alt="Logo" width="50" height="auto">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+            <% if (typeof user !== 'undefined') { %>
+              <li class="nav-item"><a class="nav-link" href="#">Logout</a></li>
+            <% } else { %>
+              <li class="nav-item"><a class="nav-link" href="#">Login</a></li>
+            <% } %>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <h1 class="text-center my-4">Prime Radio</h1>
+    <div class="row justify-content-center mb-4">
+      <audio controls src="<%= streamUrl %>">Prime</audio>
     </div>
-    <h1 class="text-center">Prime Radio</h1>
-    <div class="row"><audio controls src="<%= streamUrl %>">Prime</audio></div>
-    <br>
-    <div class="container-fluid d-flex align-items-center justify-content-center"  style="min-height: fit-content;">
-      <iframe id="iframe" width="350" height="480" src="adv.html" frameborder="0"  scrolling="yes" allowfullscreen></iframe>
-      <div style="height: 480px; width: 250px; background: rgba(61, 61, 133, 0); position: absolute; margin: 0 auto;"  onclick="adv()"></div>
-  </div>
-    <div class="row">
-      
-      <!-- <button id="recordButton" class="btn btn-success">Record</button>
-      <button id="stopRecordButton" class="btn btn-danger" disabled>Stop Recording</button> -->
-      <h2>User custom recording coming soon!</h2>
-      <p><a href="/try.html">click here</a> to schedule your favourite program for recording.</p>
-      <p>Contact <a href="mailto:kitarogz@gmail.com">developer</a> for any assistance.</p>
-      <p>or <a href="https://wa.me/256757035774"><i class="fa fa-whatsapp" aria-hidden="true"></i></a> || <a href="https://t.me/EnnyimbaZaKristo"><i class="fa fa-telegram" aria-hidden="true"></i></a>
-      </p>
-      <p>
-        <b>Note:</b>
-        <li>Most recorded programs are broken into more than 1 file.</li>
-        <li>look at the name of the audio</li>
-        <li>The one which ends with 1 eg. 'lwaki nze 1'</li>
-        <li>Listen to them in order</li>
-      </p>
+
+    <div class="container-fluid d-flex align-items-center justify-content-center mb-4">
+      <iframe id="iframe" width="350" height="480" src="adv.html" frameborder="0" scrolling="yes" allowfullscreen></iframe>
+      <div style="height: 480px; width: 250px; background: rgba(61, 61, 133, 0); position: absolute; margin: 0 auto;" onclick="adv()"></div>
     </div>
-    <br>
-    <div class="row">
-      <% if (typeof recs !== 'undefined') { %>
-        <h2>Recorded programs</h2>
-        <br>
-        <br>
+
+    <% if (typeof recs !== 'undefined') { %>
+      <div class="row mb-4">
+        <h2>Recorded Programs</h2>
         <% Object.keys(recs).forEach(function (key) { %>
-          <details  class="card p-1" >
+          <details class="card p-2 mb-2">
             <summary><%= key %></summary>
-            <% recs[`${key}`].forEach(el => { %>
-              <details class="card p-1" onclick="openInNewTab(this)">
+            <% recs[key].forEach(el => { %>
+              <details class="card p-2 mb-2" onclick="openInNewTab(this)">
                 <summary class="bg-dark text-light p-1"><%= el.program %> - <%= el.Day %></summary>
                 <div class="row">
                   <% el.files.forEach(file => { %>
                     <p><%= file %></p>
-                    <!-- <audio controls preload="metadata" src="uploads/<%= el.program %>/<%= file %>"></audio> -->
-                    <a target="_blank" href="https://lugandahymnalnew.infinityfreeapp.com/uploads/<%= el.program %>/<%= file %>" download="<%= file %>"><button>download</button></a>
+                    <a target="_blank" href="https://lugandahymnalnew.infinityfreeapp.com/uploads/<%= el.program %>/<%= file %>" download="<%= file %>">
+                      <button class="btn btn-primary">Download</button>
+                    </a>
                   <% }) %>
                 </div>
               </details>
             <% }) %>
           </details>
         <% }); %>
-      <% } %>
-      <br>
-<!-- Custom Dialog Box -->
-<div id="custom-dialog-box" class="modal">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <!-- Modal Header -->
-      <div class="modal-header">
-        <h5 class="modal-title" id="textH">Confirm</h5>
-        <button type="button" class="close btn-danger" data-dismiss="modal" aria-label="Close" onclick="resolveDialogPromise(false)">
-          <span aria-hidden="true">&times;</span>
-        </button>
       </div>
-      <!-- Modal Body -->
-      <div class="modal-body" id="textB">
-        Are you sure you want to proceed?
-      </div>
-      <!-- Modal Footer -->
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" id="btnClo" data-dismiss="modal" onclick="resolveDialogPromise(false)">No</button>
-        <button type="button" class="btn btn-primary" id="btnAcc" onclick="resolveDialogPromise(true)">Yes</button>
-      </div>
-    </div>
-  </div>
-</div>
-    <br>
-        <div class="row bg-dark text-light text-align-center">
-          <br>
-          <p style="text-align: center;">Developed to stream and also record programs broadcasted on prime radio 91.9FM.</p>
-          <p style="text-align: center;">copyright &copy;kitaroghope 2024</p>
+    <% } %>
+      <!-- Custom Dialog Box -->
+      <div id="custom-dialog-box" class="modal">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+              <h5 class="modal-title" id="textH">Confirm</h5>
+              <button type="button" class="close btn-danger" data-dismiss="modal" aria-label="Close" onclick="resolveDialogPromise(false)">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <!-- Modal Body -->
+            <div class="modal-body" id="textB">
+              Are you sure you want to proceed?
+            </div>
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" id="btnClo" data-dismiss="modal" onclick="resolveDialogPromise(false)">No</button>
+              <button type="button" class="btn btn-primary" id="btnAcc" onclick="resolveDialogPromise(true)">Yes</button>
+            </div>
+          </div>
         </div>
+      </div>
+      <div class="row mb-4">
+        <h2>User Custom Recording Coming Soon!</h2>
+        <p><a href="/try.html">Click here</a> to schedule your favourite program for recording.</p>
+        <p>Contact <a href="mailto:kitarogz@gmail.com">developer</a> for any assistance.</p>
+        <p>
+          <a href="https://wa.me/256757035774"><i class="fa fa-whatsapp" aria-hidden="true"></i></a> ||
+          <a href="https://t.me/EnnyimbaZaKristo"><i class="fa fa-telegram" aria-hidden="true"></i></a>
+        </p>
+        <p>
+          <b>Note:</b>
+          <ul>
+            <li>Most recorded programs are broken into more than 1 file.</li>
+            <li>Look at the name of the audio.</li>
+            <li>The one which ends with 1 eg. 'lwaki nze 1'</li>
+            <li>Listen to them in order.</li>
+          </ul>
+        </p>
+      </div>
+
+    <!-- Footer -->
+    <footer class="row bg-dark text-light text-center py-3">
+      <p>Developed to stream and record programs broadcasted on Prime Radio 91.9FM.</p>
+      <p>&copy; Kitaroghope 2024</p>
+    </footer>
   </div>
+
   <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
   <script src="script.js"></script>
   <script>
-    // const recordButton = document.getElementById('recordButton');
-    // const stopRecordButton = document.getElementById('stopRecordButton');
-
-    // recordButton.addEventListener('click', async () => {
-    //   stopRecordButton.disabled = false;
-    //   // Enable the recordButton
-    //   recordButton.disabled = true;
-    //   try {
-    //     const response = await fetch('/record', { method: 'POST' });
-        
-    //     if (response.ok) {
-    //       const data = await response.json();
-    //       alert(data.message);
-    //       console.log('Recording started');
-    //     } else {
-    //       console.error('Response not OK:', response.status);
-    //     }
-    //   } catch (error) {
-    //     console.error('Error starting recording:', error);
-    //   }
-    // });
-
-
-    // stopRecordButton.addEventListener('click', async () => {
-    //   stopRecordButton.disabled = true;
-    //   // Enable the recordButton
-    //   recordButton.disabled = false;
-    //   try {
-    //     const response = await fetch('/stop-record', { method: 'POST' });
-    //     if (response.ok) {
-    //       const data = await response.json();
-    //       alert(data.message);
-    //       console.log('Recording stopped');
-    //     } else {
-    //       console.error('Response not OK:', response.status);
-    //     }
-    //   } catch (error) {
-    //     console.error('Error stopping recording:', error);
-    //   }
-    // });
-    
     async function openInNewTab(x) {
-      var count = $(x).find('a').length;
+      const count = $(x).find('a').length;
       let songs = [];
-      for (i = 0; i < count; i++) {
+      for (let i = 0; i < count; i++) {
         songs.push($(x).find('a').eq(i).attr('href'));
       }
-      let l = 'https://lugandahymnalnew.infinityfreeapp.com/player.html?prog='+$(x).find('summary').text()+'&songs='+encodeArrayToUrlData(songs);
-      console.log(l)
-      // const con = confirm("Do you want to play the program?");
-      const con = await customConfirm("Do you wish to listen to this recorded program?","Confirm");
-      if(con){
-        openInNewTab1(l);
-      }
-      else{
-        // console.log('nada');
-      }
+      const l = 'https://lugandahymnalnew.infinityfreeapp.com/player.html?prog='+$(x).find('summary').text()+'&songs='+encodeArrayToUrlData(songs);
+      const con = await customConfirm("Do you wish to listen to this recorded program?", "Confirm");
+      if (con) openInNewTab1(l);
     }
+
     function openInNewTab1(url) {
       try {
         B4A.CallSub('Open_web', true, url);
       } catch (error) {
-        var newTab = window.open(url, '_blank');
-        newTab.focus(); 
+        window.open(url, '_blank').focus();
       }
     }
+
     function encodeArrayToUrlData(array) {
-      const jsonString = JSON.stringify(array);
-      const encodedData = encodeURIComponent(jsonString);
-      return encodedData;
+      return encodeURIComponent(JSON.stringify(array));
     }
-    
-    async function adv(){
-      let con = await customConfirm('Do you wish to view the details of the advert?');
-      if(con){
+
+    async function adv() {
+      const con = await customConfirm('Do you wish to view the details of the advert?');
+      if (con) {
         try {
           B4A.CallSub('Open_web', true, 'https://lugandahymnalnew.infinityfreeapp.com/adv.html');
         } catch (error) {
@@ -217,7 +158,6 @@
         }
       }
     }
-
   </script>
 </body>
 </html>
