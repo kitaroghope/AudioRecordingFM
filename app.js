@@ -18,7 +18,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 // app.use(express.urlencoded({extended:true}));
 
-const port = 3300;
+const port = process.env.PORT || 3300;
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
