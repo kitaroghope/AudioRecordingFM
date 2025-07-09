@@ -300,9 +300,11 @@ fetch("https://hiweightechsystemsltd.onrender.com/keepAlive")
   .finally(() => {
         // Call the function again after 10 minutes, regardless of success or error
     try{
-      fetch('https://auto-swift-password-reset.onrender.com/')
+      fetch('https://auto-swift-password-reset.onrender.com/api/finish-reset')
       .then(res => {
-        console.log('auto_swift done');
+        return res;
+      }).then(data=>{
+        console.log(data.error);
       })
     }
     catch(err){
