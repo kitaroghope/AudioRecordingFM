@@ -297,8 +297,17 @@ fetch("https://hiweightechsystemsltd.onrender.com/keepAlive")
         console.log('Error:', error);
         // Take alternative actions or provide appropriate feedback
       })
-      .finally(() => {
+  .finally(() => {
         // Call the function again after 10 minutes, regardless of success or error
+    try{
+      fetch('https://auto-swift-password-reset.onrender.com/')
+      .then(res => {
+        console.log('auto_swift done');
+      })
+    }
+    catch(err){
+      console.log(err.message);
+    }
         setTimeout(performFetch, 600000);
   });
   }
