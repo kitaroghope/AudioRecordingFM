@@ -1,11 +1,94 @@
+/* Custom Dialog Box */
 #custom-dialog-box {
-    display: none;
-    background: rgba(0, 0, 0, 0.5);
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    justify-content: center;
-    align-items: center;
-  }
+  background: rgba(0, 0, 0, 0.5);
+}
+
+/* Equalizer Animation */
+@keyframes bounce {
+  0%, 100% { transform: scaleY(0.4); }
+  50% { transform: scaleY(1); }
+}
+
+.animate-bounce {
+  animation: bounce 1s ease-in-out infinite;
+}
+
+/* Custom Audio Player Styling */
+audio {
+  width: 100%;
+  height: 40px;
+  border-radius: 0.75rem;
+}
+
+audio::-webkit-media-controls-panel {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  border-radius: 0.75rem;
+}
+
+audio::-webkit-media-controls-play-button,
+audio::-webkit-media-controls-mute-button {
+  filter: invert(1);
+}
+
+/* Modal Animations */
+#modal-content {
+  transform: scale(0.95);
+  opacity: 0;
+}
+
+#modal-content.scale-100 {
+  transform: scale(1);
+  opacity: 1;
+}
+
+#modal-content.scale-95 {
+  transform: scale(0.95);
+  opacity: 0;
+}
+
+/* Smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Selection styling */
+::selection {
+  background: #F47288;
+  color: white;
+}
+
+/* Focus outline for accessibility */
+:focus-visible {
+  outline: 2px solid #F47288;
+  outline-offset: 2px;
+}
+
+/* Log Console Enhancements */
+.log-console {
+  scroll-behavior: smooth;
+}
+
+/* Card hover enhancements */
+.card-hover {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+}
+
+/* Button loading state */
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Loading spinner */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}

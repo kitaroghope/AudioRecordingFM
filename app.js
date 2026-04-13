@@ -4,6 +4,7 @@ const app = express();
 const cors = require('cors');
 const recorder = require('./try');
 const db = require('./modules/mongoDBApi');
+const ftp = require('./modules/ftp');
 const con = require('./config.json');
 const streamUrl = con.radios.prime;
 
@@ -41,6 +42,19 @@ function viewDate(n){
 setInterval(async ()=>{
   progS = await recordings1();
 }, 3600000);
+
+// Run old files cleanup and program folders sync every hour
+setInterval(async () => {
+  try {
+    // Sync program folders to check alignment
+    await ftp.syncProgramFolders();
+
+    // Cleanup old files (older than 2 weeks)
+    await ftp.syncOldFiles();
+  } catch (error) {
+    console.log('[SCHEDULED] Error during scheduled sync:', error.message);
+  }
+}, 3600000); // Run every hour
 
 async function recordings1(){
   let recs = {};
@@ -132,6 +146,43 @@ app.post('/stop-record',async (req, res) => {
 
 app.post('/newProgram', recorder.addProgram);
 app.post('/deleteProgram', recorder.deleteProgram);
+
+// FTP Manager page
+app.get('/ftp-manager', async (req, res) => {
+  try {
+    res.render('ftp-manager');
+  } catch (error) {
+    res.send(error.message);
+  }
+});
+
+// Manual sync endpoints for troubleshooting
+app.get('/sync-folders', async (req, res) => {
+  try {
+    const result = await ftp.syncProgramFolders();
+    res.json({ message: 'Program folders synced', result });
+  } catch (error) {
+    res.json({ message: 'Error syncing folders', error: error.message });
+  }
+});
+
+app.get('/sync-old-files', async (req, res) => {
+  try {
+    await ftp.syncOldFiles();
+    res.json({ message: 'Old files cleanup complete' });
+  } catch (error) {
+    res.json({ message: 'Error cleaning up old files', error: error.message });
+  }
+});
+
+app.get('/list-ftp-files', async (req, res) => {
+  try {
+    const files = await ftp.listFTPFiles();
+    res.json({ message: 'FTP files listed', files });
+  } catch (error) {
+    res.json({ message: 'Error listing FTP files', error: error.message });
+  }
+});
 
 
 // async function renameDates(){

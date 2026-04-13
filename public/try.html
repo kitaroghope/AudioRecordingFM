@@ -8,127 +8,254 @@
     <meta property="og:description" content="Do you want to record your favourite program on prime radio, schedule it for recording here.">
     <meta property="og:image" content="https://audiorecordingfm.onrender.com/images/prime.jpg">
     <meta property="og:url" content="https://audiorecordingfm.onrender.com/try.html">
-    <title>Program Data Form</title>
-    <!-- Bootstrap CSS CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <title>Schedule Recording - Prime Radio</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        rose: {
+                            50: '#FFF5F7',
+                            100: '#FFF1F3',
+                            200: '#FFE4E8',
+                            300: '#F9A8B8',
+                            400: '#F68FA0',
+                            500: '#F47288',
+                            600: '#E5566B',
+                            700: '#C23855',
+                            800: '#A12745',
+                            900: '#861F3A',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    <div class="container">
-        <div class="row">
-            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-                <div class="container-fluid">
-                <!-- Logo on the far left -->
-                <a class="navbar-brand" href="/">
-                    <img src="images/prime.jpg" class="rounded" alt="Logo" width="50" height="auto">
+<body class="bg-rose-50 min-h-screen flex flex-col">
+
+    <!-- Navigation -->
+    <nav class="bg-slate-900/95 backdrop-blur-sm sticky top-0 z-50 border-b border-slate-700/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <a href="/" class="flex items-center space-x-3 group">
+                    <img src="images/prime.jpg" alt="Logo"
+                         class="w-10 h-10 rounded-lg object-cover shadow-lg group-hover:shadow-rose-500/30 transition-shadow duration-300">
+                    <span class="text-white font-semibold text-lg hidden sm:block">Prime Radio</span>
                 </a>
-                <!-- Toggle button for small screens -->
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
+
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex items-center space-x-1">
+                    <a href="/" class="px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-all duration-200">
+                        <i class="fa fa-home mr-2"></i>Home
+                    </a>
+                    <a href="/ftp-manager" class="px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-all duration-200">
+                        <i class="fa fa-server mr-2"></i>FTP Manager
+                    </a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">
+                    <i class="fa fa-bars text-xl"></i>
                 </button>
-                <!-- Links on the far right -->
-                <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-                    <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">Home</a>
-                    </li>
-                    </ul>
-                </div>
-                </div>
-            </nav>
+            </div>
         </div>
 
-        <!-- Section to display recorded programs -->
-        <div class="container mt-4">
-            <h2>Recorded Programs</h2>
-            <div id="recordedProgramsList" class="list-group">
-                <!-- Recorded programs will be dynamically added here -->
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden border-t border-slate-700/50">
+            <div class="px-4 py-3 space-y-1">
+                <a href="/" class="block px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-all">
+                    <i class="fa fa-home mr-2"></i>Home
+                </a>
+                <a href="/ftp-manager" class="block px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-all">
+                    <i class="fa fa-server mr-2"></i>FTP Manager
+                </a>
             </div>
         </div>
-        <div class="container mt-4">
-            <h2>Schedule program for recording</h2>
-            <form id="programForm">
-                <div class="form-group">
-                    <label for="days">Days when the program is hosted:</label>
-                    <div class="form-check days">
-                        <!-- Add data-day attribute to identify repeated input -->
-                    </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-1 py-8">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            <!-- Page Header -->
+            <div class="text-center mb-10">
+                <div class="w-16 h-16 bg-gradient-to-br from-rose-500 to-rose-600 rounded-2xl flex items-center justify-center shadow-lg shadow-rose-500/30 mx-auto mb-4">
+                    <i class="fa fa-calendar-plus text-white text-2xl"></i>
                 </div>
-                <div class="form-group">
-                    <label for="startTime">Program start time:</label>
-                    <div class="row">
-                        <div class="col-4">
-                            <select class="form-control hourSelect" id="startHour">
-                                <!-- Populate options for hours -->
-                            </select>
-                        </div>:
-                        <div class="col-4">
-                            <select class="form-control minuteSelect" id="startMinute">
-                                <!-- Populate options for minutes -->
-                            </select>
+                <h1 class="text-3xl md:text-4xl font-bold text-slate-800 mb-2">Schedule a Recording</h1>
+                <p class="text-slate-500">Set up automatic recording for your favorite Prime Radio programs</p>
+            </div>
+
+            <!-- Recorded Programs Section -->
+            <div class="bg-white rounded-2xl shadow-lg border border-rose-100 overflow-hidden mb-8">
+                <div class="bg-gradient-to-r from-rose-500 to-rose-600 px-6 py-4">
+                    <h2 class="text-xl font-bold text-white flex items-center">
+                        <i class="fa fa-list mr-3"></i>Scheduled Programs
+                    </h2>
+                </div>
+                <div id="recordedProgramsList" class="p-6 space-y-3">
+                    <!-- Recorded programs will be dynamically added here -->
+                </div>
+            </div>
+
+            <!-- Schedule Form -->
+            <div class="bg-white rounded-2xl shadow-lg border border-rose-100 overflow-hidden">
+                <div class="bg-gradient-to-r from-slate-800 to-slate-900 px-6 py-4">
+                    <h2 class="text-xl font-bold text-white flex items-center">
+                        <i class="fa fa-clock mr-3"></i>New Program Schedule
+                    </h2>
+                </div>
+
+                <form id="programForm" class="p-6 space-y-6">
+                    <!-- Days Selection -->
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-3">
+                            <i class="fa fa-calendar-day mr-2 text-rose-500"></i>Days when the program is hosted
+                        </label>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="daysContainer">
+                            <!-- Days will be populated by JavaScript -->
                         </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label for="endTime">Program end time:</label>
-                    <div class="row">
-                        <div class="col-4">
-                            <select class="form-control hourSelect" id="endHour">
-                                <!-- Populate options for hours -->
-                            </select>
-                        </div>:
-                        <div class="col-4">
-                            <select class="form-control minuteSelect" id="endMinute">
-                                <!-- Populate options for minutes -->
-                            </select>
+
+                    <!-- Time Selection -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <!-- Start Time -->
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-3">
+                                <i class="fa fa-play-circle mr-2 text-emerald-500"></i>Program start time
+                            </label>
+                            <div class="flex items-center gap-2">
+                                <select class="hourSelect flex-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-all"></select>
+                                <span class="text-slate-500 font-bold">:</span>
+                                <select class="minuteSelect flex-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-all"></select>
+                            </div>
+                        </div>
+
+                        <!-- End Time -->
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-3">
+                                <i class="fa fa-stop-circle mr-2 text-red-500"></i>Program end time
+                            </label>
+                            <div class="flex items-center gap-2">
+                                <select class="hourSelect flex-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-all"></select>
+                                <span class="text-slate-500 font-bold">:</span>
+                                <select class="minuteSelect flex-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-all"></select>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-8">
-                        <label for="programName">Program name:</label>
-                        <input type="text" class="form-control" id="programName" placeholder="Enter program name">
+
+                    <!-- Program Name -->
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-3">
+                            <i class="fa fa-microphone mr-2 text-rose-500"></i>Program name
+                        </label>
+                        <input type="text" id="programName" placeholder="Enter program name"
+                               class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-all placeholder-slate-400">
                     </div>
-                </div>
-                <button type="button" class="btn btn-primary btnAdd" onclick="captureData()">Add Program</button>
-            </form>
-        </div>
-        <!-- Custom Dialog Box -->
-        <div id="custom-dialog-box" class="modal">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <!-- Modal Header -->
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="textH">Confirm</h5>
-                        <button type="button" class="close btn-danger" data-dismiss="modal" aria-label="Close" onclick="resolveDialogPromise(false)">
-                            <span aria-hidden="true">&times;</span>
+
+                    <!-- Submit Button -->
+                    <div class="pt-4">
+                        <button type="button" id="btnAdd"
+                                class="btnAdd w-full sm:w-auto px-8 py-3 bg-gradient-to-r from-rose-500 to-rose-600 text-white font-semibold rounded-xl shadow-lg shadow-rose-500/30 hover:shadow-rose-500/50 hover:from-rose-600 hover:to-rose-700 transition-all flex items-center justify-center gap-2">
+                            <i class="fa fa-plus"></i>
+                            Add Program
                         </button>
                     </div>
-                    <!-- Modal Body -->
-                    <div class="modal-body" id="textB">
-                        Are you sure you want to proceed?
+                </form>
+            </div>
+
+            <!-- Info Card -->
+            <div class="mt-8 bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-6 border border-amber-200">
+                <h3 class="font-semibold text-amber-800 mb-2 flex items-center">
+                    <i class="fa fa-lightbulb mr-2"></i>Tips
+                </h3>
+                <ul class="text-sm text-amber-700 space-y-1">
+                    <li>• Programs that run past midnight (e.g., 23:00 to 01:00) are supported</li>
+                    <li>• Make sure the program name matches exactly what's on Prime Radio</li>
+                    <li>• You can edit programs after adding them</li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="text-center text-slate-500 text-sm">
+                <p class="mb-2">Developed to stream and also record programs broadcasted on Prime Radio 91.9FM.</p>
+                <p>&copy; <span id="currentYear"></span> Kitaroghope. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Custom Dialog Box -->
+    <div id="custom-dialog-box" class="fixed inset-0 z-[9999] hidden">
+        <!-- Backdrop -->
+        <div class="modal-backdrop absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
+
+        <!-- Modal Content -->
+        <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full pointer-events-auto transform transition-all duration-300 scale-95 opacity-0"
+                 id="modal-content">
+
+                <!-- Header -->
+                <div class="flex items-center justify-between p-6 border-b border-slate-100">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-rose-100 rounded-xl flex items-center justify-center">
+                            <i class="fa fa-question text-rose-500"></i>
+                        </div>
+                        <h3 id="textH" class="text-lg font-bold text-slate-800">Confirm</h3>
                     </div>
-                    <!-- Modal Footer -->
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" id="btnClo" data-dismiss="modal" onclick="resolveDialogPromise(false)">No</button>
-                        <button type="button" class="btn btn-primary" id="btnAcc" onclick="resolveDialogPromise(true)">Yes</button>
-                    </div>
+                    <button id="modal-close-btn"
+                            class="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </div>
+
+                <!-- Body -->
+                <div class="p-6">
+                    <p id="textB" class="text-slate-600 leading-relaxed whitespace-pre-line">Are you sure you want to proceed?</p>
+                </div>
+
+                <!-- Footer -->
+                <div class="flex gap-3 p-6 border-t border-slate-100 bg-slate-50 rounded-b-2xl">
+                    <button id="modal-no-btn"
+                            class="flex-1 px-5 py-2.5 bg-slate-100 text-slate-700 font-medium rounded-xl hover:bg-slate-200 transition-colors">
+                        No
+                    </button>
+                    <button id="modal-yes-btn"
+                            class="flex-1 px-5 py-2.5 bg-gradient-to-r from-rose-500 to-rose-600 text-white font-medium rounded-xl hover:from-rose-600 hover:to-rose-700 transition-all shadow-md hover:shadow-lg">
+                        Yes
+                    </button>
                 </div>
             </div>
         </div>
-        <br>
-        <div class="row bg-dark text-light text-align-center">
-            <br>
-            <p style="text-align: center;">Developed to stream and also record programs broadcasted on prime radio 91.9FM.</p>
-            <p style="text-align: center;">copyright &copy;kitaroghope 2023</p>
-        </div>
     </div>
-    <!-- Bootstrap JS and Popper.js CDN -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <script src="script.js"></script>
     <script>
+        // Set current year dynamically
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+            var menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        });
+
         // Function to populate hours and minutes
         function populateHoursAndMinutes() {
             for (let i = 0; i < 24; i++) {
@@ -147,7 +274,7 @@
                     hh = (i - 12);
                 }
                 if (hh < 10 && hh !== "") {
-                    hh = "0" + hh
+                    hh = "0" + hh;
                 }
                 $(".hourSelect").append(`<option value="${i}">${hh} ${am}</option>`);
             }
@@ -157,17 +284,71 @@
                 if (min < 10) {
                     min = "0" + min;
                 }
-                $(".minuteSelect").append(`<option value="${i}">${min} </option>`);
+                $(".minuteSelect").append(`<option value="${i}">${min}</option>`);
             }
         }
 
-        // Function to clone and populate days
+        // Function to clone and populate days with modern styling
         function populateDays() {
             const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            const dayIcons = {
+                "Sunday": "fa-sun",
+                "Monday": "fa-moon",
+                "Tuesday": "fa-fire",
+                "Wednesday": "fa-bolt",
+                "Thursday": "fa-graduation-cap",
+                "Friday": "fa-star",
+                "Saturday": "fa-umbrella"
+            };
+            const dayColors = {
+                "Sunday": "from-amber-400 to-amber-500",
+                "Monday": "from-slate-400 to-slate-500",
+                "Tuesday": "from-orange-400 to-orange-500",
+                "Wednesday": "from-yellow-400 to-yellow-500",
+                "Thursday": "from-emerald-400 to-emerald-500",
+                "Friday": "from-pink-400 to-pink-500",
+                "Saturday": "from-cyan-400 to-cyan-500"
+            };
+
             days.forEach(function (day) {
-                $('.days').append(`<input type="checkbox" class="form-check-input dayCheckbox" data-day="${day}" value="${day}">
-                    <label class="form-check-label" for="${day}">${day}</label><br>`);
+                const colorClass = dayColors[day];
+                const iconClass = dayIcons[day];
+                $('#daysContainer').append(`
+                    <label class="day-checkbox-label relative">
+                        <input type="checkbox" class="dayCheckbox sr-only peer" data-day="${day}" value="${day}">
+                        <div class="px-4 py-3 rounded-xl border-2 border-slate-200 cursor-pointer transition-all duration-200
+                                    peer-checked:border-rose-500 peer-checked:bg-rose-50
+                                    hover:border-rose-300 hover:bg-rose-50/50
+                                    flex flex-col items-center gap-1">
+                            <i class="fa ${iconClass} text-slate-400 peer-checked:text-rose-500"></i>
+                            <span class="text-sm font-medium text-slate-600 peer-checked:text-rose-600">${day}</span>
+                        </div>
+                    </label>
+                `);
             });
+        }
+
+        // Function to format program card
+        function formatProgramCard(program) {
+            const daysBadges = program.days.map(day =>
+                `<span class="px-2 py-1 bg-rose-100 text-rose-700 text-xs rounded-full">${day}</span>`
+            ).join('');
+
+            return `
+                <div class="bg-slate-50 rounded-xl p-4 border border-slate-100 hover:border-rose-200 hover:bg-rose-50/50 transition-all duration-200">
+                    <div class="flex items-start justify-between mb-2">
+                        <h4 class="font-bold text-slate-800">${program.prog}</h4>
+                        <div class="w-8 h-8 bg-rose-100 rounded-lg flex items-center justify-center">
+                            <i class="fa fa-radio text-rose-500"></i>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap gap-1 mb-2">${daysBadges}</div>
+                    <div class="flex items-center gap-4 text-sm text-slate-500">
+                        <span><i class="fa fa-play-circle text-emerald-500 mr-1"></i>${gT(program.start[0]).h}:${gM(program.start[1])}${gT(program.start[0]).am}</span>
+                        <span><i class="fa fa-stop-circle text-red-500 mr-1"></i>${gT(program.end[0]).h}:${gM(program.end[1])}${gT(program.end[0]).am}</span>
+                    </div>
+                </div>
+            `;
         }
 
         // Function to fetch and display recorded programs
@@ -179,15 +360,33 @@
                 }
                 const data = await response.json();
                 const programsList = document.getElementById("recordedProgramsList");
-                programsList.innerHTML = ""; // Clear any existing content
-                data.listings.forEach(program => {
-                    const programItem = document.createElement("div");
-                    programItem.className = "list-group-item";
-                    programItem.innerHTML = `<strong>${program.prog}</strong><br>Days: ${program.days.join(", ")}<br>Start: ${gT(program.start[0]).h}:${gM(program.start[1])}${gT(program.start[0]).am}<br>End: ${gT(program.end[0]).h}:${gM(program.end[1])}${gT(program.end[0]).am}`;
-                    programsList.appendChild(programItem);
-                });
+                programsList.innerHTML = "";
+
+                if (data.listings.length === 0) {
+                    programsList.innerHTML = `
+                        <div class="text-center py-8">
+                            <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fa fa-calendar text-slate-400 text-2xl"></i>
+                            </div>
+                            <p class="text-slate-500">No programs scheduled yet</p>
+                            <p class="text-slate-400 text-sm">Add your first program below</p>
+                        </div>
+                    `;
+                } else {
+                    data.listings.forEach(program => {
+                        programsList.innerHTML += formatProgramCard(program);
+                    });
+                }
             } catch (error) {
                 console.error("Failed to fetch recorded programs:", error);
+                document.getElementById("recordedProgramsList").innerHTML = `
+                    <div class="text-center py-8">
+                        <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fa fa-exclamation-triangle text-red-500 text-2xl"></i>
+                        </div>
+                        <p class="text-slate-500">Failed to load programs</p>
+                    </div>
+                `;
             }
         }
 
@@ -216,16 +415,15 @@
                 await customAlert("You selected end time which is less than start time, program can't run beyond midnight.");
                 return;
             } else if (startHour == endHour && (startMinute > endMinute || startMinute == endMinute)) {
-                await customAlert("Program is runing in the same hour so end minute must be greater than startMinute");
+                await customAlert("Program is running in the same hour so end minute must be greater than start minute");
                 return;
             } else {
-                // Send program data to the server
                 var programName = document.getElementById("programName").value;
                 if (programName == "") {
                     await customAlert("Please enter program name");
-                    return
+                    return;
                 }
-                programName = programName.trim();
+                programName = programName.trim().replace(/\s+/g, '_');
 
                 var programData = {
                     days: selectedDays,
@@ -233,10 +431,10 @@
                     end: [endHour, endMinute],
                     prog: programName
                 };
-                const con = await customConfirm("Confirm details:\n" + programName + " will run from " + gT(startHour).h + ":" + gM(startMinute) + "" + gT(startHour).am + " and ends at " + gT(endHour).h + ":" + gM(endMinute) + "" + gT(endHour).am);
+                var con = await customConfirm("Confirm details:\n" + programName + " will run from " + gT(startHour).h + ":" + gM(startMinute) + "" + gT(startHour).am + " and ends at " + gT(endHour).h + ":" + gM(endMinute) + "" + gT(endHour).am);
 
                 if (con) {
-                    $(".btnAdd").text("loading data on server ...");
+                    $(".btnAdd").html('<i class="fa fa-spinner animate-spin mr-2"></i>Loading data on server...');
                     $(".btnAdd").prop("disabled", true);
                     fetch('/newProgram', {
                         method: 'POST',
@@ -248,18 +446,21 @@
                     .then(response => response.json())
                     .then(async (data) => {
                         await customAlert(data.message);
-                        const con = await customConfirm('Would you like to edit the program?');
-                        if (con) {
-                            await customAlert("Edit the program.")
-                            $(".btnAdd").text("Add Program");
+                        var con2 = await customConfirm('Would you like to add another program?');
+                        if (con2) {
+                            document.getElementById("programName").value = "";
+                            document.querySelectorAll('input[type=checkbox]:checked').forEach(function (cb) {
+                                cb.checked = false;
+                            });
+                            $(".btnAdd").html('<i class="fa fa-plus mr-2"></i>Add Program');
                             $(".btnAdd").prop("disabled", false);
                         } else {
-                            window.location.href = '/try.html'
+                            window.location.href = '/try.html';
                         }
                     })
                     .catch(async (error) => {
                         await customAlert("There was an error: " + error.message);
-                        $(".btnAdd").text("Add Program");
+                        $(".btnAdd").html('<i class="fa fa-plus mr-2"></i>Add Program');
                         $(".btnAdd").prop("disabled", false);
                     });
                 } else {
@@ -294,6 +495,11 @@
             }
             return m;
         }
+
+        // Add click handler for the Add button
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('btnAdd').addEventListener('click', captureData);
+        });
     </script>
 </body>
 </html>

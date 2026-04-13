@@ -10,153 +10,570 @@
   <meta property="og:image" content="https://audiorecordingfm.onrender.com/images/prime.jpg">
   <meta property="og:url" content="https://audiorecordingfm.onrender.com/">
   <title>FM Stream App</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            rose: {
+              50: '#FFF5F7',
+              100: '#FFF1F3',
+              200: '#FFE4E8',
+              300: '#F9A8B8',
+              400: '#F68FA0',
+              500: '#F47288',
+              600: '#E5566B',
+              700: '#C23855',
+              800: '#A12745',
+              900: '#861F3A',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Custom CSS -->
   <link rel="stylesheet" href="style.css">
 </head>
-<body style="background: rgb(241, 214, 214);">
-  <div class="container">
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="/">
-          <img src="images/prime.jpg" class="rounded" alt="Logo" width="50" height="auto">
+<body class="bg-rose-50 min-h-screen flex flex-col">
+
+  <!-- Navigation -->
+  <nav class="bg-slate-900/95 backdrop-blur-sm sticky top-0 z-50 border-b border-slate-700/50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <!-- Logo -->
+        <a href="/" class="flex items-center space-x-3 group">
+          <img src="images/prime.jpg" alt="Logo"
+               class="w-10 h-10 rounded-lg object-cover shadow-lg group-hover:shadow-rose-500/30 transition-shadow duration-300">
+          <span class="text-white font-semibold text-lg hidden sm:block">Prime Radio</span>
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
+
+        <!-- Desktop Navigation -->
+        <div class="hidden md:flex items-center space-x-1">
+          <a href="/" class="px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-all duration-200">
+            <i class="fa fa-home mr-2"></i>Home
+          </a>
+          <% if (typeof user !== 'undefined') { %>
+            <a href="#" class="px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-all duration-200">
+              <i class="fa fa-sign-out mr-2"></i>Logout
+            </a>
+          <% } else { %>
+            <a href="#" class="px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-all duration-200">
+              <i class="fa fa-sign-in mr-2"></i>Login
+            </a>
+          <% } %>
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">
+          <i class="fa fa-bars text-xl"></i>
         </button>
-        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-          <ul class="navbar-nav">
-            <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
-            <% if (typeof user !== 'undefined') { %>
-              <li class="nav-item"><a class="nav-link" href="#">Logout</a></li>
-            <% } else { %>
-              <li class="nav-item"><a class="nav-link" href="#">Login</a></li>
-            <% } %>
-          </ul>
-        </div>
       </div>
-    </nav>
-
-    <!-- Main Content -->
-    <div class="row">
-      <div class="col-sm-12 col-md-6 mt-1">
-        <div class="row">
-          <div class="col-4"><img class="img-fluid rounded" src="https://play-lh.googleusercontent.com/fBaSmhCG7hO9Z_UpYpdYMl7-kv8WIs7u5JGiTCskqyN_XYYzqyzyTYpsggoaKSxlTg=w480-h960-rw"></div>
-          <div class="col-8">
-            <h3>AventoMedia</h3>
-            <a class="btn btn-success" target="_blank" href="https://play.google.com/store/apps/details?id=tv.avventomedia.app">Download now</a>
-            <p>Avvento Radio. Discover Christian programs and soulful music on our online radio, accessible via your browser or the Google Play store app.</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-sm-12 col-md-6 mt-1">
-        <div class="row">
-          <div class="col-4"><img class="img-fluid rounded" src="https://play-lh.googleusercontent.com/z6mLZLyFPl28jExZ1sNxNLw7ugM8WqvWN75pPDgy7w1yAQrEW63BIYlLxGwuOSle3Q=w480-h960-rw"></div>
-          <div class="col-8">
-            <h3>Ennyimba za Kristo</h3>
-            <a class="btn btn-success" target="_blank" href="https://newlugandahymnal.onrender.com/download.html">Download now</a>
-            <p>Looking for your favourite luganda songs in english, or vice verser? click download.</p>
-          </div>
-        </div>
-      </div>
-      </div>
-    </div>
-    <h1 class="text-center my-4">Prime Radio</h1>
-    <div class="row justify-content-center mb-4">
-      <audio class="w-75 mx-auto" controls src="<%= streamUrl %>">Prime</audio>
-    </div>
-    <div class="container-fluid d-flex align-items-center justify-content-center mb-4 d-none">
-      <iframe id="iframe" width="350" height="480" src="adv.html" frameborder="0" scrolling="yes" allowfullscreen></iframe>
-      <div style="height: 480px; width: 250px; background: rgba(61, 61, 133, 0); position: absolute; margin: 0 auto;" onclick="adv()"></div>
     </div>
 
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden md:hidden border-t border-slate-700/50">
+      <div class="px-4 py-3 space-y-1">
+        <a href="/" class="block px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-all">
+          <i class="fa fa-home mr-2"></i>Home
+        </a>
+        <% if (typeof user !== 'undefined') { %>
+          <a href="#" class="block px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-all">
+            <i class="fa fa-sign-out mr-2"></i>Logout
+          </a>
+        <% } else { %>
+          <a href="#" class="block px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-all">
+            <i class="fa fa-sign-in mr-2"></i>Login
+          </a>
+        <% } %>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="flex-1">
+
+    <!-- App Promotions Section -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <!-- AvventoMedia Card -->
+        <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-rose-100">
+          <div class="flex flex-col sm:flex-row">
+            <!-- App Icon -->
+            <div class="sm:w-1/3 p-6 flex items-center justify-center bg-gradient-to-br from-rose-100 to-rose-50">
+              <img src="https://play-lh.googleusercontent.com/fBaSmhCG7hO9Z_UpYpdYMl7-kv8WIs7u5JGiTCskqyN_XYYzqyzyTYpsggoaKSxlTg=w480-h960-rw"
+                   alt="AvventoMedia"
+                   class="w-24 h-24 rounded-2xl object-cover shadow-lg group-hover:scale-105 transition-transform duration-300">
+            </div>
+
+            <!-- Content -->
+            <div class="sm:w-2/3 p-6 flex flex-col justify-center">
+              <h3 class="text-xl font-bold text-slate-800 mb-2 group-hover:text-rose-600 transition-colors">AvventoMedia</h3>
+              <p class="text-slate-600 text-sm mb-4 leading-relaxed">
+                Avvento Radio. Discover Christian programs and soulful music on our online radio, accessible via your browser or the Google Play store app.
+              </p>
+              <a href="https://play.google.com/store/apps/details?id=tv.avventomedia.app"
+                 target="_blank"
+                 class="inline-flex items-center justify-center px-5 py-2.5 bg-gradient-to-r from-rose-500 to-rose-600 text-white rounded-xl font-medium shadow-lg shadow-rose-500/30 hover:shadow-rose-500/50 hover:from-rose-600 hover:to-rose-700 transition-all duration-200 w-fit">
+                <i class="fab fa-google-play mr-2"></i>
+                Download now
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ennyimba za Kristo Card -->
+        <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-rose-100">
+          <div class="flex flex-col sm:flex-row">
+            <div class="sm:w-1/3 p-6 flex items-center justify-center bg-gradient-to-br from-rose-100 to-rose-50">
+              <img src="https://play-lh.googleusercontent.com/z6mLZLyFPl28jExZ1sNxNLw7ugM8WqvWN75pPDgy7w1yAQrEW63BIYlLxGwuOSle3Q=w480-h960-rw"
+                   alt="Ennyimba za Kristo"
+                   class="w-24 h-24 rounded-2xl object-cover shadow-lg group-hover:scale-105 transition-transform duration-300">
+            </div>
+            <div class="sm:w-2/3 p-6 flex flex-col justify-center">
+              <h3 class="text-xl font-bold text-slate-800 mb-2 group-hover:text-rose-600 transition-colors">Ennyimba za Kristo</h3>
+              <p class="text-slate-600 text-sm mb-4 leading-relaxed">
+                Looking for your favourite luganda songs in english, or vice verser? click download.
+              </p>
+              <a href="https://newlugandahymnal.onrender.com/download.html"
+                 target="_blank"
+                 class="inline-flex items-center justify-center px-5 py-2.5 bg-gradient-to-r from-rose-500 to-rose-600 text-white rounded-xl font-medium shadow-lg shadow-rose-500/30 hover:shadow-rose-500/50 hover:from-rose-600 hover:to-rose-700 transition-all duration-200 w-fit">
+                <i class="fa fa-download mr-2"></i>
+                Download now
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Radio Player Section -->
+    <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <!-- Main Player Card -->
+      <div class="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-3xl shadow-2xl overflow-hidden border border-slate-700/50">
+
+        <!-- Animated Background -->
+        <div class="absolute inset-0 opacity-30">
+          <div class="absolute inset-0 bg-gradient-to-r from-rose-500/20 via-transparent to-rose-500/20 animate-pulse"></div>
+        </div>
+
+        <!-- Content -->
+        <div class="relative z-10 p-8 md:p-12">
+
+          <!-- Station Branding -->
+          <div class="flex items-center justify-center mb-8">
+            <div class="relative">
+              <!-- Live Indicator -->
+              <span class="absolute -top-1 -right-1 flex h-4 w-4">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-4 w-4 bg-emerald-500"></span>
+              </span>
+              <img src="images/prime.jpg" alt="Prime Radio"
+                   class="w-20 h-20 md:w-24 md:h-24 rounded-full object-cover shadow-2xl border-4 border-rose-500/50">
+            </div>
+          </div>
+
+          <div class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-white mb-2">Prime Radio</h1>
+            <p class="text-slate-400 text-lg">91.9 FM &bull; Broadcasting Live</p>
+          </div>
+
+          <!-- Audio Visualizer -->
+          <div class="flex items-center justify-center space-x-1 mb-8 h-12">
+            <div class="w-1 bg-rose-500 rounded-full animate-bounce" style="animation-delay: 0ms; height: 40%;"></div>
+            <div class="w-1 bg-rose-400 rounded-full animate-bounce" style="animation-delay: 150ms; height: 70%;"></div>
+            <div class="w-1 bg-rose-300 rounded-full animate-bounce" style="animation-delay: 300ms; height: 50%;"></div>
+            <div class="w-1 bg-rose-400 rounded-full animate-bounce" style="animation-delay: 450ms; height: 80%;"></div>
+            <div class="w-1 bg-rose-500 rounded-full animate-bounce" style="animation-delay: 600ms; height: 60%;"></div>
+            <div class="w-1 bg-rose-300 rounded-full animate-bounce" style="animation-delay: 750ms; height: 90%;"></div>
+            <div class="w-1 bg-rose-400 rounded-full animate-bounce" style="animation-delay: 900ms; height: 45%;"></div>
+            <div class="w-1 bg-rose-500 rounded-full animate-bounce" style="animation-delay: 1050ms; height: 75%;"></div>
+          </div>
+
+          <!-- Audio Element -->
+          <div class="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50">
+            <audio id="radio-player" class="w-full" controls>
+              <source src="<%= streamUrl %>" type="audio/mpeg">
+              Your browser does not support the audio element.
+            </audio>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Recorded Programs Section -->
     <% if (typeof recs !== 'undefined') { %>
-      <div class="row m-4 p-2">
-        <h2>Recorded Programs</h2>
+      <!-- Hidden element to store recordings data -->
+      <div id="recordings-data" data-recordings="<%= encodeURIComponent(JSON.stringify(recs)) %>" style="display:none;"></div>
+      <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="flex items-center justify-between mb-8">
+          <div>
+            <h2 class="text-2xl md:text-3xl font-bold text-slate-800">
+              <i class="fa fa-microphone text-rose-500 mr-3"></i>
+              Recorded Programs
+            </h2>
+            <p class="text-slate-500 mt-1">Browse and download recorded radio programs</p>
+          </div>
+        </div>
+
         <% Object.keys(recs).forEach(function (key) { %>
-          <details class="card p-2 mb-2">
-            <summary><%= key %></summary>
-            <% recs[key].forEach(el => { %>
-              <details class="card p-2 mb-2" onclick="openInNewTab(this)">
-                <summary class="bg-dark text-light p-1"><%= el.program %> - <%= el.Day %></summary>
-                <div class="row">
-                  <% el.files.forEach(file => { %>
-                    <p><%= file %></p>
-                    <a target="_blank" href="https://lugandahymnalnew.infinityfreeapp.com/uploads/<%= el.program %>/<%= file %>" download="<%= file %>">
-                      <button class="btn btn-primary">Download</button>
-                    </a>
-                  <% }) %>
+
+          <!-- Program Category -->
+          <div class="mb-10">
+            <div class="flex items-center mb-6">
+              <div class="w-10 h-10 bg-gradient-to-br from-rose-500 to-rose-600 rounded-xl flex items-center justify-center shadow-lg shadow-rose-500/30 mr-4">
+                <i class="fa fa-radio text-white"></i>
+              </div>
+              <h3 class="text-xl font-bold text-slate-800"><%= key %></h3>
+              <span class="ml-3 px-3 py-1 bg-rose-100 text-rose-700 rounded-full text-sm font-medium">
+                <%= recs[key].length %> episodes
+              </span>
+            </div>
+
+            <!-- Episodes Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 episodes-grid" data-program="<%= key %>">
+              <% recs[key].slice(0, 3).forEach(function(el) { %>
+
+                <!-- Episode Card -->
+                <div class="episode-card group bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-slate-100 hover:border-rose-200" data-files='<%= JSON.stringify(el.files) %>' data-program-name="<%= el.program %>" data-day="<%= el.Day %>">
+
+                  <!-- Card Header -->
+                  <div class="p-4 bg-gradient-to-br from-slate-50 to-rose-50 border-b border-slate-100">
+                    <div class="flex items-start justify-between">
+                      <div>
+                        <p class="text-xs text-rose-600 font-medium uppercase tracking-wide">
+                          <%= el.Day %>
+                        </p>
+                        <h4 class="font-semibold text-slate-800 mt-1 group-hover:text-rose-600 transition-colors">
+                          <%= el.program %>
+                        </h4>
+                      </div>
+                      <div class="w-8 h-8 bg-rose-100 rounded-lg flex items-center justify-center">
+                        <i class="fa fa-headphones text-rose-500 text-sm"></i>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Card Body -->
+                  <div class="p-4">
+                    <div class="flex items-center text-sm text-slate-500 mb-3">
+                      <i class="fa fa-file-audio mr-2 text-rose-400"></i>
+                      <%= el.files.length %> file(s)
+                    </div>
+
+                    <!-- File Preview -->
+                    <div class="space-y-1 mb-4">
+                      <% el.files.slice(0, 2).forEach(function(file) { %>
+                        <p class="text-xs text-slate-400 truncate">
+                          <i class="fa fa-music mr-1"></i><%= file %>
+                        </p>
+                      <% }); %>
+                      <% if (el.files.length > 2) { %>
+                        <p class="text-xs text-slate-400">+<%= el.files.length - 2 %> more files</p>
+                      <% } %>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex gap-2">
+                      <button class="listen-btn flex-1 px-3 py-2 bg-gradient-to-r from-rose-500 to-rose-600 text-white text-sm font-medium rounded-xl hover:from-rose-600 hover:to-rose-700 transition-all duration-200 shadow-md hover:shadow-lg">
+                        <i class="fa fa-play mr-1"></i> Listen
+                      </button>
+
+                      <a href="https://lugandahymnalnew.infinityfreeapp.com/uploads/<%= encodeURIComponent(el.program) %>/<%= encodeURIComponent(el.files[0]) %>"
+                         download="<%= el.files[0] %>"
+                         class="px-3 py-2 bg-slate-100 text-slate-600 text-sm font-medium rounded-xl hover:bg-slate-200 transition-colors">
+                        <i class="fa fa-download"></i>
+                      </a>
+                    </div>
+                  </div>
+
                 </div>
-              </details>
-            <% }) %>
-          </details>
+              <% }); %>
+            </div>
+
+            <!-- Show More Button -->
+            <% if (recs[key].length > 3) { %>
+              <div class="mt-4 text-center">
+                <button class="show-more-btn inline-flex items-center px-6 py-2.5 bg-slate-100 text-slate-700 font-medium rounded-xl hover:bg-slate-200 transition-colors border border-slate-200" data-program="<%= key %>">
+                  <i class="fa fa-chevron-down mr-2"></i>
+                  Show <%= recs[key].length - 3 %> more episodes
+                </button>
+              </div>
+            <% } %>
+          </div>
         <% }); %>
-      </div>
+      </section>
     <% } %>
-      <!-- Custom Dialog Box -->
-      <div id="custom-dialog-box" class="modal">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <!-- Modal Header -->
-            <div class="modal-header">
-              <h5 class="modal-title" id="textH">Confirm</h5>
-              <button type="button" class="close btn-danger" data-dismiss="modal" aria-label="Close" onclick="resolveDialogPromise(false)">
-                <span aria-hidden="true">&times;</span>
-              </button>
+
+    <!-- Coming Soon Section -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div class="bg-gradient-to-br from-rose-100 to-white rounded-3xl p-8 border border-rose-200 relative overflow-hidden">
+
+        <!-- Decorative Elements -->
+        <div class="absolute top-0 right-0 w-64 h-64 bg-rose-200/30 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-0 left-0 w-48 h-48 bg-rose-300/20 rounded-full blur-2xl"></div>
+
+        <div class="relative z-10">
+          <div class="flex items-center mb-4">
+            <div class="w-12 h-12 bg-gradient-to-br from-rose-500 to-rose-600 rounded-2xl flex items-center justify-center shadow-lg shadow-rose-500/30 mr-4">
+              <i class="fa fa-clock text-white text-xl"></i>
             </div>
-            <!-- Modal Body -->
-            <div class="modal-body" id="textB">
-              Are you sure you want to proceed?
+            <div>
+              <h2 class="text-2xl font-bold text-slate-800">User Custom Recording</h2>
+              <span class="px-3 py-1 bg-emerald-100 text-emerald-700 text-xs font-semibold rounded-full">Coming Soon</span>
             </div>
-            <!-- Modal Footer -->
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" id="btnClo" data-dismiss="modal" onclick="resolveDialogPromise(false)">No</button>
-              <button type="button" class="btn btn-primary" id="btnAcc" onclick="resolveDialogPromise(true)">Yes</button>
+          </div>
+
+          <p class="text-slate-600 mb-6 max-w-2xl">
+            Schedule your favourite programs for automatic recording. Never miss a broadcast again!
+          </p>
+
+          <div class="flex flex-wrap gap-4">
+            <a href="/try.html" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-rose-500 to-rose-600 text-white font-medium rounded-xl shadow-lg shadow-rose-500/30 hover:shadow-rose-500/50 hover:from-rose-600 hover:to-rose-700 transition-all">
+              <i class="fa fa-calendar-plus mr-2"></i>
+              Schedule Recording
+            </a>
+            <a href="mailto:kitarogz@gmail.com" class="inline-flex items-center px-6 py-3 bg-white text-slate-700 font-medium rounded-xl border border-slate-200 hover:border-rose-300 hover:bg-rose-50 transition-all">
+              <i class="fa fa-headset mr-2 text-rose-500"></i>
+              Contact Developer
+            </a>
+          </div>
+
+          <!-- Info Cards -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
+            <div class="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-rose-100">
+              <h5 class="font-semibold text-slate-800 mb-2">
+                <i class="fa fa-info-circle text-rose-500 mr-2"></i>Important Note
+              </h5>
+              <ul class="text-sm text-slate-600 space-y-1">
+                <li>Most recordings are split into multiple files</li>
+                <li>Files are named sequentially (e.g., "lwaki nze 1", "lwaki nze 2")</li>
+                <li>Listen to them in order for complete content</li>
+              </ul>
+            </div>
+            <div class="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-rose-100">
+              <h5 class="font-semibold text-slate-800 mb-2">
+                <i class="fa fa-question-circle text-rose-500 mr-2"></i>Need Help?
+              </h5>
+              <div class="flex space-x-3 mt-2">
+                <a href="https://wa.me/256757035774" class="w-10 h-10 bg-emerald-500 rounded-lg flex items-center justify-center text-white hover:bg-emerald-600 transition-colors">
+                  <i class="fa fa-whatsapp text-lg"></i>
+                </a>
+                <a href="https://t.me/EnnyimbaZaKristo" class="w-10 h-10 bg-rose-500 rounded-lg flex items-center justify-center text-white hover:bg-rose-600 transition-colors">
+                  <i class="fa fa-telegram text-lg"></i>
+                </a>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="row mb-4 p-2">
-        <h2>User Custom Recording Coming Soon!</h2>
-        <p><a href="/try.html">Click here</a> to schedule your favourite program for recording.</p>
-        <p>Contact <a href="mailto:kitarogz@gmail.com">developer</a> for any assistance.</p>
-        <p>
-          <a href="https://wa.me/256757035774"><i class="fa fa-whatsapp" aria-hidden="true"></i></a> ||
-          <a href="https://t.me/EnnyimbaZaKristo"><i class="fa fa-telegram" aria-hidden="true"></i></a>
-        </p>
-        <p>
-          <b>Note:</b>
-          <ul>
-            <li>Most recorded programs are broken into more than 1 file.</li>
-            <li>Look at the name of the audio.</li>
-            <li>The one which ends with 1 eg. 'lwaki nze 1'</li>
-            <li>Listen to them in order.</li>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+        <!-- About -->
+        <div>
+          <div class="flex items-center space-x-3 mb-4">
+            <img src="images/prime.jpg" class="w-10 h-10 rounded-lg" alt="Logo">
+            <span class="font-bold text-lg">Prime Radio</span>
+          </div>
+          <p class="text-slate-400 text-sm leading-relaxed">
+            Developed to stream and record programs broadcasted on Prime Radio 91.9FM.
+          </p>
+        </div>
+
+        <!-- Quick Links -->
+        <div>
+          <h4 class="font-semibold mb-4">Quick Links</h4>
+          <ul class="space-y-2 text-slate-400">
+            <li><a href="/" class="hover:text-rose-400 transition-colors"><i class="fa fa-home mr-2"></i>Home</a></li>
+            <li><a href="/ftp-manager" class="hover:text-rose-400 transition-colors"><i class="fa fa-server mr-2"></i>FTP Manager</a></li>
           </ul>
-        </p>
+        </div>
+
+        <!-- Contact -->
+        <div>
+          <h4 class="font-semibold mb-4">Contact</h4>
+          <div class="flex space-x-4">
+            <a href="https://wa.me/256757035774" class="w-10 h-10 bg-slate-700 rounded-lg flex items-center justify-center text-slate-400 hover:text-white hover:bg-emerald-600 transition-all">
+              <i class="fa fa-whatsapp text-lg"></i>
+            </a>
+            <a href="https://t.me/EnnyimbaZaKristo" class="w-10 h-10 bg-slate-700 rounded-lg flex items-center justify-center text-slate-400 hover:text-white hover:bg-rose-500 transition-all">
+              <i class="fa fa-telegram text-lg"></i>
+            </a>
+            <a href="mailto:kitarogz@gmail.com" class="w-10 h-10 bg-slate-700 rounded-lg flex items-center justify-center text-slate-400 hover:text-white hover:bg-rose-600 transition-all">
+              <i class="fa fa-envelope text-lg"></i>
+            </a>
+          </div>
+        </div>
+
       </div>
 
-    <!-- Footer -->
-    <footer class="row bg-dark text-light text-center py-3">
-      <p>Developed to stream and record programs broadcasted on Prime Radio 91.9FM.</p>
-      <p>&copy; Kitaroghope 2024</p>
-    </footer>
+      <!-- Copyright -->
+      <div class="border-t border-slate-700 mt-8 pt-8 text-center text-slate-500 text-sm">
+        <p>&copy; <span id="footerYear"></span> Kitaroghope. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Custom Confirmation Modal -->
+  <div id="custom-dialog-box" class="fixed inset-0 z-[9999] hidden">
+    <!-- Backdrop -->
+    <div class="modal-backdrop absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
+
+    <!-- Modal Content -->
+    <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
+      <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full pointer-events-auto transform transition-all duration-300 scale-95 opacity-0"
+           id="modal-content">
+
+        <!-- Header -->
+        <div class="flex items-center justify-between p-6 border-b border-slate-100">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-rose-100 rounded-xl flex items-center justify-center">
+              <i class="fa fa-question text-rose-500"></i>
+            </div>
+            <h3 id="textH" class="text-lg font-bold text-slate-800">Confirm</h3>
+          </div>
+          <button id="modal-close-btn"
+                  class="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
+            <i class="fa fa-times"></i>
+          </button>
+        </div>
+
+        <!-- Body -->
+        <div class="p-6">
+          <p id="textB" class="text-slate-600 leading-relaxed">Are you sure you want to proceed?</p>
+        </div>
+
+        <!-- Footer -->
+        <div class="flex gap-3 p-6 border-t border-slate-100 bg-slate-50 rounded-b-2xl">
+          <button id="modal-no-btn"
+                  class="flex-1 px-5 py-2.5 bg-slate-100 text-slate-700 font-medium rounded-xl hover:bg-slate-200 transition-colors">
+            No
+          </button>
+          <button id="modal-yes-btn"
+                  class="flex-1 px-5 py-2.5 bg-gradient-to-r from-rose-500 to-rose-600 text-white font-medium rounded-xl hover:from-rose-600 hover:to-rose-700 transition-all shadow-md hover:shadow-lg">
+            Yes
+          </button>
+        </div>
+
+      </div>
+    </div>
   </div>
 
   <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
   <script src="script.js"></script>
   <script>
-    async function openInNewTab(x) {
-      const count = $(x).find('a').length;
-      let songs = [];
-      for (let i = 0; i < count; i++) {
-        songs.push($(x).find('a').eq(i).attr('href'));
-      }
-      const l = 'https://lugandahymnalnew.infinityfreeapp.com/player.html?prog='+$(x).find('summary').text()+'&songs='+encodeArrayToUrlData(songs);
-      const con = await customConfirm("Do you wish to listen to this recorded program?", "Confirm");
-      if (con) openInNewTab1(l);
+    // Mobile menu toggle
+    document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+      var menu = document.getElementById('mobile-menu');
+      menu.classList.toggle('hidden');
+    });
+
+    // Set current year dynamically
+    document.getElementById('footerYear').textContent = new Date().getFullYear();
+
+    // All recordings data for "Show More" functionality
+    var allRecordings = <%- JSON.stringify(recs) %>;
+
+    // Listen functionality - opens player with all files from this recording
+    function openInNewTab(e) {
+      var listenBtn = e.target.closest('.listen-btn');
+      if (!listenBtn) return;
+
+      var card = listenBtn.closest('.episode-card');
+      var files = JSON.parse(card.dataset.files);
+      var programName = card.dataset.programName;
+      var day = card.dataset.day;
+
+      var songs = files.map(function(file) {
+        return 'https://lugandahymnalnew.infinityfreeapp.com/uploads/' + encodeURIComponent(programName) + '/' + encodeURIComponent(file);
+      });
+      var l = 'https://lugandahymnalnew.infinityfreeapp.com/player.html?prog=' + encodeURIComponent(programName + ' - ' + day) + '&songs=' + encodeArrayToUrlData(songs);
+      customConfirm("Do you wish to listen to this recorded program?", "Confirm").then(function(con) {
+        if (con) openInNewTab1(l);
+      });
     }
+
+    // Toggle showing more episodes
+    function toggleMoreEpisodes(programKey, button) {
+      var grid = document.querySelector('.episodes-grid[data-program="' + programKey + '"]');
+      var isExpanded = button.getAttribute('data-expanded') === 'true';
+
+      if (!isExpanded) {
+        // Show all episodes
+        var allEpisodes = allRecordings[programKey];
+        var html = '';
+        allEpisodes.forEach(function(el) {
+          html += createEpisodeCard(el);
+        });
+        grid.innerHTML = html;
+        button.innerHTML = '<i class="fa fa-chevron-up mr-2"></i>Show less';
+        button.setAttribute('data-expanded', 'true');
+      } else {
+        // Collapse to 3 episodes
+        var allEpisodes = allRecordings[programKey];
+        var html = '';
+        allEpisodes.slice(0, 3).forEach(function(el) {
+          html += createEpisodeCard(el);
+        });
+        grid.innerHTML = html;
+        button.innerHTML = '<i class="fa fa-chevron-down mr-2"></i>Show ' + (allEpisodes.length - 3) + ' more episodes';
+        button.setAttribute('data-expanded', 'false');
+      }
+    }
+
+    // Create episode card HTML
+    function createEpisodeCard(el) {
+      var encodedProgram = encodeURIComponent(el.program);
+      return '<div class="episode-card group bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-slate-100 hover:border-rose-200" data-files=\'' + JSON.stringify(el.files) + '\' data-program-name="' + el.program + '" data-day="' + el.Day + '">' +
+        '<div class="p-4 bg-gradient-to-br from-slate-50 to-rose-50 border-b border-slate-100">' +
+          '<div class="flex items-start justify-between">' +
+            '<div>' +
+              '<p class="text-xs text-rose-600 font-medium uppercase tracking-wide">' + el.Day + '</p>' +
+              '<h4 class="font-semibold text-slate-800 mt-1 group-hover:text-rose-600 transition-colors">' + el.program + '</h4>' +
+            '</div>' +
+            '<div class="w-8 h-8 bg-rose-100 rounded-lg flex items-center justify-center">' +
+              '<i class="fa fa-headphones text-rose-500 text-sm"></i>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="p-4">' +
+          '<div class="flex items-center text-sm text-slate-500 mb-3">' +
+            '<i class="fa fa-file-audio mr-2 text-rose-400"></i>' + el.files.length + ' file(s)' +
+          '</div>' +
+          '<div class="space-y-1 mb-4">' +
+            el.files.slice(0, 2).map(function(file) { return '<p class="text-xs text-slate-400 truncate"><i class="fa fa-music mr-1"></i>' + file + '</p>'; }).join('') +
+            (el.files.length > 2 ? '<p class="text-xs text-slate-400">+' + (el.files.length - 2) + ' more files</p>' : '') +
+          '</div>' +
+          '<div class="flex gap-2">' +
+            '<button class="listen-btn flex-1 px-3 py-2 bg-gradient-to-r from-rose-500 to-rose-600 text-white text-sm font-medium rounded-xl hover:from-rose-600 hover:to-rose-700 transition-all duration-200 shadow-md hover:shadow-lg"><i class="fa fa-play mr-1"></i> Listen</button>' +
+            '<a href="https://lugandahymnalnew.infinityfreeapp.com/uploads/' + encodedProgram + '/' + encodeURIComponent(el.files[0]) + '" download="' + el.files[0] + '" class="px-3 py-2 bg-slate-100 text-slate-600 text-sm font-medium rounded-xl hover:bg-slate-200 transition-colors"><i class="fa fa-download"></i></a>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    }
+
+    // Make functions globally accessible
+    window.openInNewTab = openInNewTab;
+    window.toggleMoreEpisodes = toggleMoreEpisodes;
+    window.createEpisodeCard = createEpisodeCard;
 
     function openInNewTab1(url) {
       try {
@@ -165,21 +582,27 @@
         window.open(url, '_blank').focus();
       }
     }
+    window.openInNewTab1 = openInNewTab1;
 
     function encodeArrayToUrlData(array) {
       return encodeURIComponent(JSON.stringify(array));
     }
+    window.encodeArrayToUrlData = encodeArrayToUrlData;
 
-    async function adv() {
-      const con = await customConfirm('Do you wish to view the details of the advert?');
-      if (con) {
-        try {
-          B4A.CallSub('Open_web', true, 'https://lugandahymnalnew.infinityfreeapp.com/adv.html');
-        } catch (error) {
-          window.location.href = '/adv.html';
-        }
+    // Delegated event listeners
+    document.addEventListener('click', function(e) {
+      var listenBtn = e.target.closest('.listen-btn');
+      if (listenBtn) {
+        e.preventDefault();
+        openInNewTab(e);
       }
-    }
+
+      var showMoreBtn = e.target.closest('.show-more-btn');
+      if (showMoreBtn) {
+        e.preventDefault();
+        var programKey = showMoreBtn.getAttribute('data-program');
+        toggleMoreEpisodes(programKey, showMoreBtn);
+      }
+    });
   </script>
-</body>
 </html>

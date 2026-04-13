@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FTP Manager - FM Stream App</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            rose: {
+              50: '#FFF5F7',
+              100: '#FFF1F3',
+              200: '#FFE4E8',
+              300: '#F9A8B8',
+              400: '#F68FA0',
+              500: '#F47288',
+              600: '#E5566B',
+              700: '#C23855',
+              800: '#A12745',
+              900: '#861F3A',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Custom Styles -->
+  <style>
+    .log-console {
+      background: linear-gradient(180deg, #0f1419 0%, #1a1f2e 100%);
+      color: #e2e8f0;
+      font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      padding: 1rem;
+      border-radius: 0 0 1rem 1rem;
+    }
+
+    .log-console::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .log-console::-webkit-scrollbar-track {
+      background: rgba(255,255,255,0.05);
+      border-radius: 4px;
+    }
+
+    .log-console::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.15);
+      border-radius: 4px;
+    }
+
+    .log-console::-webkit-scrollbar-thumb:hover {
+      background: rgba(255,255,255,0.25);
+    }
+
+    .log-entry {
+      margin: 4px 0;
+      padding: 4px 8px;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.02);
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      animation: fadeIn 0.2s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .log-info { color: #a78bfa; }
+    .log-ftp { color: #38bdf8; }
+    .log-sync { color: #fb923c; }
+    .log-error { color: #f87171; background: rgba(248, 113, 113, 0.1); }
+    .log-success { color: #4ade80; }
+  </style>
+</head>
+<body class="bg-rose-50 min-h-screen flex flex-col">
+
+  <!-- Navigation -->
+  <nav class="bg-slate-900/95 backdrop-blur-sm sticky top-0 z-50 border-b border-slate-700/50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <!-- Logo -->
+        <a href="/" class="flex items-center space-x-3 group">
+          <img src="images/prime.jpg" alt="Logo"
+               class="w-10 h-10 rounded-lg object-cover shadow-lg group-hover:shadow-rose-500/30 transition-shadow duration-300">
+          <span class="text-white font-semibold text-lg hidden sm:block">Prime Radio</span>
+        </a>
+
+        <!-- Desktop Navigation -->
+        <div class="hidden md:flex items-center space-x-1">
+          <a href="/" class="px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-all duration-200">
+            <i class="fa fa-home mr-2"></i>Home
+          </a>
+          <a href="/ftp-manager" class="px-4 py-2 rounded-lg text-white bg-slate-800 transition-all duration-200">
+            <i class="fa fa-server mr-2"></i>FTP Manager
+          </a>
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">
+          <i class="fa fa-bars text-xl"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden md:hidden border-t border-slate-700/50">
+      <div class="px-4 py-3 space-y-1">
+        <a href="/" class="block px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-all">
+          <i class="fa fa-home mr-2"></i>Home
+        </a>
+        <a href="/ftp-manager" class="block px-4 py-2 rounded-lg text-white bg-slate-800 transition-all">
+          <i class="fa fa-server mr-2"></i>FTP Manager
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="flex-1">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+      <h1 class="text-3xl font-bold text-slate-800 mb-8 text-center">
+        <i class="fa fa-server text-rose-500 mr-3"></i>
+        FTP Manager
+      </h1>
+
+      <!-- Stats Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+
+        <!-- FTP Folders Card -->
+        <div class="group relative bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-slate-100 hover:border-blue-200">
+          <div class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-500 to-blue-600"></div>
+          <div class="p-6 pl-8">
+            <div class="flex items-center justify-between mb-4">
+              <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                <i class="fa fa-folder text-blue-600 text-xl"></i>
+              </div>
+              <span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-lg">
+                <i class="fa fa-server mr-1"></i>FTP
+              </span>
+            </div>
+            <h3 class="text-slate-500 text-sm font-medium mb-1">FTP Folders</h3>
+            <p id="ftpFoldersCount" class="text-3xl font-bold text-slate-800">-</p>
+          </div>
+        </div>
+
+        <!-- DB Programs Card -->
+        <div class="group relative bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-slate-100 hover:border-emerald-200">
+          <div class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-emerald-500 to-emerald-600"></div>
+          <div class="p-6 pl-8">
+            <div class="flex items-center justify-between mb-4">
+              <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                <i class="fa fa-database text-emerald-600 text-xl"></i>
+              </div>
+              <span class="px-2 py-1 bg-emerald-100 text-emerald-700 text-xs font-semibold rounded-lg">
+                <i class="fa fa-hard-drive mr-1"></i>Database
+              </span>
+            </div>
+            <h3 class="text-slate-500 text-sm font-medium mb-1">DB Programs</h3>
+            <p id="dbProgramsCount" class="text-3xl font-bold text-slate-800">-</p>
+          </div>
+        </div>
+
+        <!-- Missing in FTP Card -->
+        <div class="group relative bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-slate-100 hover:border-amber-200">
+          <div class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-amber-500 to-amber-600"></div>
+          <div class="p-6 pl-8">
+            <div class="flex items-center justify-between mb-4">
+              <div class="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                <i class="fa fa-exclamation-triangle text-amber-600 text-xl"></i>
+              </div>
+              <span class="px-2 py-1 bg-amber-100 text-amber-700 text-xs font-semibold rounded-lg">
+                <i class="fa fa-exclamation-circle mr-1"></i>Warning
+              </span>
+            </div>
+            <h3 class="text-slate-500 text-sm font-medium mb-1">Missing in FTP</h3>
+            <p id="missingCount" class="text-3xl font-bold text-slate-800">-</p>
+          </div>
+        </div>
+
+        <!-- Extra in FTP Card -->
+        <div class="group relative bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-slate-100 hover:border-red-200">
+          <div class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-red-500 to-red-600"></div>
+          <div class="p-6 pl-8">
+            <div class="flex items-center justify-between mb-4">
+              <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                <i class="fa fa-trash text-red-600 text-xl"></i>
+              </div>
+              <span class="px-2 py-1 bg-red-100 text-red-700 text-xs font-semibold rounded-lg">
+                <i class="fa fa-times-circle mr-1"></i>Extra
+              </span>
+            </div>
+            <h3 class="text-slate-500 text-sm font-medium mb-1">Extra in FTP</h3>
+            <p id="extraCount" class="text-3xl font-bold text-slate-800">-</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden mb-8">
+        <div class="bg-gradient-to-r from-slate-800 to-slate-700 px-6 py-4">
+          <div class="flex items-center space-x-3">
+            <div class="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center">
+              <i class="fa fa-cogs text-white"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-white">Actions</h3>
+          </div>
+        </div>
+
+        <div class="p-6">
+          <div class="flex flex-wrap gap-3">
+
+            <!-- Sync Button -->
+            <button onclick="syncFolders()"
+                    class="inline-flex items-center px-5 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-medium rounded-xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:from-blue-600 hover:to-blue-700 transition-all duration-200">
+              <i class="fa fa-sync mr-2"></i>
+              Sync Folders
+            </button>
+
+            <!-- Cleanup Button -->
+            <button onclick="cleanupOldFiles()"
+                    class="inline-flex items-center px-5 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 text-white font-medium rounded-xl shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50 hover:from-amber-600 hover:to-amber-700 transition-all duration-200">
+              <i class="fa fa-broom mr-2"></i>
+              Cleanup Old Files (2+ weeks)
+            </button>
+
+            <!-- List FTP Files Button -->
+            <button onclick="listFTPFiles()"
+                    class="inline-flex items-center px-5 py-2.5 bg-gradient-to-r from-cyan-500 to-cyan-600 text-white font-medium rounded-xl shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50 hover:from-cyan-600 hover:to-cyan-700 transition-all duration-200">
+              <i class="fa fa-list mr-2"></i>
+              List FTP Files
+            </button>
+
+            <!-- Clear Logs Button -->
+            <button onclick="clearLogs()"
+                    class="inline-flex items-center px-5 py-2.5 bg-slate-100 text-slate-700 font-medium rounded-xl hover:bg-slate-200 transition-colors">
+              <i class="fa fa-trash-alt mr-2"></i>
+              Clear Logs
+            </button>
+
+            <!-- Refresh Stats Button -->
+            <button onclick="refreshStats()"
+                    class="inline-flex items-center px-5 py-2.5 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-medium rounded-xl shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:from-emerald-600 hover:to-emerald-700 transition-all duration-200">
+              <i class="fa fa-redo mr-2"></i>
+              Refresh Stats
+            </button>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Comparison Section -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+
+        <!-- Programs in DB -->
+        <div class="bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden">
+          <div class="bg-gradient-to-r from-emerald-500 to-emerald-600 px-6 py-4">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                  <i class="fa fa-check-circle text-white"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-white">Programs in Database</h3>
+              </div>
+              <span id="dbCountBadge" class="px-3 py-1 bg-white/20 text-white text-sm font-semibold rounded-full">0 items</span>
+            </div>
+          </div>
+          <div class="p-4 max-h-80 overflow-y-auto">
+            <ul id="dbProgramsList" class="space-y-2"></ul>
+          </div>
+        </div>
+
+        <!-- Folders on FTP -->
+        <div class="bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden">
+          <div class="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-4">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                  <i class="fa fa-folder-open text-white"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-white">Folders on FTP</h3>
+              </div>
+              <span id="ftpCountBadge" class="px-3 py-1 bg-white/20 text-white text-sm font-semibold rounded-full">0 items</span>
+            </div>
+          </div>
+          <div class="p-4 max-h-80 overflow-y-auto">
+            <ul id="ftpFoldersList" class="space-y-2"></ul>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- FTP File Browser -->
+      <div class="bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden mb-8">
+        <div class="bg-gradient-to-r from-cyan-500 to-cyan-600 px-6 py-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+              <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                <i class="fa fa-server text-white"></i>
+              </div>
+              <h3 class="text-lg font-semibold text-white">FTP File Browser</h3>
+            </div>
+            <span id="ftpFilesCount" class="px-3 py-1 bg-white/20 text-white text-sm font-semibold rounded-full">0 files</span>
+          </div>
+        </div>
+
+        <!-- Search/Filter -->
+        <div class="px-6 py-3 border-b border-slate-100">
+          <div class="relative">
+            <input type="text" id="ftpSearch" placeholder="Search files..."
+                   class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-400 transition-all">
+            <i class="fa fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+          </div>
+        </div>
+
+        <!-- Files Grid -->
+        <div class="p-6">
+          <div id="ftpFilesList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"></div>
+        </div>
+      </div>
+
+      <!-- Activity Log -->
+      <div class="bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden">
+        <div class="bg-gradient-to-r from-slate-700 to-slate-800 px-6 py-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+              <div class="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center">
+                <i class="fa fa-terminal text-emerald-400"></i>
+              </div>
+              <h3 class="text-lg font-semibold text-white">Activity Log</h3>
+            </div>
+            <div class="flex items-center space-x-2">
+              <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
+              <span class="text-emerald-400 text-sm font-medium">Live</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Log Console -->
+        <div class="relative">
+          <div id="logConsole" class="log-console" style="min-height: 300px; max-height: 400px;"></div>
+
+          <!-- Log Controls -->
+          <div class="absolute bottom-4 right-4 flex space-x-2">
+            <button onclick="scrollToBottom()"
+                    class="p-2 bg-slate-700/80 text-slate-300 rounded-lg hover:bg-slate-600 transition-colors"
+                    title="Scroll to bottom">
+              <i class="fa fa-arrow-down"></i>
+            </button>
+            <button onclick="clearLogs()"
+                    class="p-2 bg-slate-700/80 text-slate-300 rounded-lg hover:bg-red-500 transition-colors"
+                    title="Clear logs">
+              <i class="fa fa-trash"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center">
+      <p class="text-slate-500 text-sm">
+        FTP Manager - FM Stream App &copy; <span id="footerYear"></span> Kitaroghope
+      </p>
+    </div>
+  </footer>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Mobile menu toggle
+    document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+      const menu = document.getElementById('mobile-menu');
+      menu.classList.toggle('hidden');
+    });
+
+    // Set current year dynamically
+    document.getElementById('footerYear').textContent = new Date().getFullYear();
+
+    // Logging function
+    function addLog(message, type = 'info') {
+      const timestamp = new Date().toLocaleTimeString();
+      const logConsole = document.getElementById('logConsole');
+
+      const entry = document.createElement('div');
+      entry.className = 'log-entry log-' + type;
+      entry.innerHTML = '<span style="color: #64748b;">[' + timestamp + ']</span> <span>' + message + '</span>';
+
+      logConsole.appendChild(entry);
+      logConsole.scrollTop = logConsole.scrollHeight;
+    }
+
+    function clearLogs() {
+      $('#logConsole').html('');
+      addLog('Logs cleared', 'info');
+    }
+
+    function scrollToBottom() {
+      const logConsole = document.getElementById('logConsole');
+      logConsole.scrollTo({
+        top: logConsole.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
+
+    // Refresh stats
+    function refreshStats() {
+      syncFolders();
+    }
+
+    // Sync folders
+    async function syncFolders() {
+      addLog('Starting folder sync...', 'sync');
+      try {
+        const response = await fetch('/sync-folders');
+        const data = await response.json();
+        addLog('Folder sync complete', 'success');
+
+        // Update counts
+        $('#ftpFoldersCount').text(data.result.ftpFolders.length);
+        $('#dbProgramsCount').text(data.result.dbPrograms.length);
+        $('#missingCount').text(data.result.missingInFTP.length);
+        $('#extraCount').text(data.result.extraInFTP.length);
+
+        // Update badges
+        $('#dbCountBadge').text(data.result.dbPrograms.length + ' items');
+        $('#ftpCountBadge').text(data.result.ftpFolders.length + ' items');
+
+        // Update DB list
+        $('#dbProgramsList').html(data.result.dbPrograms.map(function(p) {
+          return '<li class="flex items-center space-x-3 p-3 bg-emerald-50 rounded-xl border border-emerald-100 hover:bg-emerald-100 transition-colors">' +
+                 '<div class="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center flex-shrink-0">' +
+                 '<i class="fa fa-database text-white text-sm"></i></div>' +
+                 '<span class="text-slate-700 font-medium truncate">' + p + '</span></li>';
+        }).join(''));
+
+        // Update FTP list
+        $('#ftpFoldersList').html(data.result.ftpFolders.map(function(f) {
+          return '<li class="flex items-center space-x-3 p-3 bg-blue-50 rounded-xl border border-blue-100 hover:bg-blue-100 transition-colors">' +
+                 '<div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center flex-shrink-0">' +
+                 '<i class="fa fa-folder text-white text-sm"></i></div>' +
+                 '<span class="text-slate-700 font-medium truncate">' + f + '</span></li>';
+        }).join(''));
+
+        // Warnings
+        if (data.result.missingInFTP.length > 0) {
+          addLog('WARNING: ' + data.result.missingInFTP.length + ' programs in DB but missing in FTP', 'error');
+        }
+        if (data.result.extraInFTP.length > 0) {
+          addLog('WARNING: ' + data.result.extraInFTP.length + ' folders in FTP but not in DB: ' + data.result.extraInFTP.join(', '), 'error');
+        }
+
+      } catch (error) {
+        addLog('Error syncing folders: ' + error.message, 'error');
+      }
+    }
+
+    // List FTP files
+    async function listFTPFiles() {
+      addLog('Listing FTP files...', 'ftp');
+      try {
+        const response = await fetch('/list-ftp-files');
+        const data = await response.json();
+        addLog('Found ' + data.files.length + ' items on FTP', 'ftp');
+
+        $('#ftpFilesCount').text(data.files.length + ' files');
+
+        const filesHtml = data.files.map(function(item) {
+          const icon = item.type === 'd' ? 'fa-folder text-amber-500 bg-amber-100' : 'fa fa-file-audio text-blue-500 bg-blue-100';
+          const iconClass = item.type === 'd' ? 'fa-folder' : 'fa-file-audio';
+          const bgClass = item.type === 'd' ? 'bg-amber-100' : 'bg-blue-100';
+          const textClass = item.type === 'd' ? 'text-amber-500' : 'text-blue-500';
+          const size = item.type === 'd' ? 'Folder' : (item.size / 1024).toFixed(1) + ' KB';
+          return '<div class="group bg-slate-50 hover:bg-rose-50 rounded-xl border border-slate-200 hover:border-rose-200 p-4 transition-all duration-200 cursor-pointer">' +
+                 '<div class="flex flex-col items-center text-center">' +
+                 '<div class="w-12 h-12 ' + bgClass + ' rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">' +
+                 '<i class="fa ' + iconClass + ' ' + textClass + ' text-lg"></i></div>' +
+                 '<p class="text-sm font-medium text-slate-700 truncate w-full" title="' + item.name + '">' + item.name + '</p>' +
+                 '<p class="text-xs text-slate-400 mt-1">' + size + '</p></div></div>';
+        }).join('');
+
+        $('#ftpFilesList').html(filesHtml);
+      } catch (error) {
+        addLog('Error listing FTP files: ' + error.message, 'error');
+      }
+    }
+
+    // Cleanup old files
+    async function cleanupOldFiles() {
+      addLog('Starting old files cleanup...', 'sync');
+      try {
+        const response = await fetch('/sync-old-files');
+        const data = await response.json();
+        addLog(data.message, 'success');
+      } catch (error) {
+        addLog('Error cleaning up old files: ' + error.message, 'error');
+      }
+    }
+
+    // Initial load
+    $(document).ready(function() {
+      addLog('FTP Manager loaded', 'info');
+      syncFolders();
+    });
+  </script>
+</body>
+</html>
