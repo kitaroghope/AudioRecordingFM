@@ -2,24 +2,81 @@ const express = require('express');
 const path = require('path');
 const app = express();
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
+const jwt = require('jsonwebtoken');
 const recorder = require('./try');
 const db = require('./modules/mongoDBApi');
 const ftp = require('./modules/ftp');
-const con = require('./config.json');
-const streamUrl = con.radios.prime;
+const config = require('./config');
+const { verifyToken } = require('./middleware/auth');
+const streamUrl = config.radios.prime;
 
 app.use(cors({
-    origin: "*",
+    origin: config.cors.origins,
     methods: "*",
    allowedHeaders:"*"
 }));
+app.use(cookieParser());
 app.set('view engine', 'ejs');
 app.use(express.json());
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 // app.use(express.urlencoded({extended:true}));
 
-const port = process.env.PORT || 3300;
+// Global error handlers
+app.use((err, req, res, next) => {
+    console.error('[Global Error Handler]', {
+        message: err.message,
+        stack: err.stack,
+        path: req.path,
+        method: req.method
+    });
+
+    // Don't expose stack trace in production
+    const isDev = config.server.nodeEnv === 'development';
+
+    // User-friendly error messages
+    let userMessage = 'Something unexpected happened. Please try again in a few moments.';
+    let userHint = 'If this problem persists, please contact support.';
+
+    if (err.name === 'ValidationError') {
+        userMessage = 'The information you provided could not be processed.';
+        userHint = 'Please check your input and try again.';
+    } else if (err.name === 'MongoServerError') {
+        userMessage = 'A database error occurred.';
+        userHint = 'Please try again. If the problem persists, contact support.';
+    } else if (err.code === 'ECONNREFUSED') {
+        userMessage = 'Could not connect to the server.';
+        userHint = 'Please check your internet connection and try again.';
+    }
+
+    res.status(err.status || 500).json({
+        error: err.name || 'ServerError',
+        message: isDev ? err.message : userMessage,
+        hint: isDev ? undefined : userHint,
+        ...(isDev && { stack: err.stack })
+    });
+});
+
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('[Unhandled Rejection]', {
+        reason: reason instanceof Error ? reason.message : reason,
+        stack: reason instanceof Error ? reason.stack : undefined
+    });
+});
+
+// Handle uncaught exceptions
+process.on('uncaughtException', (error) => {
+    console.error('[Uncaught Exception]', {
+        message: error.message,
+        stack: error.stack
+    });
+    // Exit with error code for process supervision to restart
+    process.exit(1);
+});
+
+const port = config.server.port || 3300;
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
@@ -123,7 +180,67 @@ app.get('/keepAlive',(req, res) => {
   res.sendStatus(200);
 });
 
-app.post('/record', async (req, res) => {
+// Login endpoint - returns JWT token
+app.post('/login', async (req, res) => {
+  try {
+    const { username, password } = req.body;
+
+    // Basic validation
+    if (!username || !password) {
+      return res.status(400).json({
+        error: 'Missing credentials',
+        message: 'Username and password are required'
+      });
+    }
+
+    // TODO: Replace with actual user authentication from database
+    // For now, use admin credentials from environment
+    const validUsername = process.env.ADMIN_USERNAME || 'admin';
+    const validPassword = process.env.ADMIN_PASSWORD || 'admin123';
+
+    if (username !== validUsername || password !== validPassword) {
+      return res.status(401).json({
+        error: 'Invalid credentials',
+        message: 'Username or password is incorrect'
+      });
+    }
+
+    // Generate JWT token
+    const token = jwt.sign(
+      { username, role: 'admin' },
+      config.jwt.secret,
+      { expiresIn: config.jwt.expiresIn }
+    );
+
+    // Send token in cookie and response
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: config.server.nodeEnv === 'production',
+      sameSite: 'strict',
+      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    });
+
+    res.json({
+      message: 'Login successful',
+      token,
+      expiresIn: config.jwt.expiresIn
+    });
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({
+      error: 'Server error',
+      message: 'An error occurred during login'
+    });
+  }
+});
+
+// Logout endpoint
+app.post('/logout', (req, res) => {
+  res.clearCookie('token');
+  res.json({ message: 'Logged out successfully' });
+});
+
+app.post('/record', verifyToken, async (req, res) => {
   // Start recording logic
   try {
     // console.log(recorder.record);
@@ -134,7 +251,7 @@ app.post('/record', async (req, res) => {
   }
 });
 
-app.post('/stop-record',async (req, res) => {
+app.post('/stop-record', verifyToken, async (req, res) => {
   // Stop recording logic
   try {
     const jk = await recorder.stopRecording("User",true);
@@ -144,8 +261,8 @@ app.post('/stop-record',async (req, res) => {
   }
 });
 
-app.post('/newProgram', recorder.addProgram);
-app.post('/deleteProgram', recorder.deleteProgram);
+app.post('/newProgram', verifyToken, recorder.addProgram);
+app.post('/deleteProgram', verifyToken, recorder.deleteProgram);
 
 // FTP Manager page
 app.get('/ftp-manager', async (req, res) => {
@@ -157,7 +274,7 @@ app.get('/ftp-manager', async (req, res) => {
 });
 
 // Manual sync endpoints for troubleshooting
-app.get('/sync-folders', async (req, res) => {
+app.get('/sync-folders', verifyToken, async (req, res) => {
   try {
     const result = await ftp.syncProgramFolders();
     res.json({ message: 'Program folders synced', result });
@@ -166,7 +283,7 @@ app.get('/sync-folders', async (req, res) => {
   }
 });
 
-app.get('/sync-old-files', async (req, res) => {
+app.get('/sync-old-files', verifyToken, async (req, res) => {
   try {
     await ftp.syncOldFiles();
     res.json({ message: 'Old files cleanup complete' });
@@ -175,7 +292,7 @@ app.get('/sync-old-files', async (req, res) => {
   }
 });
 
-app.get('/list-ftp-files', async (req, res) => {
+app.get('/list-ftp-files', verifyToken, async (req, res) => {
   try {
     const files = await ftp.listFTPFiles();
     res.json({ message: 'FTP files listed', files });

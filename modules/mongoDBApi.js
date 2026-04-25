@@ -1,8 +1,11 @@
-// Import the required modules
-// const MongoClient = require('mongodb').MongoClient;
+/**
+ * MongoDB API Module - Database CRUD operations
+ * @module mongoDBApi
+ */
+
 const { MongoClient } = require("mongodb");
-const con = require('./../config.json');
-const url = con.mongoDB.url; // Update this to your MongoUri [visit mongodb.com to get one if you have none]
+const config = require('../config');
+const url = config.mongoDB.url;
 
 
 
@@ -124,6 +127,39 @@ async function readRow(nameOfRow, dbName,tName){
     catch (err) {
         return {"listing":err.message,"found":false,"err":true};
     } 
+}
+
+async function readRowsWithCursor(query, dbName, tName, options = {}) {
+    if (!await checkClient()) return;
+    try {
+        const { batchSize = 100, limit = 0 } = options;
+        let cursor = client.db(dbName).collection(tName).find(query);
+
+        if (batchSize > 0) {
+            cursor = cursor.batchSize(batchSize);
+        }
+        if (limit > 0) {
+            cursor = cursor.limit(limit);
+        }
+
+        const results = [];
+        let count = 0;
+        const maxIterations = limit > 0 ? Math.ceil(limit / batchSize) : Infinity;
+
+        while (count < (limit > 0 ? limit : Number.MAX_SAFE_INTEGER)) {
+            const doc = await cursor.next();
+            if (doc === null) break;
+            results.push(doc);
+            count++;
+            if (count % batchSize === 0) {
+                console.log(`Processed ${count} records...`);
+            }
+        }
+
+        return { listings: results, found: results.length > 0, err: false };
+    } catch (err) {
+        return { listings: err.message, found: false, err: true };
+    }
 }
 
 // Reading one rows
@@ -353,16 +389,17 @@ async function autoInc(tName){
 }
 // Export the CRUD functions
 module.exports = {
-    createListing, 
-    createListings, 
-    readRow, 
-    readRows, 
-    updateRow, 
-    updateRow2, 
-    updateRows, 
-    updateRows2, 
-    deleteRow, 
-    deleteRows, 
+    createListing,
+    createListings,
+    readRow,
+    readRows,
+    readRowsWithCursor,
+    updateRow,
+    updateRow2,
+    updateRows,
+    updateRows2,
+    deleteRow,
+    deleteRows,
     listDatabeses,
     listTables,
     createTable,

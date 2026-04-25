@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(graphify)",
+      "Bash(python -c \"\nimport sys, json\nfrom graphify.extract import collect_files, extract\nfrom pathlib import Path\nimport json\n\ncode_files = []\ndetect = json.loads\\(Path\\(''.graphify_detect.json''\\).read_text\\(\\)\\)\nfor f in detect.get\\(''files'', {}\\).get\\(''code'', []\\):\n    code_files.extend\\(collect_files\\(Path\\(f\\)\\) if Path\\(f\\).is_dir\\(\\) else [Path\\(f\\)]\\)\n\nif code_files:\n    result = extract\\(code_files\\)\n    Path\\(''.graphify_ast.json''\\).write_text\\(json.dumps\\(result, indent=2\\)\\)\n    print\\(f''AST: {len\\(result[\"\"nodes\"\"]\\)} nodes, {len\\(result[\"\"edges\"\"]\\)} edges''\\)\nelse:\n    Path\\(''.graphify_ast.json''\\).write_text\\(json.dumps\\({''nodes'':[],''edges'':[],''input_tokens'':0,''output_tokens'':0}\\)\\)\n    print\\(''No code files - skipping AST extraction''\\)\n\")",
+      "Bash(python -c \"\nimport json\nfrom graphify.cache import check_semantic_cache\nfrom pathlib import Path\n\ndetect = json.loads\\(Path\\(''.graphify_detect.json''\\).read_text\\(\\)\\)\nall_files = [f for files in detect[''files''].values\\(\\) for f in files]\n\ncached_nodes, cached_edges, cached_hyperedges, uncached = check_semantic_cache\\(all_files\\)\n\nif cached_nodes or cached_edges or cached_hyperedges:\n    Path\\(''.graphify_cached.json''\\).write_text\\(json.dumps\\({''nodes'': cached_nodes, ''edges'': cached_edges, ''hyperedges'': cached_hyperedges}\\)\\)\nPath\\(''.graphify_uncached.txt''\\).write_text\\(''\\\\n''.join\\(uncached\\)\\)\nprint\\(f''Cache: {len\\(all_files\\)-len\\(uncached\\)} files hit, {len\\(uncached\\)} files need extraction''\\)\n\")",
+      "Bash(python3:*)",
+      "Bash(python -c \"\nfrom PIL import Image\nimport os\n\nfiles = [\n    ''C:/xampp/htdocs/AudioRecordingFM/1.jpeg'',\n    ''C:/xampp/htdocs/AudioRecordingFM/public/images/1.jpeg'',\n    ''C:/xampp/htdocs/AudioRecordingFM/public/images/2.jpeg'',\n    ''C:/xampp/htdocs/AudioRecordingFM/public/images/3.jpeg'',\n    ''C:/xampp/htdocs/AudioRecordingFM/public/images/4.jpeg'',\n    ''C:/xampp/htdocs/AudioRecordingFM/public/images/5.jpeg''\n]\n\nfor f in files:\n    if os.path.exists\\(f\\):\n        img = Image.open\\(f\\)\n        print\\(f''{f}: {img.size}, mode={img.mode}, format={img.format}''\\)\n    else:\n        print\\(f''{f}: NOT FOUND''\\)\n\")",
+      "Bash(python -c:*)",
+      "Bash(python:*)",
+      "Bash(node:*)"
+    ]
+  }
+}

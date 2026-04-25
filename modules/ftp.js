@@ -1,13 +1,23 @@
+/**
+ * FTP Module - Handles file uploads and management via FTP protocol
+ * @module ftp
+ */
+
 const Client = require('ftp');
-const con = require('../config.json');
+const config = require('../config');
 const db = require('./mongoDBApi');
 const fs = require('fs');
 const path = require('path');
 
 // Define a list of forbidden file extensions or MIME types
 const forbiddenFileExtensions = ['.exe', '.bat', '.sh'];
-// You can also define forbidden MIME types if needed, e.g., 'application/x-msdownload'
 
+/**
+ * Renames a file while preserving its extension
+ * @param {string} filename - Original filename
+ * @param {string} newFilename - New filename without extension
+ * @returns {string} - New filename with original extension preserved
+ */
 async function renameFile(filename, newFilename) {
   const ext = filename.slice(filename.lastIndexOf('/'));
   return newFilename + ext;
@@ -17,14 +27,18 @@ var ftpClient;
 
 // FTP Configuration (loaded from config)
 const ftpConfig = {
-  host: con.ftp.host,
-  port: con.ftp.port || 21,
-  user: con.ftp.username,
-  password: con.ftp.password
+  host: config.ftp.host,
+  port: config.ftp.port || 21,
+  user: config.ftp.username,
+  password: config.ftp.password
 };
 
 console.log(`[FTP] Initialized with host: ${ftpConfig.host}:${ftpConfig.port}, user: ${ftpConfig.user}`);
 
+/**
+ * Establishes connection to FTP server with event handlers
+ * @returns {Promise<void>} Resolves when connected, rejects on error
+ */
 async function connectFTP() {
   if (!ftpClient || !ftpClient.connected) {
     // Create new client instance
@@ -70,6 +84,13 @@ async function connectFTP() {
 const maxRetries = 5; // Number of maximum retries
 const retryInterval = 3000; // Retry interval in milliseconds (e.g., 3000ms = 3 seconds)
 
+/**
+ * Connects to FTP server with retry logic and detailed error reporting
+ * @param {number} maxRetries - Maximum connection attempts
+ * @param {number} retryInterval - Milliseconds between retries
+ * @returns {Promise<void>} Resolves on successful connection
+ * @throws {Error} When all retry attempts fail
+ */
 async function connectFTPRetry(maxRetries, retryInterval) {
   let retries = 0;
 
@@ -99,6 +120,13 @@ async function connectFTPRetry(maxRetries, retryInterval) {
   throw new Error(errorMsg);
 }
 
+/**
+ * Uploads files from a request to the FTP server
+ * @param {Object} req - Express request object with files
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @returns {Promise<void>}
+ */
 async function uploadToFTP(req, res, next) {
   const files = req.files;
   if (!files || files.length === 0) {
@@ -164,9 +192,28 @@ async function uploadToFTP(req, res, next) {
   }
 }
 
+/**
+ * Uploads files from local folder to FTP server (program recording uploads)
+ * @param {string} pathToFolderWithFiles - Local folder path containing files
+ * @param {string} folderNameOnFtpServer - Target folder name on FTP (validated for safety)
+ * @param {Array<string>} arrayOfFiles - Array of filenames to upload
+ * @returns {Promise<void>}
+ */
 async function uploadToFTP2(pathToFolderWithFiles, folderNameOnFtpServer, arrayOfFiles) {
   if (arrayOfFiles.length === 0) {
     console.log('No files to upload');
+    return;
+  }
+
+  // Path traversal validation for folder name
+  if (folderNameOnFtpServer.includes('..') || folderNameOnFtpServer.includes('/') || folderNameOnFtpServer.includes('\\')) {
+    console.error('[FTP] Invalid folder name: path traversal detected');
+    return;
+  }
+
+  // Validate folder name only contains safe characters (alphanumeric, spaces, underscores, hyphens)
+  if (!/^[a-zA-Z0-9_\s-]+$/.test(folderNameOnFtpServer)) {
+    console.error('[FTP] Invalid folder name: contains unsafe characters');
     return;
   }
 
@@ -177,6 +224,13 @@ async function uploadToFTP2(pathToFolderWithFiles, folderNameOnFtpServer, arrayO
 
     // Validate each file before upload
     for (const file of arrayOfFiles) {
+      // Path traversal check for file name
+      if (file.includes('..') || file.includes('/') || file.includes('\\')) {
+        console.error('[FTP] Invalid file name: path traversal detected:', file);
+        uploadedCount++;
+        continue;
+      }
+
       // Check if the file's extension is in the list of forbidden extensions
       const fileExt = file.slice(file.lastIndexOf('.'));
       if (forbiddenFileExtensions.includes(fileExt)) {
@@ -237,6 +291,11 @@ async function uploadToFTP2(pathToFolderWithFiles, folderNameOnFtpServer, arrayO
 }
 
 // Check if a file exists on the FTP server
+/**
+ * Checks if a file exists on the FTP server
+ * @param {string} remotePath - Full path to file on FTP server
+ * @returns {Promise<boolean>} True if file exists, false otherwise
+ */
 async function checkFileExists(remotePath) {
   try {
     console.log(`[FTP] Checking if file exists: ${remotePath}`);
@@ -276,6 +335,11 @@ async function checkFileExists(remotePath) {
 }
 
 // Delete a file from the FTP server
+/**
+ * Deletes a file from the FTP server
+ * @param {string} remotePath - Full path to file on FTP server
+ * @returns {Promise<boolean>} True if deleted, false otherwise
+ */
 async function deleteFileFromFTP(remotePath) {
   try {
     // Skip invalid paths
@@ -305,6 +369,11 @@ async function deleteFileFromFTP(remotePath) {
 }
 
 // Delete a directory from the FTP server
+/**
+ * Deletes a directory from the FTP server
+ * @param {string} remotePath - Full path to directory on FTP server
+ * @returns {Promise<boolean>} True if deleted, false otherwise
+ */
 async function deleteFolderFromFTP(remotePath) {
   try {
     // Skip invalid paths
@@ -334,6 +403,11 @@ async function deleteFolderFromFTP(remotePath) {
 }
 
 // List files in a directory on the FTP server
+/**
+ * Lists all files and directories in a remote folder
+ * @param {string} [remotePath='htdocs/uploads'] - Directory path on FTP server
+ * @returns {Promise<Array>} Array of items with name, size, type properties
+ */
 async function listFTPFiles(remotePath = 'htdocs/uploads') {
   try {
     console.log(`[FTP] Listing directory: ${remotePath}`);
@@ -363,6 +437,10 @@ async function listFTPFiles(remotePath = 'htdocs/uploads') {
 }
 
 // Sync old files (older than 2 weeks) - delete from both FTP and DB
+/**
+ * Cleans up recordings older than 14 days from FTP and database
+ * @returns {Promise<void>}
+ */
 async function syncOldFiles() {
   console.log('[SYNC] ============================================');
   console.log('[SYNC] STARTING OLD FILES CLEANUP');
@@ -443,6 +521,11 @@ async function syncOldFiles() {
 
 // Sync program folders with database
 // autoDelete: if true, will delete FTP folders that don't exist in DB
+/**
+ * Synchronizes program folders between FTP and database
+ * @param {boolean} [autoDelete=true] - If true, deletes FTP folders not in DB
+ * @returns {Promise<Object>} Sync results with dbPrograms, ftpFolders, missingInFTP, extraInFTP
+ */
 async function syncProgramFolders(autoDelete = true) {
   console.log('[SYNC] ============================================');
   console.log('[SYNC] STARTING PROGRAM FOLDERS SYNC');

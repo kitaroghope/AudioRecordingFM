@@ -1,10 +1,12 @@
 /**
- * 
+ * Time collision detection for scheduling
  * @param {*} newProgram , [[array of days],[start hour, start minute],[end hour, end minute],"program name"]
  * @param {*} existingProgram , [[array of days],[start hour, start minute],[end hour, end minute],"program name"]
- * @returns {object} 
+ * @returns {object}
  */
-async function isTimeCollision(newProgram, existingProgram) {
+const { gT, gM } = require('./modules/timeUtils');
+
+function isTimeCollision(newProgram, existingProgram) {
     // Check if there is a day overlap
     const dayOverlap = newProgram[0].some((day) => existingProgram[0].includes(day));
 
@@ -68,32 +70,6 @@ async function isTimeCollision(newProgram, existingProgram) {
     }
 
     return { collision: false }; // No collision
-}
-function gT(h){
-    var am;
-    if(h == 0){
-        h = 12
-        am = "midnight";
-    }
-    else if(h >12){
-        h = h-12
-        am = "pm"
-    }
-    else if(h == 12){
-        h = h
-        am = "noon"
-    }
-    else{
-        h = h
-        am = "am"
-    }
-    return {h:h,am:am};
-}
-function gM(m){
-    if(m < 10){
-        m = "0"+m
-    }
-    return m
 }
 
 module.exports = isTimeCollision;
