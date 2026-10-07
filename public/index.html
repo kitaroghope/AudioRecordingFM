@@ -48,14 +48,12 @@
   <nav class="bg-slate-900/95 backdrop-blur-sm sticky top-0 z-50 border-b border-slate-700/50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-16">
-        <!-- Logo -->
         <a href="/" class="flex items-center space-x-3 group">
-          <img src="images/prime.jpg" alt="Logo"
+          <img src="images/prime.jpg" alt="Prime Radio logo"
                class="w-10 h-10 rounded-lg object-cover shadow-lg group-hover:shadow-rose-500/30 transition-shadow duration-300">
           <span class="text-white font-semibold text-lg hidden sm:block">Prime Radio</span>
         </a>
 
-        <!-- Desktop Navigation -->
         <div class="hidden md:flex items-center space-x-1">
           <a href="/" class="px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-all duration-200">
             <i class="fa fa-home mr-2"></i>Home
@@ -68,14 +66,13 @@
           </button>
         </div>
 
-        <!-- Mobile Menu Button -->
-        <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">
+        <button id="mobile-menu-btn" aria-expanded="false" aria-controls="mobile-menu" aria-label="Toggle navigation menu"
+                class="md:hidden p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">
           <i class="fa fa-bars text-xl"></i>
         </button>
       </div>
     </div>
 
-    <!-- Mobile Menu -->
     <div id="mobile-menu" class="hidden md:hidden border-t border-slate-700/50">
       <div class="px-4 py-3 space-y-1">
         <a href="/" class="block px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-all">
@@ -92,53 +89,51 @@
   </nav>
 
   <!-- Login Modal -->
-  <div id="login-modal" class="fixed inset-0 z-[9999] hidden">
-    <!-- Backdrop -->
+  <div id="login-modal" class="fixed inset-0 z-[9999] hidden" aria-hidden="true">
     <div class="login-backdrop absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
 
-    <!-- Modal Content -->
     <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
       <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full pointer-events-auto transform transition-all duration-300 scale-95 opacity-0"
-           id="login-modal-content">
+           id="login-modal-content"
+           role="dialog"
+           aria-modal="true"
+           aria-labelledby="login-modal-title">
 
-        <!-- Header -->
         <div class="flex items-center justify-between p-6 border-b border-slate-100">
           <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 bg-gradient-to-br from-rose-500 to-rose-600 rounded-xl flex items-center justify-center">
+            <div class="w-10 h-10 bg-gradient-to-br from-rose-500 to-rose-600 rounded-xl flex items-center justify-center flex-shrink-0">
               <i class="fa fa-lock text-white"></i>
             </div>
             <div>
-              <h3 class="text-lg font-bold text-slate-800">Welcome Back</h3>
+              <h3 id="login-modal-title" class="text-lg font-bold text-slate-800">Welcome Back</h3>
               <p class="text-sm text-slate-500">Sign in to manage programs</p>
             </div>
           </div>
-          <button id="login-modal-close-btn"
+          <button id="login-modal-close-btn" aria-label="Close sign in dialog"
                   class="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
             <i class="fa fa-times"></i>
           </button>
         </div>
 
-        <!-- Login Form -->
-        <form id="loginForm" class="p-6 space-y-4">
+        <form id="loginForm" class="p-6 space-y-4" novalidate>
           <div>
-            <label class="block text-sm font-semibold text-slate-700 mb-2">
+            <label for="loginUsername" class="block text-sm font-semibold text-slate-700 mb-2">
               <i class="fa fa-user mr-2 text-rose-500"></i>Username
             </label>
-            <input type="text" id="loginUsername" placeholder="Enter your username"
+            <input type="text" id="loginUsername" name="username" autocomplete="username" placeholder="Enter your username"
                    class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-all placeholder-slate-400"
                    required>
           </div>
           <div>
-            <label class="block text-sm font-semibold text-slate-700 mb-2">
+            <label for="loginPassword" class="block text-sm font-semibold text-slate-700 mb-2">
               <i class="fa fa-key mr-2 text-rose-500"></i>Password
             </label>
-            <input type="password" id="loginPassword" placeholder="Enter your password"
+            <input type="password" id="loginPassword" name="password" autocomplete="current-password" placeholder="Enter your password"
                    class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-all placeholder-slate-400"
                    required>
           </div>
 
-          <!-- Error Message -->
-          <div id="loginError" class="hidden bg-red-50 border border-red-200 rounded-xl p-4">
+          <div id="loginError" class="hidden bg-red-50 border border-red-200 rounded-xl p-4" role="alert" aria-live="assertive">
             <div class="flex items-start gap-3">
               <div class="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
                 <i class="fa fa-exclamation-circle text-red-500"></i>
@@ -150,8 +145,7 @@
             </div>
           </div>
 
-          <!-- Success Message -->
-          <div id="loginSuccess" class="hidden bg-emerald-50 border border-emerald-200 rounded-xl p-4">
+          <div id="loginSuccess" class="hidden bg-emerald-50 border border-emerald-200 rounded-xl p-4" role="status" aria-live="polite">
             <div class="flex items-start gap-3">
               <div class="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
                 <i class="fa fa-check-circle text-emerald-500"></i>
@@ -170,7 +164,6 @@
           </button>
         </form>
 
-        <!-- Footer -->
         <div class="px-6 pb-6">
           <p class="text-center text-sm text-slate-500">
             <i class="fa fa-info-circle mr-1"></i>
@@ -188,24 +181,20 @@
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-        <!-- AvventoMedia Card -->
         <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-rose-100">
           <div class="flex flex-col sm:flex-row">
-            <!-- App Icon -->
             <div class="sm:w-1/3 p-6 flex items-center justify-center bg-gradient-to-br from-rose-100 to-rose-50">
               <img src="https://play-lh.googleusercontent.com/fBaSmhCG7hO9Z_UpYpdYMl7-kv8WIs7u5JGiTCskqyN_XYYzqyzyTYpsggoaKSxlTg=w480-h960-rw"
                    alt="AvventoMedia"
                    class="w-24 h-24 rounded-2xl object-cover shadow-lg group-hover:scale-105 transition-transform duration-300">
             </div>
-
-            <!-- Content -->
             <div class="sm:w-2/3 p-6 flex flex-col justify-center">
               <h3 class="text-xl font-bold text-slate-800 mb-2 group-hover:text-rose-600 transition-colors">AvventoMedia</h3>
               <p class="text-slate-600 text-sm mb-4 leading-relaxed">
                 Avvento Radio. Discover Christian programs and soulful music on our online radio, accessible via your browser or the Google Play store app.
               </p>
               <a href="https://play.google.com/store/apps/details?id=tv.avventomedia.app"
-                 target="_blank"
+                 target="_blank" rel="noopener noreferrer"
                  class="inline-flex items-center justify-center px-5 py-2.5 bg-gradient-to-r from-rose-500 to-rose-600 text-white rounded-xl font-medium shadow-lg shadow-rose-500/30 hover:shadow-rose-500/50 hover:from-rose-600 hover:to-rose-700 transition-all duration-200 w-fit">
                 <i class="fab fa-google-play mr-2"></i>
                 Download now
@@ -214,7 +203,6 @@
           </div>
         </div>
 
-        <!-- Ennyimba za Kristo Card -->
         <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-rose-100">
           <div class="flex flex-col sm:flex-row">
             <div class="sm:w-1/3 p-6 flex items-center justify-center bg-gradient-to-br from-rose-100 to-rose-50">
@@ -228,7 +216,7 @@
                 Looking for your favourite luganda songs in english, or vice verser? click download.
               </p>
               <a href="https://newlugandahymnal.onrender.com/download.html"
-                 target="_blank"
+                 target="_blank" rel="noopener noreferrer"
                  class="inline-flex items-center justify-center px-5 py-2.5 bg-gradient-to-r from-rose-500 to-rose-600 text-white rounded-xl font-medium shadow-lg shadow-rose-500/30 hover:shadow-rose-500/50 hover:from-rose-600 hover:to-rose-700 transition-all duration-200 w-fit">
                 <i class="fa fa-download mr-2"></i>
                 Download now
@@ -242,21 +230,16 @@
 
     <!-- Radio Player Section -->
     <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <!-- Main Player Card -->
       <div class="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-3xl shadow-2xl overflow-hidden border border-slate-700/50">
 
-        <!-- Animated Background -->
         <div class="absolute inset-0 opacity-30">
           <div class="absolute inset-0 bg-gradient-to-r from-rose-500/20 via-transparent to-rose-500/20 animate-pulse"></div>
         </div>
 
-        <!-- Content -->
         <div class="relative z-10 p-8 md:p-12">
 
-          <!-- Station Branding -->
           <div class="flex items-center justify-center mb-8">
             <div class="relative">
-              <!-- Live Indicator -->
               <span class="absolute -top-1 -right-1 flex h-4 w-4">
                 <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                 <span class="relative inline-flex rounded-full h-4 w-4 bg-emerald-500"></span>
@@ -271,7 +254,6 @@
             <p class="text-slate-400 text-lg">91.9 FM &bull; Broadcasting Live</p>
           </div>
 
-          <!-- Audio Visualizer -->
           <div class="flex items-center justify-center space-x-1 mb-8 h-12">
             <div class="w-1 bg-rose-500 rounded-full animate-bounce" style="animation-delay: 0ms; height: 40%;"></div>
             <div class="w-1 bg-rose-400 rounded-full animate-bounce" style="animation-delay: 150ms; height: 70%;"></div>
@@ -283,10 +265,9 @@
             <div class="w-1 bg-rose-500 rounded-full animate-bounce" style="animation-delay: 1050ms; height: 75%;"></div>
           </div>
 
-          <!-- Audio Element -->
           <div class="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50">
-            <audio id="radio-player" class="w-full" controls>
-              <source src="<%= streamUrl %>" type="audio/mpeg">
+            <audio id="radio-player" class="w-full" controls preload="none">
+              <source id="radio-source" src="" type="audio/mpeg">
               Your browser does not support the audio element.
             </audio>
           </div>
@@ -296,107 +277,31 @@
     </section>
 
     <!-- Recorded Programs Section -->
-    <% if (typeof recs !== 'undefined') { %>
-      <!-- Hidden element to store recordings data -->
-      <div id="recordings-data" data-recordings="<%= encodeURIComponent(JSON.stringify(recs)) %>" style="display:none;"></div>
-      <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="flex items-center justify-between mb-8">
-          <div>
-            <h2 class="text-2xl md:text-3xl font-bold text-slate-800">
-              <i class="fa fa-microphone text-rose-500 mr-3"></i>
-              Recorded Programs
-            </h2>
-            <p class="text-slate-500 mt-1">Browse and download recorded radio programs</p>
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div class="flex items-center justify-between mb-8 gap-4">
+        <div>
+          <h2 class="text-2xl md:text-3xl font-bold text-slate-800">
+            <i class="fa fa-microphone text-rose-500 mr-3"></i>
+            Recorded Programs
+          </h2>
+          <p class="text-slate-500 mt-1">Swipe to browse episodes of each program</p>
+        </div>
+      </div>
+
+      <div id="programsContainer" aria-busy="true">
+        <div class="mb-10">
+          <div class="skeleton h-5 w-40 mb-4"></div>
+          <div class="flex gap-4">
+            <div class="skeleton h-56 w-60 rounded-2xl"></div>
+            <div class="skeleton h-56 w-60 rounded-2xl"></div>
           </div>
         </div>
-
-        <% Object.keys(recs).forEach(function (key) { %>
-
-          <!-- Program Category -->
-          <div class="mb-10">
-            <div class="flex items-center mb-6">
-              <div class="w-10 h-10 bg-gradient-to-br from-rose-500 to-rose-600 rounded-xl flex items-center justify-center shadow-lg shadow-rose-500/30 mr-4">
-                <i class="fa fa-radio text-white"></i>
-              </div>
-              <h3 class="text-xl font-bold text-slate-800"><%= key %></h3>
-              <span class="ml-3 px-3 py-1 bg-rose-100 text-rose-700 rounded-full text-sm font-medium">
-                <%= recs[key].length %> episodes
-              </span>
-            </div>
-
-            <!-- Episodes: horizontal strip -->
-            <div class="scroller-wrap">
-              <div class="episodes-strip" data-strip tabindex="0" role="list"
-                   aria-label="<%= key %> episodes" data-program="<%= key %>">
-                <% recs[key].forEach(function(el) { %>
-
-                  <!-- Episode Card -->
-                  <div class="episode-card group bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-slate-100 hover:border-rose-200" role="listitem" data-files='<%= JSON.stringify(el.files) %>' data-program-name="<%= el.program %>" data-day="<%= el.Day %>">
-
-                    <!-- Card Header -->
-                    <div class="p-4 bg-gradient-to-br from-slate-50 to-rose-50 border-b border-slate-100">
-                      <div class="flex items-start justify-between gap-2">
-                        <div class="min-w-0">
-                          <p class="text-xs text-rose-600 font-medium uppercase tracking-wide">
-                            <%= el.Day %>
-                          </p>
-                          <h4 class="font-semibold text-slate-800 mt-1 truncate group-hover:text-rose-600 transition-colors">
-                            <%= el.program %>
-                          </h4>
-                        </div>
-                        <div class="w-8 h-8 bg-rose-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                          <i class="fa fa-headphones text-rose-500 text-sm"></i>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- Card Body -->
-                    <div class="p-4">
-                      <div class="flex items-center text-sm text-slate-500 mb-3">
-                        <i class="fa fa-file-audio mr-2 text-rose-400"></i>
-                        <%= el.files.length %> file(s)
-                      </div>
-
-                      <!-- File Preview -->
-                      <div class="space-y-1 mb-4">
-                        <% el.files.slice(0, 2).forEach(function(file) { %>
-                          <p class="text-xs text-slate-400 truncate">
-                            <i class="fa fa-music mr-1"></i><%= file %>
-                          </p>
-                        <% }); %>
-                        <% if (el.files.length > 2) { %>
-                          <p class="text-xs text-slate-400">+<%= el.files.length - 2 %> more files</p>
-                        <% } %>
-                      </div>
-
-                      <!-- Action Buttons -->
-                      <div class="flex gap-2">
-                        <button class="listen-btn flex-1 px-3 py-2 bg-gradient-to-r from-rose-500 to-rose-600 text-white text-sm font-medium rounded-xl hover:from-rose-600 hover:to-rose-700 transition-all duration-200 shadow-md hover:shadow-lg">
-                          <i class="fa fa-play mr-1"></i> Listen
-                        </button>
-
-                        <a href="https://lugandahymnalnew.infinityfreeapp.com/uploads/<%= encodeURIComponent(el.program) %>/<%= encodeURIComponent(el.files[0]) %>"
-                           download="<%= el.files[0] %>"
-                           class="px-3 py-2 bg-slate-100 text-slate-600 text-sm font-medium rounded-xl hover:bg-slate-200 transition-colors">
-                          <i class="fa fa-download"></i>
-                        </a>
-                      </div>
-                    </div>
-
-                  </div>
-                <% }); %>
-              </div>
-            </div>
-          </div>
-        <% }); %>
-      </section>
-    <% } %>
+      </div>
+    </section>
 
     <!-- Coming Soon Section -->
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div class="bg-gradient-to-br from-rose-100 to-white rounded-3xl p-8 border border-rose-200 relative overflow-hidden">
-
-        <!-- Decorative Elements -->
         <div class="absolute top-0 right-0 w-64 h-64 bg-rose-200/30 rounded-full blur-3xl"></div>
         <div class="absolute bottom-0 left-0 w-48 h-48 bg-rose-300/20 rounded-full blur-2xl"></div>
 
@@ -426,7 +331,6 @@
             </a>
           </div>
 
-          <!-- Info Cards -->
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
             <div class="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-rose-100">
               <h5 class="font-semibold text-slate-800 mb-2">
@@ -463,7 +367,6 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
 
-        <!-- About -->
         <div>
           <div class="flex items-center space-x-3 mb-4">
             <img src="images/prime.jpg" class="w-10 h-10 rounded-lg" alt="Logo">
@@ -474,7 +377,6 @@
           </p>
         </div>
 
-        <!-- Quick Links -->
         <div>
           <h4 class="font-semibold mb-4">Quick Links</h4>
           <ul class="space-y-2 text-slate-400">
@@ -483,14 +385,13 @@
           </ul>
         </div>
 
-        <!-- Contact -->
         <div>
           <h4 class="font-semibold mb-4">Contact</h4>
           <div class="flex space-x-4">
             <a href="https://wa.me/256757035774" class="w-10 h-10 bg-slate-700 rounded-lg flex items-center justify-center text-slate-400 hover:text-white hover:bg-emerald-600 transition-all">
               <i class="fa fa-whatsapp text-lg"></i>
             </a>
-            <a href="https://t.me/EnnyimbaZaKristo" class="w-10 h-10 bg-slate-700 rounded-lg flex items-center justify-center text-slate-400 hover:text-white hover:bg-rose-500 transition-all">
+            <a href="https://t.me/EnnyimbaZaKristo" class="w-10 h-10 bg-slate-700 rounded-lg flex items-center justify-center text-slate-400 hover:text-white hover:bg-rose-600 transition-all">
               <i class="fa fa-telegram text-lg"></i>
             </a>
             <a href="mailto:kitarogz@gmail.com" class="w-10 h-10 bg-slate-700 rounded-lg flex items-center justify-center text-slate-400 hover:text-white hover:bg-rose-600 transition-all">
@@ -501,19 +402,16 @@
 
       </div>
 
-      <!-- Copyright -->
       <div class="border-t border-slate-700 mt-8 pt-8 text-center text-slate-500 text-sm">
         <p>&copy; <span id="footerYear"></span> Kitaroghope. All rights reserved.</p>
       </div>
     </div>
   </footer>
 
-  <!-- Custom Confirmation Modal -->
+  <!-- Custom Dialog -->
   <div id="custom-dialog-box" class="fixed inset-0 z-[9999] hidden" aria-hidden="true">
-    <!-- Backdrop -->
     <div class="modal-backdrop absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
 
-    <!-- Modal Content -->
     <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
       <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full pointer-events-auto transform transition-all duration-300 scale-95 opacity-0"
            id="modal-content"
@@ -522,67 +420,46 @@
            aria-labelledby="textH"
            aria-describedby="textB">
 
-        <!-- Header -->
         <div class="flex items-center justify-between p-6 border-b border-slate-100">
-          <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 bg-rose-100 rounded-xl flex items-center justify-center" id="dialog-icon">
-              <i class="fa fa-question text-rose-500"></i>
+          <div class="flex items-center space-x-3 min-w-0">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" id="dialog-icon">
+              <i class="fa fa-question text-slate-500"></i>
             </div>
-            <h3 id="textH" class="text-lg font-bold text-slate-800">Confirm</h3>
+            <h3 id="textH" class="text-lg font-bold text-slate-800 truncate">Confirm</h3>
           </div>
-          <button id="modal-close-btn"
-                  class="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
+          <button id="modal-close-btn" aria-label="Close dialog"
+                  class="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors flex-shrink-0">
             <i class="fa fa-times"></i>
           </button>
         </div>
 
-        <!-- Body -->
         <div class="p-6">
-          <p id="textB" class="text-slate-600 leading-relaxed">Are you sure you want to proceed?</p>
+          <p id="textB" class="text-slate-600 leading-relaxed whitespace-pre-line">Are you sure you want to proceed?</p>
         </div>
 
-        <!-- Footer -->
-        <div class="flex gap-3 p-6 border-t border-slate-100 bg-slate-50 rounded-b-2xl">
-          <button id="modal-no-btn"
+        <div class="modal-actions flex gap-3 p-6 border-t border-slate-100 bg-slate-50 rounded-b-2xl">
+          <button id="modal-no-btn" type="button"
                   class="flex-1 px-5 py-2.5 bg-slate-100 text-slate-700 font-medium rounded-xl hover:bg-slate-200 transition-colors">
             Cancel
           </button>
-          <button id="modal-yes-btn"
+          <button id="modal-yes-btn" type="button"
                   class="flex-1 px-5 py-2.5 bg-gradient-to-r from-rose-500 to-rose-600 text-white font-medium rounded-xl hover:from-rose-600 hover:to-rose-700 transition-all shadow-md hover:shadow-lg">
             Confirm
           </button>
         </div>
-
       </div>
     </div>
   </div>
 
   <script src="script.js"></script>
   <script>
-    // Set current year dynamically
+  (function () {
+    'use strict';
+
+    const MEDIA_BASE = 'https://lugandahymnalnew.infinityfreeapp.com/uploads/';
+    const container = document.getElementById('programsContainer');
+
     document.getElementById('footerYear').textContent = new Date().getFullYear();
-
-    // Listen functionality - opens player with all files from this recording
-    function openInNewTab(e) {
-      var listenBtn = e.target.closest('.listen-btn');
-      if (!listenBtn) return;
-
-      var card = listenBtn.closest('.episode-card');
-      var files = JSON.parse(card.dataset.files);
-      var programName = card.dataset.programName;
-      var day = card.dataset.day;
-
-      var songs = files.map(function(file) {
-        return 'https://lugandahymnalnew.infinityfreeapp.com/uploads/' + encodeURIComponent(programName) + '/' + encodeURIComponent(file);
-      });
-      var l = 'https://lugandahymnalnew.infinityfreeapp.com/player.html?prog=' + encodeURIComponent(programName + ' - ' + day) + '&songs=' + encodeArrayToUrlData(songs);
-      customConfirm("Do you wish to listen to this recorded program?", "Confirm").then(function(con) {
-        if (con) openInNewTab1(l);
-      });
-    }
-
-    // Make functions globally accessible
-    window.openInNewTab = openInNewTab;
 
     function openInNewTab1(url) {
       try {
@@ -591,20 +468,248 @@
         window.open(url, '_blank').focus();
       }
     }
-    window.openInNewTab1 = openInNewTab1;
 
-    function encodeArrayToUrlData(array) {
-      return encodeURIComponent(JSON.stringify(array));
+    function showError() {
+      container.setAttribute('aria-busy', 'false');
+      container.innerHTML = '';
+
+      const wrap = document.createElement('div');
+      wrap.className = 'text-center py-10';
+
+      const bubble = document.createElement('div');
+      bubble.className = 'w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4';
+      const glyph = document.createElement('i');
+      glyph.className = 'fa fa-exclamation-triangle text-red-500 text-2xl';
+      bubble.appendChild(glyph);
+
+      const msg = document.createElement('p');
+      msg.className = 'text-slate-600';
+      msg.textContent = 'Could not load recorded programs';
+
+      const retry = document.createElement('button');
+      retry.type = 'button';
+      retry.className = 'mt-4 inline-flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-700 text-sm font-medium rounded-xl hover:bg-slate-200 transition-colors';
+      const retryIcon = document.createElement('i');
+      retryIcon.className = 'fa fa-rotate-right';
+      retry.appendChild(retryIcon);
+      retry.appendChild(document.createTextNode('Try again'));
+      retry.addEventListener('click', loadRecordings);
+
+      wrap.appendChild(bubble);
+      wrap.appendChild(msg);
+      wrap.appendChild(retry);
+      container.appendChild(wrap);
     }
-    window.encodeArrayToUrlData = encodeArrayToUrlData;
 
-    // Delegated event listeners
-    document.addEventListener('click', function(e) {
-      var listenBtn = e.target.closest('.listen-btn');
-      if (listenBtn) {
-        e.preventDefault();
-        openInNewTab(e);
+    function showEmpty() {
+      container.setAttribute('aria-busy', 'false');
+      container.innerHTML = '';
+
+      const wrap = document.createElement('div');
+      wrap.className = 'text-center py-10';
+      const msg = document.createElement('p');
+      msg.className = 'text-slate-500';
+      msg.textContent = 'No recorded programs yet. Recordings will appear here.';
+      wrap.appendChild(msg);
+      container.appendChild(wrap);
+    }
+
+    /* Every string below comes from the database and is set with textContent,
+       so a program name or filename can never inject markup. */
+    function buildEpisodeCard(el) {
+      const card = document.createElement('div');
+      card.className = 'episode-card group bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-slate-100 hover:border-rose-200';
+      card.setAttribute('role', 'listitem');
+
+      const program = typeof el.program === 'string' ? el.program : '';
+      const day = typeof el.Day === 'string' ? el.Day : '';
+      const files = Array.isArray(el.files) ? el.files : [];
+
+      /* Header */
+      const header = document.createElement('div');
+      header.className = 'p-4 bg-gradient-to-br from-slate-50 to-rose-50 border-b border-slate-100';
+      const headRow = document.createElement('div');
+      headRow.className = 'flex items-start justify-between gap-2';
+
+      const headText = document.createElement('div');
+      headText.className = 'min-w-0';
+      const dayEl = document.createElement('p');
+      dayEl.className = 'text-xs text-rose-600 font-medium uppercase tracking-wide';
+      dayEl.textContent = day;
+      const nameEl = document.createElement('h4');
+      nameEl.className = 'font-semibold text-slate-800 mt-1 truncate';
+      nameEl.textContent = program;
+      headText.appendChild(dayEl);
+      headText.appendChild(nameEl);
+
+      const iconBox = document.createElement('div');
+      iconBox.className = 'w-8 h-8 bg-rose-100 rounded-lg flex items-center justify-center flex-shrink-0';
+      const icon = document.createElement('i');
+      icon.className = 'fa fa-headphones text-rose-500 text-sm';
+      iconBox.appendChild(icon);
+
+      headRow.appendChild(headText);
+      headRow.appendChild(iconBox);
+      header.appendChild(headRow);
+
+      /* Body */
+      const body = document.createElement('div');
+      body.className = 'p-4';
+
+      const count = document.createElement('div');
+      count.className = 'flex items-center text-sm text-slate-500 mb-3';
+      const countIcon = document.createElement('i');
+      countIcon.className = 'fa fa-file-audio mr-2 text-rose-400';
+      count.appendChild(countIcon);
+      count.appendChild(document.createTextNode(files.length + ' file(s)'));
+      body.appendChild(count);
+
+      const preview = document.createElement('div');
+      preview.className = 'space-y-1 mb-4';
+      files.slice(0, 2).forEach(function (file) {
+        const p = document.createElement('p');
+        p.className = 'text-xs text-slate-400 truncate';
+        const music = document.createElement('i');
+        music.className = 'fa fa-music mr-1';
+        p.appendChild(music);
+        p.appendChild(document.createTextNode(String(file)));
+        preview.appendChild(p);
+      });
+      if (files.length > 2) {
+        const more = document.createElement('p');
+        more.className = 'text-xs text-slate-400';
+        more.textContent = '+' + (files.length - 2) + ' more files';
+        preview.appendChild(more);
       }
-    });
+      body.appendChild(preview);
+
+      /* Actions */
+      const actions = document.createElement('div');
+      actions.className = 'flex gap-2';
+
+      const listen = document.createElement('button');
+      listen.type = 'button';
+      listen.className = 'listen-btn flex-1 px-3 py-2 bg-gradient-to-r from-rose-500 to-rose-600 text-white text-sm font-medium rounded-xl hover:from-rose-600 hover:to-rose-700 transition-all duration-200 shadow-md hover:shadow-lg';
+      const playIcon = document.createElement('i');
+      playIcon.className = 'fa fa-play mr-1';
+      listen.appendChild(playIcon);
+      listen.appendChild(document.createTextNode(' Listen'));
+      listen.addEventListener('click', function () {
+        if (!files.length) return;
+        const songs = files.map(function (file) {
+          return MEDIA_BASE + encodeURIComponent(program) + '/' + encodeURIComponent(String(file));
+        });
+        const url = 'https://lugandahymnalnew.infinityfreeapp.com/player.html?prog=' +
+          encodeURIComponent(program + ' - ' + day) +
+          '&songs=' + encodeURIComponent(JSON.stringify(songs));
+
+        customConfirm('Do you wish to listen to this recorded program?', 'Confirm')
+          .then(function (ok) { if (ok) openInNewTab1(url); });
+      });
+      actions.appendChild(listen);
+
+      if (files.length) {
+        const download = document.createElement('a');
+        download.href = MEDIA_BASE + encodeURIComponent(program) + '/' + encodeURIComponent(String(files[0]));
+        download.setAttribute('download', String(files[0]));
+        download.className = 'px-3 py-2 bg-slate-100 text-slate-600 text-sm font-medium rounded-xl hover:bg-slate-200 transition-colors';
+        const dlIcon = document.createElement('i');
+        dlIcon.className = 'fa fa-download';
+        download.appendChild(dlIcon);
+        actions.appendChild(download);
+      }
+
+      body.appendChild(actions);
+      card.appendChild(header);
+      card.appendChild(body);
+
+      return card;
+    }
+
+    function buildProgramStrip(name, episodes) {
+      const section = document.createElement('div');
+      section.className = 'mb-10';
+
+      const heading = document.createElement('div');
+      heading.className = 'flex items-center mb-4 flex-wrap gap-2';
+
+      const badge = document.createElement('div');
+      badge.className = 'w-10 h-10 bg-gradient-to-br from-rose-500 to-rose-600 rounded-xl flex items-center justify-center shadow-lg shadow-rose-500/30 mr-2';
+      const badgeIcon = document.createElement('i');
+      badgeIcon.className = 'fa fa-radio text-white';
+      badge.appendChild(badgeIcon);
+
+      const title = document.createElement('h3');
+      title.className = 'text-xl font-bold text-slate-800 truncate';
+      title.textContent = name;
+
+      const count = document.createElement('span');
+      count.className = 'px-3 py-1 bg-rose-100 text-rose-700 rounded-full text-sm font-medium';
+      count.textContent = episodes.length + (episodes.length === 1 ? ' episode' : ' episodes');
+
+      heading.appendChild(badge);
+      heading.appendChild(title);
+      heading.appendChild(count);
+      section.appendChild(heading);
+
+      const wrap = document.createElement('div');
+      wrap.className = 'scroller-wrap';
+
+      const strip = document.createElement('div');
+      strip.className = 'episodes-strip';
+      strip.setAttribute('data-strip', '');
+      strip.setAttribute('tabindex', '0');
+      strip.setAttribute('role', 'list');
+      strip.setAttribute('aria-label', name + ' episodes');
+
+      const frag = document.createDocumentFragment();
+      episodes.forEach(function (el) { frag.appendChild(buildEpisodeCard(el)); });
+      strip.appendChild(frag);
+
+      wrap.appendChild(strip);
+      section.appendChild(wrap);
+
+      return section;
+    }
+
+    async function loadRecordings() {
+      container.setAttribute('aria-busy', 'true');
+
+      try {
+        const response = await fetch('/recordings');
+        if (!response.ok) throw new Error('bad response');
+        const data = await response.json();
+
+        // Stream URL for the live player
+        const source = document.getElementById('radio-source');
+        if (source && data.streamUrl) source.src = data.streamUrl;
+
+        const programs = data.programs && typeof data.programs === 'object' ? data.programs : {};
+        const names = Object.keys(programs).filter(function (key) {
+          return Array.isArray(programs[key]) && programs[key].length > 0;
+        });
+
+        container.setAttribute('aria-busy', 'false');
+        container.innerHTML = '';
+
+        if (!names.length) {
+          showEmpty();
+          return;
+        }
+
+        const frag = document.createDocumentFragment();
+        names.forEach(function (name) {
+          frag.appendChild(buildProgramStrip(name, programs[name]));
+        });
+        container.appendChild(frag);
+
+      } catch (error) {
+        showError();
+      }
+    }
+
+    loadRecordings();
+  })();
   </script>
+</body>
 </html>

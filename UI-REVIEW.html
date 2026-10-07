@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UI Review — Feedback &amp; Usability · AudioRecordingFM</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Outfit:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f7f5f0;
+    --card:#ffffff;
+    --line:#e9e3d6;
+    --line-soft:#f0ece2;
+    --text:#14171e;
+    --body:#3a4256;
+    --muted:#7c7a72;
+    --primary:#b06367;
+    --crit:#9f2d2d;
+    --high:#b06367;
+    --med:#c97b3f;
+    --low:#8a8880;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);
+    color:var(--body);
+    font-family:'Outfit',sans-serif;
+    font-size:15px;
+    line-height:1.62;
+    -webkit-font-smoothing:antialiased;
+  }
+  body::before,body::after{
+    content:"";position:fixed;width:520px;height:520px;border-radius:50%;
+    pointer-events:none;z-index:0;
+  }
+  body::before{top:-220px;right:-160px;background:radial-gradient(circle,rgba(176,99,103,.10),transparent 68%)}
+  body::after{bottom:-240px;left:-180px;background:radial-gradient(circle,rgba(201,123,63,.09),transparent 68%)}
+  .wrap{max-width:980px;margin:0 auto;padding:0 28px;position:relative;z-index:1}
+
+  /* ---------- Hero ---------- */
+  header{padding:72px 0 44px;border-bottom:1px solid var(--line)}
+  .kicker{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--primary);background:rgba(176,99,103,.09);
+    border:1px solid rgba(176,99,103,.20);
+    padding:6px 13px;border-radius:999px;margin-bottom:26px;
+  }
+  h1{
+    font-family:'DM Serif Display',serif;font-weight:400;
+    font-size:clamp(34px,5.4vw,54px);line-height:1.08;letter-spacing:-.005em;
+    color:var(--text);max-width:17ch;margin-bottom:18px;
+  }
+  .lede{font-size:17px;max-width:62ch;color:var(--body)}
+  .verdict{
+    margin-top:30px;padding:18px 22px;background:var(--card);
+    border:1px solid var(--line);border-radius:14px;
+    box-shadow:0 2px 8px rgba(0,0,0,.04);
+    display:flex;gap:16px;align-items:flex-start;max-width:74ch;
+  }
+  .verdict svg{flex-shrink:0;margin-top:2px;color:var(--primary)}
+  .verdict strong{color:var(--text);font-weight:600}
+
+  .meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+  .chip{
+    font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--muted);
+    background:var(--card);border:1px solid var(--line);
+    padding:5px 11px;border-radius:7px;
+  }
+  .chip b{color:var(--body);font-weight:500}
+
+  /* ---------- Sections ---------- */
+  section{padding:52px 0;border-bottom:1px solid var(--line)}
+  section:last-of-type{border-bottom:0}
+  .s-head{display:flex;align-items:center;gap:11px;margin-bottom:8px}
+  .s-head svg{color:var(--primary);flex-shrink:0}
+  h2{
+    font-family:'DM Serif Display',serif;font-weight:400;
+    font-size:26px;color:var(--text);letter-spacing:-.003em;line-height:1.2;
+  }
+  .s-sub{color:var(--muted);font-size:14px;margin:0 0 28px;max-width:70ch}
+
+  /* ---------- Score panel ---------- */
+  .scores{display:grid;grid-template-columns:1fr 300px;gap:16px;align-items:start}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+  .bench{display:grid;grid-template-columns:158px 1fr 46px;gap:14px;align-items:center;padding:7px 0}
+  .bench+.bench{border-top:1px solid var(--line-soft)}
+  .bench-label{font-size:13.5px;color:var(--body)}
+  .bench-track{height:9px;background:var(--line-soft);border-radius:5px;overflow:hidden}
+  .bench-fill{height:100%;border-radius:5px;background:var(--primary)}
+  .bench-val{font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--muted);text-align:right}
+  .overall{text-align:center;padding:8px 4px}
+  .overall .num{font-family:'DM Serif Display',serif;font-size:62px;line-height:1;color:var(--primary)}
+  .overall .of{font-size:13px;color:var(--muted);margin-top:4px}
+  .overall .grade{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--crit);margin-top:14px}
+  .note{font-size:12px;color:var(--muted);margin-top:14px;padding-top:14px;border-top:1px solid var(--line-soft);font-style:italic}
+
+  /* ---------- Severity bar ---------- */
+  .sevbar{display:flex;height:38px;border-radius:9px;overflow:hidden;border:1px solid var(--line);margin-bottom:12px}
+  .sevbar div{display:flex;align-items:center;justify-content:center;color:#fff;font-size:12.5px;font-weight:600}
+  .sevlegend{display:flex;flex-wrap:wrap;gap:18px;font-size:12.5px;color:var(--muted)}
+  .sevlegend span{display:inline-flex;align-items:center;gap:7px}
+  .dot{width:9px;height:9px;border-radius:50%;display:inline-block}
+
+  /* ---------- Journey compare ---------- */
+  .journeys{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .jcol{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+  .jtitle{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:20px}
+  .jtitle .tag{margin-left:auto;font-size:10.5px;letter-spacing:.06em;padding:3px 9px;border-radius:999px}
+  .tag.bad{background:rgba(159,45,45,.10);color:var(--crit)}
+  .tag.good{background:rgba(31,122,89,.10);color:#1f7a59}
+  ol.j{list-style:none;position:relative}
+  ol.j::before{content:"";position:absolute;left:7px;top:8px;bottom:8px;width:2px;background:var(--line)}
+  ol.j li{position:relative;padding:0 0 17px 26px;font-size:13.5px;line-height:1.5}
+  ol.j li:last-child{padding-bottom:0}
+  ol.j li::before{content:"";position:absolute;left:2px;top:6px;width:13px;height:13px;border-radius:50%;background:#fff;border:2px solid var(--primary)}
+  ol.j li.bad::before{border-color:var(--crit);background:var(--crit)}
+  ol.j li.bad b{color:var(--crit)}
+  ol.j li b{color:var(--text);font-weight:600;display:block;font-size:14px}
+  ol.j li .why{color:var(--muted);font-size:12.5px}
+  ol.j li .fix{color:#1f7a59;font-size:12px;display:block;margin-top:3px}
+
+  /* ---------- Finding cards ---------- */
+  .finding{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px 24px;box-shadow:0 2px 8px rgba(0,0,0,.04);margin-bottom:14px}
+  .f-top{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px}
+  .f-id{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--muted);padding:3px 8px;border:1px solid var(--line);border-radius:6px;flex-shrink:0;margin-top:3px}
+  .f-title{font-size:16px;font-weight:600;color:var(--text);line-height:1.35;flex:1}
+  .sev{flex-shrink:0;font-size:10.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;padding:4px 10px;border-radius:999px;margin-top:2px}
+  .sev.critical{background:rgba(159,45,45,.11);color:var(--crit)}
+  .sev.high{background:rgba(176,99,103,.13);color:var(--high)}
+  .sev.medium{background:rgba(201,123,63,.13);color:var(--med)}
+  .sev.low{background:rgba(138,136,128,.13);color:var(--low)}
+  .f-body{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .f-body h4{font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+  .f-body p{font-size:13.5px;line-height:1.6}
+  code{font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--line-soft);color:var(--text);padding:1.5px 6px;border-radius:5px;border:1px solid var(--line)}
+  .ref{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--muted);margin-top:10px}
+
+  /* ---------- Table ---------- */
+  table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;font-size:13.5px}
+  thead th{background:var(--line-soft);text-align:left;padding:11px 16px;font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:600;border-bottom:1px solid var(--line)}
+  tbody td{padding:12px 16px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+  tbody tr:last-child td{border-bottom:0}
+  tbody tr:hover{background:#fdfcfa}
+  td.id{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--muted);white-space:nowrap}
+  td.ref{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);white-space:nowrap}
+
+  /* ---------- Strengths ---------- */
+  .strengths{display:grid;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));gap:14px}
+  .st{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.04);transition:transform .2s,box-shadow .2s}
+  .st:hover{transform:translateY(-2px);box-shadow:0 4px 16px -2px rgba(0,0,0,.06)}
+  .st svg{color:#1f7a59;margin-bottom:11px}
+  .st h3{font-size:14.5px;color:var(--text);font-weight:600;margin-bottom:6px}
+  .st p{font-size:13px;color:var(--muted);line-height:1.55}
+
+  /* ---------- Plan ---------- */
+  .phase{margin-bottom:26px}
+  .phase-h{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+  .phase-tag{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;color:#fff;padding:3px 10px;border-radius:6px}
+  .p0 .phase-tag{background:var(--crit)}
+  .p1 .phase-tag{background:var(--med)}
+  .p2 .phase-tag{background:var(--low)}
+  .phase-h h3{font-size:16px;color:var(--text);font-weight:600}
+  .phase-h .est{margin-left:auto;font-size:12px;color:var(--muted);font-family:'JetBrains Mono',monospace}
+  .tasks{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .task{display:flex;gap:13px;padding:13px 18px;border-bottom:1px solid var(--line-soft);font-size:13.5px;align-items:flex-start}
+  .task:last-child{border-bottom:0}
+  .task .tid{font-family:'JetBrains Mono',monospace;font-size:11px;color:#fff;background:var(--body);border-radius:5px;padding:2px 6px;flex-shrink:0;margin-top:2px}
+  .task .tid.c{background:var(--crit)}
+  .task .tid.m{background:var(--med)}
+  .task .tid.l{background:var(--low)}
+  .task b{color:var(--text);font-weight:600}
+
+  footer{padding:38px 0 56px;color:var(--muted);font-size:12.5px}
+  footer .fl{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+
+  @media (max-width:820px){
+    .wrap{padding:0 20px}
+    .scores,.journeys,.f-body{grid-template-columns:1fr}
+    .bench{grid-template-columns:120px 1fr 40px;gap:10px}
+    h1{font-size:34px}
+    table{font-size:12.5px}
+    thead th,tbody td{padding:10px 12px}
+    td.ref{white-space:normal}
+    .verdict{padding:15px 16px}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header>
+    <div class="kicker">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M3 12h18"/></svg>
+      Expert UI Review
+    </div>
+
+    <h1>Feedback &amp; usability audit of the scheduling interface</h1>
+
+    <p class="lede">
+      A source-level review of the Prime Radio recording scheduler, focused on the two things that decide whether
+      an interface feels trustworthy: <strong style="color:var(--text)">how it tells you what just happened</strong>,
+      and <strong style="color:var(--text)">how easily you can get a schedule saved.</strong>
+    </p>
+
+    <div class="verdict">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+      <div>
+        The visual design is genuinely good and the server error contract is well built. But the client-side
+        feedback layer is <strong>not delivering what the backend already sends</strong> — four defects break the
+        core "add a program" journey, one of them a security issue. All four are small, contained fixes.
+      </div>
+    </div>
+
+    <div class="meta">
+      <span class="chip"><b>19</b> findings</span>
+      <span class="chip">Scope <b>try.html</b> · <b>script.js</b> · <b>app.js</b></span>
+      <span class="chip">Method <b>static code review</b></span>
+      <span class="chip">Review date <b>07 Oct 2026</b></span>
+    </div>
+  </header>
+
+  <!-- ============ SCORES ============ -->
+  <section>
+    <div class="s-head">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg>
+      <h2>Where it stands</h2>
+    </div>
+    <p class="s-sub">Heuristic expert-judgement scores — each is an opinion grounded in the code, not a measurement from a user test.</p>
+
+    <div class="scores">
+      <div class="panel">
+        <div class="bench">
+          <span class="bench-label">Visual design</span>
+          <div class="bench-track"><div class="bench-fill" style="width:82%;background:#1f7a59"></div></div>
+          <span class="bench-val">8.2</span>
+        </div>
+        <div class="bench">
+          <span class="bench-label">Feedback clarity</span>
+          <div class="bench-track"><div class="bench-fill" style="width:40%"></div></div>
+          <span class="bench-val">4.0</span>
+        </div>
+        <div class="bench">
+          <span class="bench-label">Task efficiency</span>
+          <div class="bench-track"><div class="bench-fill" style="width:50%"></div></div>
+          <span class="bench-val">5.0</span>
+        </div>
+        <div class="bench">
+          <span class="bench-label">Accessibility</span>
+          <div class="bench-track"><div class="bench-fill" style="width:20%;background:var(--crit)"></div></div>
+          <span class="bench-val">2.0</span>
+        </div>
+        <div class="bench">
+          <span class="bench-label">Mobile</span>
+          <div class="bench-track"><div class="bench-fill" style="width:60%"></div></div>
+          <span class="bench-val">6.0</span>
+        </div>
+        <div class="bench">
+          <span class="bench-label">Performance</span>
+          <div class="bench-track"><div class="bench-fill" style="width:50%"></div></div>
+          <span class="bench-val">5.0</span>
+        </div>
+        <p class="note">Weighted toward the primary task — saving a schedule — rather than pure aesthetics. Visual design scores high and does not save the product, because the failures are all below the surface.</p>
+      </div>
+
+      <div class="panel overall">
+        <div class="num">4.8</div>
+        <div class="of">out of 10</div>
+        <div class="grade">Needs work</div>
+        <p style="font-size:12px;color:var(--muted);margin-top:18px;padding-top:16px;border-top:1px solid var(--line-soft)">
+          The gap between 8.2 and 2.0 is the whole story: a polished shell sitting on top of a feedback layer that does not work.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SEVERITY ============ -->
+  <section>
+    <div class="s-head">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+      <h2>Severity breakdown</h2>
+    </div>
+    <p class="s-sub">Weighted toward what actually stops a user saving a schedule. The four critical items all sit on the primary path.</p>
+
+    <div class="sevbar">
+      <div style="width:21%;background:var(--crit)">4</div>
+      <div style="width:26%;background:var(--high)">5</div>
+      <div style="width:32%;background:var(--med)">6</div>
+      <div style="width:21%;background:var(--low)">4</div>
+    </div>
+    <div class="sevlegend">
+      <span><i class="dot" style="background:var(--crit)"></i> Critical — blocks or breaks the task (4)</span>
+      <span><i class="dot" style="background:var(--high)"></i> High — trust, security, accessibility (5)</span>
+      <span><i class="dot" style="background:var(--med)"></i> Medium — friction and confusion (6)</span>
+      <span><i class="dot" style="background:var(--low)"></i> Low — polish and hygiene (4)</span>
+    </div>
+  </section>
+
+  <!-- ============ JOURNEY ============ -->
+  <section>
+    <div class="s-head">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/></svg>
+      <h2>The core journey, broken</h2>
+    </div>
+    <p class="s-sub">Adding a program is the one thing this page exists to do. Marked steps are where the current build loses the user.</p>
+
+    <div class="journeys">
+      <div class="jcol">
+        <div class="jtitle">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/></svg>
+          Current behaviour
+          <span class="tag bad">4 breaks</span>
+        </div>
+        <ol class="j">
+          <li>
+            <b>Fill in the form</b>
+            <span class="why">Days, start/end time, program name.</span>
+          </li>
+          <li>
+            <b>Validation → modal alert</b>
+            <span class="why">Errors arrive as a popup, not next to the field that caused them.</span>
+          </li>
+          <li class="bad">
+            <b>Confirm dialog</b>
+            <span class="why">Button labels silently fail to change — this renders as <b>No / Yes</b>.</span>
+          </li>
+          <li class="bad">
+            <b>"You need to be logged in"</b>
+            <span class="why">The auth check runs <i>after</i> confirmation. The user retypes everything.</span>
+          </li>
+          <li class="bad">
+            <b>Save → success alert</b>
+            <span class="why">Stacks a second dialog on top of the first: "add another?"</span>
+          </li>
+          <li class="bad">
+            <b>List does not update</b>
+            <span class="why">The new program is missing from Scheduled Programs until a manual reload.</span>
+          </li>
+        </ol>
+      </div>
+
+      <div class="jcol">
+        <div class="jtitle">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+          Recommended behaviour
+          <span class="tag good">0 dead ends</span>
+        </div>
+        <ol class="j">
+          <li>
+            <b>Auth checked up front</b>
+            <span class="why">Page nudges to log in before any work is done, not after.</span>
+          </li>
+          <li>
+            <b>Inline field validation</b>
+            <span class="why">Red hairline + message under the exact field. Screen reader announces it.</span>
+          </li>
+          <li>
+            <b>Confirm with real labels</b>
+            <span class="why">Buttons read <b>Cancel</b> and <b>Add program</b> — never Yes/No.</span>
+          </li>
+          <li>
+            <b>Save with inline progress</b>
+            <span class="why">Button shows "Saving…" and disables; no ambiguity.</span>
+          </li>
+          <li>
+            <b>One success message</b>
+            <span class="why">An inline confirmation banner. No stacked modal dialogs.</span>
+          </li>
+          <li>
+            <b>List refreshes in place</b>
+            <span class="why">New card animates in, form stays filled for the next entry.</span>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CRITICAL ============ -->
+  <section>
+    <div class="s-head">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 20h20L12 2z"/><path d="M12 9v4M12 17h.01"/></svg>
+      <h2>Critical findings</h2>
+    </div>
+    <p class="s-sub">Four defects on the primary path. Each has been confirmed by reading the source, not inferred.</p>
+
+    <div class="finding">
+      <div class="f-top">
+        <span class="f-id">C1</span>
+        <div class="f-title">Confirm and Alert dialogs are visually identical — the labels never change</div>
+        <span class="sev critical">Critical</span>
+      </div>
+      <div class="f-body">
+        <div>
+          <h4>The defect</h4>
+          <p><code>script.js</code> relabels the dialog buttons via <code>$('#btnClo')</code> and <code>$('#btnAcc')</code> — but the markup defines <code>id="modal-no-btn"</code> and <code>id="modal-yes-btn"</code>. The two IDs do not exist anywhere in the project, so every jQuery write is a silent no-op.</p>
+          <p style="margin-top:8px">The result: a destructive "are you sure?" confirmation and a passive success notice both present as <strong>No / Yes</strong>.</p>
+        </div>
+        <div>
+          <h4>Why it matters</h4>
+          <p>"Yes" carries no meaning. On a confirmation the user must read the body text to know what they are agreeing to — recognition has collapsed into recall. This is also the direct cause of C4 and H1.</p>
+          <h4 style="margin-top:14px">Fix</h4>
+          <p>Replace both IDs with the real ones, then give the dialog a proper mode: <code>customConfirm</code> renders <em>Cancel / Add program</em>, <code>customAlert</code> renders a single <em>Close</em>.</p>
+        </div>
+      </div>
+      <span class="ref">script.js:249-250, 268-269 · try.html:330, 334</span>
+    </div>
+
+    <div class="finding">
+      <div class="f-top">
+        <span class="f-id">C2</span>
+        <div class="f-title">The login requirement is discovered <em>after</em> the user has already filled the form in</div>
+        <span class="sev critical">Critical</span>
+      </div>
+      <div class="f-body">
+        <div>
+          <h4>The defect</h4>
+          <p>The <code>isLoggedIn()</code> check sits at line 548 — <em>after</em> the confirmation dialog is awaited at line 544. The user selects days, sets times, types a name, clicks Add, reads the confirmation, presses Yes… and only then learns they must log in.</p>
+          <p style="margin-top:8px">The form state survives the interrupt, but the flow has been reset to zero confidence.</p>
+        </div>
+        <div>
+          <h4>Why it matters</h4>
+          <p>Auth is a precondition, not a validation error. Checking preconditions after the expensive part of the task is the single most common cause of abandoned flows.</p>
+          <h4 style="margin-top:14px">Fix</h4>
+          <p>Move the check to the top of <code>captureData()</code>, before any validation. Better still, gate the Add button itself and show a "Log in to add programs" prompt in place of the form while logged out.</p>
+        </div>
+      </div>
+      <span class="ref">try.html:544 → 548</span>
+    </div>
+
+    <div class="finding">
+      <div class="f-top">
+        <span class="f-id">C3</span>
+        <div class="f-title">The scheduled-programs list never refreshes after a successful save</div>
+        <span class="sev critical">Critical</span>
+      </div>
+      <div class="f-body">
+        <div>
+          <h4>The defect</h4>
+          <p><code>fetchRecordedPrograms()</code> is called exactly once, on page load. The success branch after <code>/newProgram</code> never calls it — instead it clears the form and asks "Would you like to add another program?"</p>
+          <p style="margin-top:8px">Answering <b>No</b> does <code>window.location.href = '/try.html'</code> — a full page reload used as a substitute for a refetch. Answering <b>Yes</b> leaves the stale list on screen entirely.</p>
+        </div>
+        <div>
+          <h4>Why it matters</h4>
+          <p>The app reports success for work whose result is invisible. The user has no on-screen confirmation that their program actually exists — the core promise of the page is unverified. It also throws away scroll position and re-downloads the whole bundle.</p>
+          <h4 style="margin-top:14px">Fix</h4>
+          <p>Call <code>await fetchRecordedPrograms()</code> on success and drop the reload. Let the form keep its values so repeat entry is one keystroke from the next program.</p>
+        </div>
+      </div>
+      <span class="ref">try.html:493 (only call) · try.html:589-602 (success path)</span>
+    </div>
+
+    <div class="finding">
+      <div class="f-top">
+        <span class="f-id">C4</span>
+        <div class="f-title">One global promise slot — a second dialog strands the first forever</div>
+        <span class="sev critical">Critical</span>
+      </div>
+      <div class="f-body">
+        <div>
+          <h4>The defect</h4>
+          <p>Every dialog writes to a single module-level variable, <code>dialogResolveFunction</code>. There is no queue and no stack. If a second dialog opens while the first is awaiting, the resolver is overwritten and the first promise never settles.</p>
+          <p style="margin-top:8px">Nothing times out, so the awaiting code blocks silently — and the Add button stays disabled with no way out but refreshing.</p>
+        </div>
+        <div>
+          <h4>Why it matters</h4>
+          <p>This is a hang, not a cosmetic bug. Because C1 means alerts and confirms are indistinguishable, users clicking buttons quickly is the <em>expected</em> path — exactly the sequence that triggers it.</p>
+          <h4 style="margin-top:14px">Fix</h4>
+          <p>Resolve any pending promise with <code>false</code> before storing a new one, and add a focus trap + Escape handler so a dialog always has exactly one dismiss path. Consider a proper dialog component instead of hand-rolled modal CSS.</p>
+        </div>
+      </div>
+      <span class="ref">script.js:2, 244-297</span>
+    </div>
+  </section>
+
+  <!-- ============ HIGH ============ -->
+  <section>
+    <div class="s-head">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <h2>High — trust, security, accessibility</h2>
+    </div>
+    <p class="s-sub">These do not block the task, but they damage confidence, safety, or access.</p>
+
+    <div class="finding">
+      <div class="f-top">
+        <span class="f-id">H1</span>
+        <div class="f-title">The session-expired message promises an action that never happens</div>
+        <span class="sev high">High</span>
+      </div>
+      <div class="f-body">
+        <div>
+          <h4>The defect</h4>
+          <p>On a 401 the error text reads <em>"Click OK to log in now"</em>. No such button exists — the button renders as "Yes" (C1), and clicking it only closes the dialog. Nothing opens the login modal.</p>
+        </div>
+        <div>
+          <h4>Fix</h4>
+          <p>Either open <code>showLoginModal()</code> directly from the 401 branch, or drop the sentence. Silently broken instructions are worse than none.</p>
+        </div>
+      </div>
+      <span class="ref">try.html:571</span>
+    </div>
+
+    <div class="finding">
+      <div class="f-top">
+        <span class="f-id">H2</span>
+        <div class="f-title">Unescaped program names rendered into innerHTML, with the auth token in localStorage</div>
+        <span class="sev high">High</span>
+      </div>
+      <div class="f-body">
+        <div>
+          <h4>The defect</h4>
+          <p><code>formatProgramCard()</code> interpolates <code>program.prog</code> and each day name directly into an <code>innerHTML</code> template string with no escaping. The server sanitises names on write, but the card trusts that data on read.</p>
+          <p style="margin-top:8px">Any path that stores an unsanitised name — a manual database edit, a future import, a legacy row — becomes stored XSS. And because <code>authToken</code> lives in <code>localStorage</code>, injected script can exfiltrate it directly.</p>
+        </div>
+        <div>
+          <h4>Why it matters</h4>
+          <p>This is the one finding with a security dimension, and the two halves compound: an XSS sink plus a token in a JS-readable store means a stored name could hand over a live session.</p>
+          <h4 style="margin-top:14px">Fix</h4>
+          <p>Render with <code>textContent</code> or a DOM-building helper instead of string HTML — the <code>daysBadges</code> span list is a trivial <code>createElement</code> loop. Sanitise on write as defence in depth, not as the primary control.</p>
+        </div>
+      </div>
+      <span class="ref">try.html:429-449 · script.js:10-13</span>
+    </div>
+
+    <div class="finding">
+      <div class="f-top">
+        <span class="f-id">H3</span>
+        <div class="f-title">Both modals are inaccessible — no role, no focus trap, no Escape, no focus return</div>
+        <span class="sev high">High</span>
+      </div>
+      <div class="f-body">
+        <div>
+          <h4>The defect</h4>
+          <p>A project-wide search returns <strong>zero</strong> <code>aria-*</code> attributes and <strong>zero</strong> <code>role=</code> attributes. Neither dialog declares <code>role="dialog"</code> or <code>aria-modal</code>; there is no focus trap, no Escape handler, no initial focus placement, and no restore on close.</p>
+          <p style="margin-top:8px">A keyboard user can Tab straight out of the open dialog into the page behind it. A screen reader announces no dialog at all.</p>
+        </div>
+        <div>
+          <h4>Fix</h4>
+          <p>Add <code>role="dialog" aria-modal="true" aria-labelledby</code>, trap Tab within the panel, close on Escape, and return focus to the trigger. The <code>:focus-visible</code> ring in <code>style.css</code> is already there — it just needs a focusable container to live in.</p>
+        </div>
+      </div>
+      <span class="ref">try.html:95-182, 300-341 · style.css:61-64</span>
+    </div>
+
+    <div class="finding">
+      <div class="f-top">
+        <span class="f-id">H4</span>
+        <div class="f-title">The Tips card promises editing that does not exist</div>
+        <span class="sev high">High</span>
+      </div>
+      <div class="f-body">
+        <div>
+          <h4>The defect</h4>
+          <p>The tips list states <em>"You can edit programs after adding them."</em> Program cards are display-only — no edit, no delete, no toggle. A <code>/deleteProgram</code> route exists server-side and is never called by any frontend file.</p>
+        </div>
+        <div>
+          <h4>Why it matters</h4>
+          <p>A wrong instruction is a small lie the app tells about itself. And without any management affordance, a mistaken schedule can only be corrected by finding a database admin.</p>
+          <h4 style="margin-top:14px">Fix</h4>
+          <p>Add edit and delete to each card with a confirm-and-undo pattern, or delete the bullet until it is true. Wiring the existing <code>/deleteProgram</code> route is most of the work already done.</p>
+        </div>
+      </div>
+      <span class="ref">try.html:283 · app.js:265</span>
+    </div>
+
+    <div class="finding">
+      <div class="f-top">
+        <span class="f-id">H5</span>
+        <div class="f-title">A normal cold start renders as a red error state</div>
+        <span class="sev high">High</span>
+      </div>
+      <div class="f-body">
+        <div>
+          <h4>The defect</h4>
+          <p><code>/recordedPrograms</code> returns a bare <code>{}</code> before the startup read completes — the catch block on failure also returns <code>{}</code>. The client then evaluates <code>data.listings.length</code>, which throws on <code>undefined</code>, and lands in the catch that renders "Failed to load programs" in red.</p>
+        </div>
+        <div>
+          <h4>Why it matters</h4>
+          <p>An ordinary, temporary condition is reported as a failure. Users who see a red error on first paint conclude the app is broken before they have done anything.</p>
+          <h4 style="margin-top:14px">Fix</h4>
+          <p>Guard with <code>(data.listings ?? []).length</code>, have the server always return <code>{listings: []}</code>, and add a retry button to the error state — there is currently no way to retry short of refreshing.</p>
+        </div>
+      </div>
+      <span class="ref">app.js:87, 170-175 · try.html:462, 477-487</span>
+    </div>
+  </section>
+
+  <!-- ============ FULL TABLE ============ -->
+  <section>
+    <div class="s-head">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      <h2>Complete findings register</h2>
+    </div>
+    <p class="s-sub">All 19 items with source references, so they can be worked through directly.</p>
+
+    <table>
+      <thead>
+        <tr><th style="width:44px">ID</th><th>Finding</th><th style="width:88px">Severity</th><th style="width:190px">Source</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="id">C1</td><td>Confirm and Alert dialogs are identical — button relabelling targets non-existent IDs</td><td><span class="sev critical">Critical</span></td><td class="ref">script.js:249, 268</td></tr>
+        <tr><td class="id">C2</td><td>Login check runs after confirmation, resetting the user's work</td><td><span class="sev critical">Critical</span></td><td class="ref">try.html:544 → 548</td></tr>
+        <tr><td class="id">C3</td><td>Program list never refetches after save; "no" branch does a full page reload</td><td><span class="sev critical">Critical</span></td><td class="ref">try.html:589-602</td></tr>
+        <tr><td class="id">C4</td><td>Single global dialog resolver can strand an awaiting promise permanently</td><td><span class="sev critical">Critical</span></td><td class="ref">script.js:2, 292</td></tr>
+
+        <tr><td class="id">H1</td><td>"Click OK to log in now" — no such action is wired up</td><td><span class="sev high">High</span></td><td class="ref">try.html:571</td></tr>
+        <tr><td class="id">H2</td><td>Unescaped program name in innerHTML + auth token in localStorage</td><td><span class="sev high">High</span></td><td class="ref">try.html:429-449</td></tr>
+        <tr><td class="id">H3</td><td>Modals lack role, aria-modal, focus trap, Escape and focus restore</td><td><span class="sev high">High</span></td><td class="ref">try.html:95-341</td></tr>
+        <tr><td class="id">H4</td><td>Tips card promises editing; no edit/delete UI exists despite the API route</td><td><span class="sev high">High</span></td><td class="ref">try.html:283</td></tr>
+        <tr><td class="id">H5</td><td>Cold-start empty response renders as a red failure state</td><td><span class="sev high">High</span></td><td class="ref">app.js:170</td></tr>
+
+        <tr><td class="id">M1</td><td>Validation is modal-only — no inline, field-level or announced errors</td><td><span class="sev medium">Medium</span></td><td class="ref">try.html:502-535</td></tr>
+        <tr><td class="id">M2</td><td>Time-range error copy contradicts its own example (09:00→10:00 is a different hour)</td><td><span class="sev medium">Medium</span></td><td class="ref">try.html:525</td></tr>
+        <tr><td class="id">M3</td><td>Names silently become underscored, contradicting the "match exactly" tip</td><td><span class="sev medium">Medium</span></td><td class="ref">try.html:536, 282</td></tr>
+        <tr><td class="id">M4</td><td>Confirmation renders "12:00midnight" — missing separator on hour 0 and 12</td><td><span class="sev medium">Medium</span></td><td class="ref">try.html:544</td></tr>
+        <tr><td class="id">M5</td><td>Arbitrary day icons (fire, umbrella, graduation cap) imply false meaning</td><td><span class="sev medium">Medium</span></td><td class="ref">try.html:391-399</td></tr>
+        <tr><td class="id">M6</td><td>No loading skeleton; error state offers no retry</td><td><span class="sev medium">Medium</span></td><td class="ref">try.html:452-488</td></tr>
+
+        <tr><td class="id">L1</td><td>Tailwind CDN in production plus an entirely unused Bootstrap bundle and jQuery</td><td><span class="sev low">Low</span></td><td class="ref">try.html:14, 343-344</td></tr>
+        <tr><td class="id">L2</td><td>No <code>prefers-reduced-motion</code> handling for infinite animations</td><td><span class="sev low">Low</span></td><td class="ref">style.css:7-14</td></tr>
+        <tr><td class="id">L3</td><td>Indeterminate spinner text ("Loading data on server…") — say "Saving…"</td><td><span class="sev low">Low</span></td><td class="ref">try.html:555</td></tr>
+        <tr><td class="id">L4</td><td><code>gT</code>/<code>gM</code> defined twice in two files — silent drift risk</td><td><span class="sev low">Low</span></td><td class="ref">script.js:217 / try.html:615</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============ STRENGTHS ============ -->
+  <section>
+    <div class="s-head">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
+      <h2>What is genuinely working</h2>
+    </div>
+    <p class="s-sub">Worth protecting during any refactor — these are the reasons the rest of the list is fixable rather than a rewrite.</p>
+
+    <div class="strengths">
+      <div class="st">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <h3>The server error contract</h3>
+        <p>Every failure ships a human-readable <code>message</code>, an optional <code>hint</code>, structured <code>errors</code>, and a meaningful status code — 400/401/409 are all handled distinctly. The client already maps them well. The problem is only that the modal layer throws that detail away.</p>
+      </div>
+      <div class="st">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        <h3>The empty state</h3>
+        <p>"No programs scheduled yet — Add your first program below" with a clear icon and directional copy. This is a properly designed empty state, and it is better than most production apps manage.</p>
+      </div>
+      <div class="st">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        <h3>Confirm-before-write</h3>
+        <p>Verifying the schedule before persisting is exactly right for a system that records broadcast audio — a wrong entry silently consumes a recording slot. This instinct is sound; only the dialog's presentation needs work.</p>
+      </div>
+      <div class="st">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+        <h3>Visual discipline</h3>
+        <p>A single rose accent, consistent radii, restrained shadows, a coherent icon set, and a visible <code>:focus-visible</code> ring. The design system is more disciplined than the feedback layer — which is why the polish reads well at a glance.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PLAN ============ -->
+  <section>
+    <div class="s-head">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      <h2>Remediation plan</h2>
+    </div>
+    <p class="s-sub">Sequenced so each phase leaves the app in a shippable state. P0 alone would remove every broken promise on the primary path.</p>
+
+    <div class="phase p0">
+      <div class="phase-h">
+        <span class="phase-tag">P0</span>
+        <h3>Restore trust in the core journey</h3>
+        <span class="est">~3-4 hrs</span>
+      </div>
+      <div class="tasks">
+        <div class="task"><span class="tid c">C1</span><div><b>Fix the dialog button IDs.</b> Point <code>customAlert</code>/<code>customConfirm</code> at <code>modal-no-btn</code>/<code>modal-yes-btn</code>, and give confirm real labels — "Cancel" and "Add program" instead of No/Yes.</div></div>
+        <div class="task"><span class="tid c">C2</span><div><b>Move the auth gate to the top</b> of <code>captureData()</code>, before validation and before the confirm dialog.</div></div>
+        <div class="task"><span class="tid c">C3</span><div><b>Refetch after save</b> and delete the <code>location.href</code> reload. Keep the form populated for the next entry.</div></div>
+        <div class="task"><span class="tid c">C4</span><div><b>Resolve any pending dialog before opening a new one</b>, so an overlapping click can never strand an await.</div></div>
+        <div class="task"><span class="tid m">H1</span><div><b>Wire the 401 path to <code>showLoginModal()</code></b>, or delete the "Click OK to log in now" sentence.</div></div>
+      </div>
+    </div>
+
+    <div class="phase p1">
+      <div class="phase-h">
+        <span class="phase-tag">P1</span>
+        <h3>Safety, honesty, access</h3>
+        <span class="est">~1 day</span>
+      </div>
+      <div class="tasks">
+        <div class="task"><span class="tid c">H2</span><div><b>Stop building cards from HTML strings.</b> Use <code>textContent</code> and <code>createElement</code> in <code>formatProgramCard()</code> — closes the XSS sink.</div></div>
+        <div class="task"><span class="tid c">H3</span><div><b>Make the modals accessible</b> — <code>role="dialog"</code>, <code>aria-modal</code>, focus trap, Escape to close, focus restored on close.</div></div>
+        <div class="task"><span class="tid m">H5</span><div><b>Return <code>{listings: []}</code> from the server</b>, guard the client with <code>?? []</code>, and add a retry button to the error state.</div></div>
+        <div class="task"><span class="tid m">H4</span><div><b>Add edit and delete to program cards</b> using the existing <code>/deleteProgram</code> route, with confirm-and-undo — or remove the untrue tip.</div></div>
+        <div class="task"><span class="tid m">M1</span><div><b>Add inline field errors</b> under the day grid, time selects and name input, with <code>aria-invalid</code> and <code>aria-describedby</code>.</div></div>
+      </div>
+    </div>
+
+    <div class="phase p2">
+      <div class="phase-h">
+        <span class="phase-tag">P2</span>
+        <h3>Polish and hygiene</h3>
+        <span class="est">~2-3 hrs</span>
+      </div>
+      <div class="tasks">
+        <div class="task"><span class="tid m">M2-M6</span><div><b>Fix the copy</b> — rewrite the time-range message so the example matches the rule; surface the underscore transformation to the user; add the missing time separator; drop the arbitrary day icons; add a loading skeleton.</div></div>
+        <div class="task"><span class="tid l">L1</span><div><b>Remove the unused Bootstrap bundle</b> and replace the Tailwind CDN with a built stylesheet — worth roughly 80&nbsp;KB and a render-blocking request.</div></div>
+        <div class="task"><span class="tid l">L2</span><div><b>Honour <code>prefers-reduced-motion</code></b> for the infinite equalizer and spinner animations.</div></div>
+        <div class="task"><span class="tid l">L4</span><div><b>Delete the duplicate <code>gT</code>/<code>gM</code></b> from the inline script — <code>script.js</code> already defines them globally.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <strong style="color:var(--body)">Review scope</strong> — <code style="font-family:'JetBrains Mono',monospace;font-size:11.5px">public/try.html</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:11.5px">public/script.js</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:11.5px">public/style.css</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:11.5px">app.js</code>. Every finding was confirmed by reading the source at the line references given; none are inferred from the rendered page.
+    <div class="fl">
+      <span class="chip">19 findings</span>
+      <span class="chip">4 critical</span>
+      <span class="chip">5 high</span>
+      <span class="chip">6 medium</span>
+      <span class="chip">4 low</span>
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>
