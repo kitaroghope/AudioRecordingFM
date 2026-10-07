@@ -4,7 +4,10 @@ const path = require('path');
 const ftp = require('./modules/ftp');
 const db = require('./modules/mongoDBApi');
 const config = require('./config');
-const streamUrl = config.radios.prime;
+// Read lazily from the shared config object. The stream-health checker
+// mutates config.radios.prime in place when the station moves host/port,
+// and this picks the new URL up without a restart.
+const getStreamUrl = () => config.radios.prime;
 const chunkDurationInSeconds = 6; // 1 minute
 const tempFolderPath = 'temp_stream_chunks';
 const timeChecker = require('./timeChecker');
@@ -279,7 +282,7 @@ async function fetchAndRecordChunk() {
   const startChunk = async () => {
     let response;
     try {
-      response = await fetch(streamUrl);
+      response = await fetch(getStreamUrl());
       if (!response.ok) {
         throw new Error(`HTTP error: ${response.status}`);
       }
@@ -613,12 +616,147 @@ const addProgram = async (req, res) => {
   }
 };
 
-const deleteProgram = async (req, res)=>{
+const updateProgram = async (req, res) => {
   try {
-    await db.createListing({prog:req.params.prog},'radio','programs');
-    res.json({'message':'Deleted successfully'})
+    const { original, prog, days, start, end } = req.body || {};
+
+    if (!original || typeof original !== 'string' || original.length > 100) {
+      return res.status(400).json({
+        message: 'The program being edited could not be identified.',
+        hint: 'Reload the page and try again.'
+      });
+    }
+
+    const sanitizedProg = sanitizeProgramName(prog || '');
+    if (!sanitizedProg) {
+      return res.status(400).json({
+        message: 'Please fix the following issues:',
+        errors: ['Program name is required'],
+        hint: 'Enter a name for this program and try again.'
+      });
+    }
+
+    const validation = validateProgramInput({ days: days, start: start, end: end, prog: sanitizedProg });
+    if (!validation.isValid) {
+      return res.status(400).json({
+        message: 'Please fix the following issues:',
+        errors: validation.errors,
+        hint: 'Review each error below, correct your input, and try again.'
+      });
+    }
+
+    // Confirm the program actually exists before trying to change it.
+    const found = await db.readRows({ prog: original }, 'radio', 'programs');
+    const rows = (found && Array.isArray(found.listings)) ? found.listings : [];
+    if (rows.length === 0) {
+      return res.status(404).json({
+        message: 'That program no longer exists.',
+        hint: 'Refresh the page to see your current schedule.'
+      });
+    }
+
+    const newProg = [days, start, end, sanitizedProg];
+
+    // A renamed program must not collide with a different program's name.
+    if (sanitizedProg !== original) {
+      const nameTaken = existingPrograms.some(function (entry) {
+        return entry && entry[3] === sanitizedProg;
+      });
+      if (nameTaken) {
+        return res.status(409).json({
+          message: `"${sanitizedProg}" is already in use. Please choose a different program name.`,
+          hint: 'Try selecting a different name for this program.'
+        });
+      }
+    }
+
+    // Collision check. The program being edited MUST be excluded, otherwise
+    // saving an unchanged schedule would always "collide" with itself.
+    for (const oldProg of existingPrograms) {
+      if (!oldProg || oldProg[3] === original) continue;
+
+      const ck = await timeChecker(newProg, oldProg);
+      if (ck.collision) {
+        let message;
+        if (ck.scenario.includes('already taken')) {
+          message = `"${sanitizedProg}" is already in use. Please choose a different program name.`;
+        } else if (ck.scenario.includes('Partial overlap') || ck.scenario.includes('Full overlap')) {
+          message = `This schedule conflicts with "${ck.conflictingProgram}" which runs from ${ck.start} to ${ck.end}. Please choose a different time slot.`;
+        } else {
+          message = ck.scenario + '. The program "' + ck.conflictingProgram + '" overlaps with your requested schedule.';
+        }
+        return res.status(409).json({
+          message: message,
+          hint: 'Try selecting different days or times for this program.'
+        });
+      }
+    }
+
+    const result = await db.updateRow(
+      { prog: original },
+      { days: days, start: start, end: end, prog: sanitizedProg },
+      'radio',
+      'programs'
+    );
+
+    if (result && result.err) {
+      return res.status(500).json({
+        message: 'The program could not be saved.',
+        hint: 'Please try again.'
+      });
+    }
+
+    // Keep the collision cache in sync, including when the name changed.
+    const index = existingPrograms.findIndex(function (entry) {
+      return entry && entry[3] === original;
+    });
+    if (index !== -1) {
+      existingPrograms[index] = newProg;
+    } else {
+      existingPrograms.push(newProg);
+    }
+
+    res.json({
+      message: 'Program updated successfully!',
+      success: true,
+      prog: sanitizedProg,
+      renamed: sanitizedProg !== original
+    });
   } catch (error) {
-    res.json({message:error.message})
+    console.log('updateProgram error:', error);
+    res.status(500).json({
+      message: 'An error occurred while updating the program. Please try again.',
+      hint: 'If this problem persists, please contact support.'
+    });
+  }
+};
+
+const deleteProgram = async (req, res) => {
+  try {
+    const prog = req.body && req.body.prog;
+
+    if (!prog || typeof prog !== 'string' || prog.length > 100) {
+      return res.status(400).json({
+        message: 'A program name is required to delete a schedule.',
+        hint: 'Reload the page and try again.'
+      });
+    }
+
+    await db.deleteRow({ prog: prog }, 'radio', 'programs');
+
+    // Keep the collision cache in sync — otherwise the freed time slot
+    // stays blocked and future schedules would be wrongly rejected.
+    existingPrograms = existingPrograms.filter(function (entry) {
+      return !entry || entry[3] !== prog;
+    });
+
+    res.json({ message: 'Deleted successfully', success: true });
+  } catch (error) {
+    console.log('deleteProgram error:', error);
+    res.status(500).json({
+      message: 'An error occurred while deleting the program. Please try again.',
+      hint: 'If this problem persists, please contact support.'
+    });
   }
 }
 
@@ -629,5 +767,6 @@ module.exports = {
   userRecord,
   record,
   addProgram,
+  updateProgram,
   deleteProgram
 };

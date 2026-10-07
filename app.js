@@ -9,7 +9,11 @@ const db = require('./modules/mongoDBApi');
 const ftp = require('./modules/ftp');
 const config = require('./config');
 const { verifyToken } = require('./middleware/auth');
-const streamUrl = config.radios.prime;
+const users = require('./modules/users');
+const streamHealth = require('./modules/streamHealth');
+// Read lazily — the stream-health checker can repoint this at a new host/port
+// while the server is running.
+const getStreamUrl = () => config.radios.prime;
 
 app.use(cors({
     origin: config.cors.origins,
@@ -20,7 +24,9 @@ app.use(cookieParser());
 app.set('view engine', 'ejs');
 app.use(express.json());
 app.set('views', path.join(__dirname, 'views'));
-app.use(express.static(path.join(__dirname, 'public')));
+// `index: false` keeps "/" on the server-rendered EJS route below, so this
+// folder's index.html stays reachable at /index.html without shadowing it.
+app.use(express.static(path.join(__dirname, 'public'), { index: false }));
 // app.use(express.urlencoded({extended:true}));
 
 // Global error handlers
@@ -57,6 +63,65 @@ app.use((err, req, res, next) => {
         ...(isDev && { stack: err.stack })
     });
 });
+
+// JSON feed for the static landing page (public/index.html), which cannot
+// receive server-rendered data. Same in-memory cache the EJS route uses.
+app.get('/recordings', async (req, res) => {
+  try {
+    if (Object.keys(progS).length < 1) {
+      progS = await recordings1();
+    }
+    await ensureProgramsLoaded(false);
+    res.json({ streamUrl: getStreamUrl(), programs: progS || {} });
+  } catch (error) {
+    console.error('[GET /recordings]', error.message);
+    res.status(500).json({ message: 'Could not load recordings.', programs: {} });
+  }
+});
+
+/* -------------------------------------------------------------------------- */
+/* Program schedule loading                                                    */
+/*                                                                             */
+/* recordings1() depends on the Mongo client being connected. If it is not,    */
+/* db.readRows returns undefined and the whole refresh throws — so we share    */
+/* one in-flight load, retry on a cooldown instead of caching the failure, and */
+/* kick off an attempt shortly after boot.                                     */
+/* -------------------------------------------------------------------------- */
+const programsLoad = { inFlight: null, lastAttemptAt: 0, lastSuccessAt: 0 };
+const PROGRAMS_RETRY_MS = 30000;
+
+async function ensureProgramsLoaded(force) {
+  const now = Date.now();
+
+  if (programsLoad.inFlight) return programsLoad.inFlight;
+
+  const haveData = recordedPrograms && Array.isArray(recordedPrograms.listings) && recordedPrograms.listings.length > 0;
+  if (!force && haveData) return recordedPrograms;
+
+  // Do not hammer the database while the connection is still coming up.
+  if (!force && now - programsLoad.lastAttemptAt < PROGRAMS_RETRY_MS) return recordedPrograms;
+
+  programsLoad.lastAttemptAt = now;
+
+  programsLoad.inFlight = (async () => {
+    try {
+      await recordings1();
+      if (recordedPrograms && Array.isArray(recordedPrograms.listings)) {
+        programsLoad.lastSuccessAt = Date.now();
+      }
+    } catch (error) {
+      console.error('[programs] schedule load failed:', error.message);
+    } finally {
+      programsLoad.inFlight = null;
+    }
+    return recordedPrograms;
+  })();
+
+  return programsLoad.inFlight;
+}
+
+// Warm the schedule shortly after boot instead of waiting for a page view.
+setTimeout(() => { ensureProgramsLoaded(true).catch(() => {}); }, 3000);
 
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (reason, promise) => {
@@ -99,6 +164,20 @@ function viewDate(n){
 setInterval(async ()=>{
   progS = await recordings1();
 }, 3600000);
+
+// Self-healing check: if the Prime Radio stream is dead, look the station up
+// on radio.co.ug and repoint config at the URL that is actually serving.
+// Runs in-process every hour; also exposed on demand at /stream-health.
+streamHealth.startStreamHealthCheck(60 * 60 * 1000);
+
+app.get('/stream-health', async (req, res) => {
+  try {
+    const outcome = await streamHealth.checkPrimeStream();
+    res.json({ outcome: outcome, state: streamHealth.getState() });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
 // Run old files cleanup and program folders sync every hour
 setInterval(async () => {
@@ -155,11 +234,11 @@ app.get('/', async (req, res) => {
   try {
     if(Object.keys(progS).length < 1){
       progS = await recordings1();
-      res.render('index', { streamUrl: streamUrl, recs:progS});
+      res.render('index', { streamUrl: getStreamUrl(), recs:progS});
       // console.log(progS)
     }//recs.listings
     else{
-      res.render('index', { streamUrl: streamUrl, recs:progS});
+      res.render('index', { streamUrl: getStreamUrl(), recs:progS});
       // console.log(progS)
     }
   } catch (error) {
@@ -167,25 +246,80 @@ app.get('/', async (req, res) => {
   }
 });
 
-app.get("/recordedPrograms",async (req, res)=>{
+app.get("/recordedPrograms", async (req, res) => {
   try {
-    res.json(recordedPrograms)
+    await ensureProgramsLoaded(false);
+    const listings = (recordedPrograms && Array.isArray(recordedPrograms.listings))
+      ? recordedPrograms.listings
+      : [];
+    res.json({ listings });
   } catch (error) {
-    res.json({})
+    res.json({ listings: [] });
   }
-})
+});
 
 app.get('/keepAlive',(req, res) => {
   console.log('status checked');
   res.sendStatus(200);
 });
 
-// Login endpoint - returns JWT token
+// --------------------------------------------------------------------------
+// Registration
+// --------------------------------------------------------------------------
+app.post('/register', async (req, res) => {
+  try {
+    const { username, password } = req.body || {};
+
+    const result = await users.createUser({ username, password });
+
+    if (!result.ok) {
+      return res.status(result.status).json({
+        error: result.status === 409 ? 'Username taken' : 'Validation failed',
+        message: result.status === 409
+          ? 'That username is already taken.'
+          : 'Please fix the following issues:',
+        errors: result.errors
+      });
+    }
+
+    console.log('[register] created account:', result.user.username, '(' + result.user.role + ')');
+
+    // Sign them straight in so registration is a single step.
+    const token = jwt.sign(
+      { username: result.user.username, role: result.user.role },
+      config.jwt.secret,
+      { expiresIn: config.jwt.expiresIn }
+    );
+
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: config.server.nodeEnv === 'production',
+      sameSite: 'strict',
+      maxAge: 24 * 60 * 60 * 1000
+    });
+
+    res.status(201).json({
+      message: 'Account created successfully',
+      user: result.user,
+      token,
+      expiresIn: config.jwt.expiresIn
+    });
+  } catch (error) {
+    console.error('Register error:', error);
+    res.status(500).json({
+      error: 'Server error',
+      message: 'An error occurred while creating the account'
+    });
+  }
+});
+
+// --------------------------------------------------------------------------
+// Login — database accounts first, environment admin as the bootstrap path
+// --------------------------------------------------------------------------
 app.post('/login', async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { username, password } = req.body || {};
 
-    // Basic validation
     if (!username || !password) {
       return res.status(400).json({
         error: 'Missing credentials',
@@ -193,35 +327,46 @@ app.post('/login', async (req, res) => {
       });
     }
 
-    // TODO: Replace with actual user authentication from database
-    // For now, use admin credentials from environment
-    const validUsername = process.env.ADMIN_USERNAME || 'admin';
-    const validPassword = process.env.ADMIN_PASSWORD || 'admin123';
+    let account = await users.authenticate(username, password);
+    let viaEnvAdmin = false;
 
-    if (username !== validUsername || password !== validPassword) {
+    // Fallback so there is always a way in before any account exists, and so
+    // an operator can still use ADMIN_USERNAME/ADMIN_PASSWORD.
+    if (!account) {
+      const validUsername = process.env.ADMIN_USERNAME || 'admin';
+      const validPassword = process.env.ADMIN_PASSWORD || 'admin123';
+
+      if (username === validUsername && password === validPassword) {
+        account = { username: validUsername, role: 'admin' };
+        viaEnvAdmin = true;
+      }
+    }
+
+    if (!account) {
       return res.status(401).json({
         error: 'Invalid credentials',
         message: 'Username or password is incorrect'
       });
     }
 
-    // Generate JWT token
     const token = jwt.sign(
-      { username, role: 'admin' },
+      { username: account.username, role: account.role },
       config.jwt.secret,
       { expiresIn: config.jwt.expiresIn }
     );
 
-    // Send token in cookie and response
     res.cookie('token', token, {
       httpOnly: true,
       secure: config.server.nodeEnv === 'production',
       sameSite: 'strict',
-      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+      maxAge: 24 * 60 * 60 * 1000
     });
 
     res.json({
       message: 'Login successful',
+      username: account.username,
+      role: account.role,
+      viaEnvAdmin,
       token,
       expiresIn: config.jwt.expiresIn
     });
@@ -233,6 +378,21 @@ app.post('/login', async (req, res) => {
     });
   }
 });
+
+// Only administrators may change the schedule. Registered "user" accounts can
+// sign in and browse, but cannot add, edit or delete programs.
+function requireRole(role) {
+  return function (req, res, next) {
+    if (!req.user || req.user.role !== role) {
+      return res.status(403).json({
+        error: 'Forbidden',
+        message: 'This action requires an administrator account.',
+        hint: 'Ask an administrator to change your role.'
+      });
+    }
+    next();
+  };
+}
 
 // Logout endpoint
 app.post('/logout', (req, res) => {
@@ -261,8 +421,9 @@ app.post('/stop-record', verifyToken, async (req, res) => {
   }
 });
 
-app.post('/newProgram', verifyToken, recorder.addProgram);
-app.post('/deleteProgram', verifyToken, recorder.deleteProgram);
+app.post('/newProgram', verifyToken, requireRole('admin'), recorder.addProgram);
+app.post('/updateProgram', verifyToken, requireRole('admin'), recorder.updateProgram);
+app.post('/deleteProgram', verifyToken, requireRole('admin'), recorder.deleteProgram);
 
 // FTP Manager page
 app.get('/ftp-manager', async (req, res) => {

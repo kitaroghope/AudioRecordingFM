@@ -47,9 +47,8 @@
     <nav class="bg-slate-900/95 backdrop-blur-sm sticky top-0 z-50 border-b border-slate-700/50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
-                <!-- Logo -->
                 <a href="/" class="flex items-center space-x-3 group">
-                    <img src="images/prime.jpg" alt="Logo"
+                    <img src="images/prime.jpg" alt="Prime Radio logo"
                          class="w-10 h-10 rounded-lg object-cover shadow-lg group-hover:shadow-rose-500/30 transition-shadow duration-300">
                     <span class="text-white font-semibold text-lg hidden sm:block">Prime Radio</span>
                 </a>
@@ -62,14 +61,14 @@
                     <a href="/ftp-manager" class="px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-all duration-200">
                         <i class="fa fa-server mr-2"></i>FTP Manager
                     </a>
-                    <!-- Login/Logout Button -->
-                    <button type="button" id="authBtn" onclick="handleAuthClick(event)" class="px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-all duration-200">
+                    <button type="button" id="authBtn" class="px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-all duration-200">
                         <i class="fa fa-user mr-2"></i><span id="authBtnText">Login</span>
                     </button>
                 </div>
 
                 <!-- Mobile Menu Button -->
-                <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">
+                <button id="mobile-menu-btn" aria-expanded="false" aria-controls="mobile-menu" aria-label="Toggle navigation menu"
+                        class="md:hidden p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">
                     <i class="fa fa-bars text-xl"></i>
                 </button>
             </div>
@@ -84,7 +83,7 @@
                 <a href="/ftp-manager" class="block px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-all">
                     <i class="fa fa-server mr-2"></i>FTP Manager
                 </a>
-                <button type="button" id="authBtnMobile" onclick="handleAuthClick(event)" class="w-full text-left block px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-all">
+                <button type="button" id="authBtnMobile" class="w-full text-left block px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-all">
                     <i class="fa fa-user mr-2"></i><span id="authBtnMobileText">Login</span>
                 </button>
             </div>
@@ -92,53 +91,51 @@
     </nav>
 
     <!-- Login Modal -->
-    <div id="login-modal" class="fixed inset-0 z-[9999] hidden">
-        <!-- Backdrop -->
-        <div class="login-backdrop absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="hideLoginModal()"></div>
+    <div id="login-modal" class="fixed inset-0 z-[9999] hidden" aria-hidden="true">
+        <div class="login-backdrop absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
 
-        <!-- Modal Content -->
         <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
-            <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full pointer-events-auto transform transition-all duration-300 scale-95 opacity-0"
-                 id="login-modal-content">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full pointer-events-auto transform transition-all duration-300 scale-95 opacity-0 overflow-hidden"
+                 id="login-modal-content"
+                 role="dialog"
+                 aria-modal="true"
+                 aria-labelledby="login-modal-title">
 
-                <!-- Header -->
                 <div class="flex items-center justify-between p-6 border-b border-slate-100">
                     <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 bg-gradient-to-br from-rose-500 to-rose-600 rounded-xl flex items-center justify-center">
+                        <div class="w-10 h-10 bg-gradient-to-br from-rose-500 to-rose-600 rounded-xl flex items-center justify-center flex-shrink-0">
                             <i class="fa fa-lock text-white"></i>
                         </div>
                         <div>
-                            <h3 class="text-lg font-bold text-slate-800">Welcome Back</h3>
+                            <h3 id="login-modal-title" class="text-lg font-bold text-slate-800">Welcome Back</h3>
                             <p class="text-sm text-slate-500">Sign in to manage programs</p>
                         </div>
                     </div>
-                    <button id="login-modal-close-btn" onclick="hideLoginModal()"
+                    <button id="login-modal-close-btn" aria-label="Close sign in dialog"
                             class="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
                         <i class="fa fa-times"></i>
                     </button>
                 </div>
 
-                <!-- Login Form -->
-                <form id="loginForm" class="p-6 space-y-4">
+                <form id="loginForm" class="p-6 space-y-4" novalidate>
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-2">
+                        <label for="loginUsername" class="block text-sm font-semibold text-slate-700 mb-2">
                             <i class="fa fa-user mr-2 text-rose-500"></i>Username
                         </label>
-                        <input type="text" id="loginUsername" placeholder="Enter your username"
+                        <input type="text" id="loginUsername" name="username" autocomplete="username" placeholder="Enter your username"
                                class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-all placeholder-slate-400"
                                required>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-2">
+                        <label for="loginPassword" class="block text-sm font-semibold text-slate-700 mb-2">
                             <i class="fa fa-key mr-2 text-rose-500"></i>Password
                         </label>
-                        <input type="password" id="loginPassword" placeholder="Enter your password"
+                        <input type="password" id="loginPassword" name="password" autocomplete="current-password" placeholder="Enter your password"
                                class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-all placeholder-slate-400"
                                required>
                     </div>
 
-                    <!-- Error Message -->
-                    <div id="loginError" class="hidden bg-red-50 border border-red-200 rounded-xl p-4">
+                    <div id="loginError" class="hidden bg-red-50 border border-red-200 rounded-xl p-4" role="alert" aria-live="assertive">
                         <div class="flex items-start gap-3">
                             <div class="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
                                 <i class="fa fa-exclamation-circle text-red-500"></i>
@@ -150,8 +147,7 @@
                         </div>
                     </div>
 
-                    <!-- Success Message -->
-                    <div id="loginSuccess" class="hidden bg-emerald-50 border border-emerald-200 rounded-xl p-4">
+                    <div id="loginSuccess" class="hidden bg-emerald-50 border border-emerald-200 rounded-xl p-4" role="status" aria-live="polite">
                         <div class="flex items-start gap-3">
                             <div class="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
                                 <i class="fa fa-check-circle text-emerald-500"></i>
@@ -170,101 +166,269 @@
                     </button>
                 </form>
 
-                <!-- Footer -->
                 <div class="px-6 pb-6">
                     <p class="text-center text-sm text-slate-500">
                         <i class="fa fa-info-circle mr-1"></i>
                         Contact your administrator if you forgot your credentials
                     </p>
+                    <button type="button" id="showRegisterBtn"
+                            class="mt-3 w-full text-center text-sm font-semibold text-rose-600 hover:text-rose-700 transition-colors">
+                        Need an account? Register
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="register-modal" class="fixed inset-0 z-[9999] hidden" aria-hidden="true">
+        <div class="register-backdrop absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
+
+        <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full pointer-events-auto transform transition-all duration-300 scale-95 opacity-0 overflow-hidden max-h-[calc(100dvh-2rem)] overflow-y-auto"
+                 id="register-modal-content"
+                 role="dialog"
+                 aria-modal="true"
+                 aria-labelledby="register-modal-title">
+
+                <div class="flex items-center justify-between p-6 border-b border-slate-100">
+                    <div class="flex items-center space-x-3 min-w-0">
+                        <div class="w-10 h-10 bg-gradient-to-br from-rose-500 to-rose-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <i class="fa fa-user-plus text-white"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <h3 id="register-modal-title" class="text-lg font-bold text-slate-800">Create an account</h3>
+                            <p class="text-sm text-slate-500">Register to manage programs</p>
+                        </div>
+                    </div>
+                    <button id="register-modal-close-btn" aria-label="Close registration dialog"
+                            class="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors flex-shrink-0">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </div>
+
+                <form id="registerForm" class="p-6 space-y-4" novalidate>
+                    <div>
+                        <label for="registerUsername" class="block text-sm font-semibold text-slate-700 mb-2">
+                            <i class="fa fa-user mr-2 text-rose-500"></i>Username
+                        </label>
+                        <input type="text" id="registerUsername" name="username" autocomplete="username" placeholder="Choose a username"
+                               class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-all placeholder-slate-400"
+                               required>
+                        <p class="text-xs text-slate-400 mt-2">3–32 characters. Letters, numbers, dots, dashes and underscores.</p>
+                    </div>
+
+                    <div>
+                        <label for="registerPassword" class="block text-sm font-semibold text-slate-700 mb-2">
+                            <i class="fa fa-key mr-2 text-rose-500"></i>Password
+                        </label>
+                        <input type="password" id="registerPassword" name="password" autocomplete="new-password" placeholder="At least 8 characters"
+                               class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-all placeholder-slate-400"
+                               required>
+                    </div>
+
+                    <div>
+                        <label for="registerConfirm" class="block text-sm font-semibold text-slate-700 mb-2">
+                            <i class="fa fa-key mr-2 text-rose-500"></i>Confirm password
+                        </label>
+                        <input type="password" id="registerConfirm" name="confirmPassword" autocomplete="new-password" placeholder="Re-enter your password"
+                               class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-all placeholder-slate-400"
+                               required>
+                    </div>
+
+                    <div id="registerError" class="hidden bg-red-50 border border-red-200 rounded-xl p-4" role="alert" aria-live="assertive">
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="fa fa-exclamation-circle text-red-500"></i>
+                            </div>
+                            <ul id="registerErrorList" class="text-sm text-red-700 space-y-1"></ul>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="registerSubmitBtn"
+                            class="w-full px-6 py-3 bg-gradient-to-r from-rose-500 to-rose-600 text-white font-semibold rounded-xl shadow-lg shadow-rose-500/30 hover:shadow-rose-500/50 hover:from-rose-600 hover:to-rose-700 transition-all flex items-center justify-center gap-2">
+                        <i class="fa fa-user-plus"></i>
+                        Create account
+                    </button>
+                </form>
+
+                <div class="px-6 pb-6">
+                    <button type="button" id="backToLoginBtn"
+                            class="w-full text-center text-sm font-semibold text-rose-600 hover:text-rose-700 transition-colors">
+                        Already have an account? Sign in
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Main Content -->
-    <main class="flex-1 py-8">
+    <main class="flex-1 py-6 sm:py-8">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
 
             <!-- Page Header -->
-            <div class="text-center mb-10">
+            <div class="text-center mb-8 sm:mb-10">
                 <div class="w-16 h-16 bg-gradient-to-br from-rose-500 to-rose-600 rounded-2xl flex items-center justify-center shadow-lg shadow-rose-500/30 mx-auto mb-4">
                     <i class="fa fa-calendar-plus text-white text-2xl"></i>
                 </div>
-                <h1 class="text-3xl md:text-4xl font-bold text-slate-800 mb-2">Schedule a Recording</h1>
-                <p class="text-slate-500">Set up automatic recording for your favorite Prime Radio programs</p>
+                <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-800 mb-2">Schedule a Recording</h1>
+                <p class="text-slate-500 text-sm sm:text-base">Set up automatic recording for your favorite Prime Radio programs</p>
             </div>
 
             <!-- Recorded Programs Section -->
-            <div class="bg-white rounded-2xl shadow-lg border border-rose-100 overflow-hidden mb-8">
-                <div class="bg-gradient-to-r from-rose-500 to-rose-600 px-6 py-4">
-                    <h2 class="text-xl font-bold text-white flex items-center">
-                        <i class="fa fa-list mr-3"></i>Scheduled Programs
+            <div class="bg-white rounded-2xl shadow-lg border border-rose-100 overflow-hidden mb-6 sm:mb-8">
+                <div class="bg-gradient-to-r from-rose-500 to-rose-600 px-4 sm:px-6 py-4 flex items-center justify-between gap-3">
+                    <h2 class="text-lg sm:text-xl font-bold text-white flex items-center min-w-0">
+                        <i class="fa fa-list mr-3 flex-shrink-0"></i>
+                        <span class="truncate">Scheduled Programs</span>
                     </h2>
+                    <span id="programCount"
+                          class="flex-shrink-0 bg-white/20 text-white text-xs font-semibold px-2.5 py-1 rounded-full"
+                          aria-live="polite">—</span>
                 </div>
-                <div id="recordedProgramsList" class="p-6 space-y-3">
-                    <!-- Recorded programs will be dynamically added here -->
+                <div class="scroller-wrap">
+                    <div id="recordedProgramsList" class="p-2.5 sm:p-4" aria-busy="true">
+                        <!-- Skeleton placeholder replaced on load -->
+                        <div class="rounded-xl border border-slate-100 p-4 space-y-3" aria-hidden="true">
+                            <div class="skeleton h-4 w-1/3"></div>
+                            <div class="flex gap-2">
+                                <div class="skeleton h-5 w-16 rounded-full"></div>
+                                <div class="skeleton h-5 w-16 rounded-full"></div>
+                            </div>
+                            <div class="skeleton h-3 w-1/2"></div>
+                        </div>
+                        <div class="rounded-xl border border-slate-100 p-4 space-y-3" aria-hidden="true">
+                            <div class="skeleton h-4 w-1/4"></div>
+                            <div class="flex gap-2">
+                                <div class="skeleton h-5 w-16 rounded-full"></div>
+                                <div class="skeleton h-5 w-16 rounded-full"></div>
+                            </div>
+                            <div class="skeleton h-3 w-2/5"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <!-- Schedule Form -->
             <div class="bg-white rounded-2xl shadow-lg border border-rose-100 overflow-hidden">
-                <div class="bg-gradient-to-r from-slate-800 to-slate-900 px-6 py-4">
-                    <h2 class="text-xl font-bold text-white flex items-center">
+                <div class="bg-gradient-to-r from-slate-800 to-slate-900 px-4 sm:px-6 py-4">
+                    <h2 class="text-lg sm:text-xl font-bold text-white flex items-center">
                         <i class="fa fa-clock mr-3"></i>New Program Schedule
                     </h2>
                 </div>
 
-                <form id="programForm" class="p-6 space-y-6">
+                <!-- Status banner -->
+                <div id="formStatus" class="px-4 sm:px-6 pt-5" role="status" aria-live="polite"></div>
+
+                <!-- Edit mode banner -->
+                <div id="editBanner" class="hidden mx-4 sm:mx-6 mt-5 bg-slate-800 text-white rounded-xl px-4 py-3 flex items-center gap-3">
+                    <i class="fa fa-pen text-slate-400 flex-shrink-0"></i>
+                    <p class="text-sm flex-1 min-w-0 truncate">
+                        Editing <span id="editTargetName" class="font-semibold"></span>
+                    </p>
+                    <button type="button" id="cancelEditBtn"
+                            class="flex-shrink-0 text-sm font-semibold text-rose-400 hover:text-rose-300 transition-colors">
+                        Cancel
+                    </button>
+                </div>
+
+                <form id="programForm" class="p-4 sm:p-6 space-y-6" novalidate>
+
                     <!-- Days Selection -->
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-3">
-                            <i class="fa fa-calendar-day mr-2 text-rose-500"></i>Days when the program is hosted
-                        </label>
-                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="daysContainer">
-                            <!-- Days will be populated by JavaScript -->
+                        <div class="flex items-center justify-between gap-3 mb-3">
+                            <label class="block text-sm font-semibold text-slate-700">
+                                <i class="fa fa-calendar-day mr-2 text-rose-500"></i>Days
+                            </label>
+                            <div class="flex items-center gap-2 text-xs">
+                                <button type="button" id="selectAllDays"
+                                        class="px-2.5 py-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors">
+                                    Every day
+                                </button>
+                                <button type="button" id="clearDays"
+                                        class="px-2.5 py-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors">
+                                    Clear
+                                </button>
+                            </div>
                         </div>
+
+                        <div id="daysContainer" class="day-grid"
+                             role="group" aria-describedby="daysError"></div>
+                        <p id="daysError" class="field-error" role="alert">
+                            <i class="fa fa-circle-exclamation"></i>
+                            <span>Select at least one day.</span>
+                        </p>
                     </div>
 
                     <!-- Time Selection -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                        <!-- Start Time -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
                         <div>
                             <label class="block text-sm font-semibold text-slate-700 mb-3">
-                                <i class="fa fa-play-circle mr-2 text-emerald-500"></i>Program start time
+                                <i class="fa fa-play-circle mr-2 text-emerald-500"></i>Starts
                             </label>
                             <div class="flex items-center gap-2">
-                                <select id="startHour" class="hourSelect flex-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-all"></select>
-                                <span class="text-slate-500 font-bold">:</span>
-                                <select id="startMinute" class="minuteSelect flex-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-all"></select>
+                                <select id="startHour" aria-label="Start hour"
+                                        class="flex-1 min-w-0 px-3 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-all"></select>
+                                <span class="text-slate-400 font-bold" aria-hidden="true">:</span>
+                                <select id="startMinute" aria-label="Start minute"
+                                        class="flex-1 min-w-0 px-3 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-all"></select>
                             </div>
                         </div>
 
-                        <!-- End Time -->
                         <div>
                             <label class="block text-sm font-semibold text-slate-700 mb-3">
-                                <i class="fa fa-stop-circle mr-2 text-red-500"></i>Program end time
+                                <i class="fa fa-stop-circle mr-2 text-red-500"></i>Ends
                             </label>
                             <div class="flex items-center gap-2">
-                                <select id="endHour" class="hourSelect flex-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-all"></select>
-                                <span class="text-slate-500 font-bold">:</span>
-                                <select id="endMinute" class="minuteSelect flex-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-all"></select>
+                                <select id="endHour" aria-label="End hour"
+                                        class="flex-1 min-w-0 px-3 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-all"></select>
+                                <span class="text-slate-400 font-bold" aria-hidden="true">:</span>
+                                <select id="endMinute" aria-label="End minute"
+                                        class="flex-1 min-w-0 px-3 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-all"></select>
                             </div>
                         </div>
                     </div>
+
+                    <!-- Duration readout -->
+                    <div class="flex flex-wrap items-center gap-2 text-xs text-slate-500 -mt-2">
+                        <span class="inline-flex items-center gap-1.5 bg-slate-100 text-slate-600 font-medium px-2.5 py-1 rounded-full">
+                            <i class="fa fa-clock text-slate-400"></i>
+                            <span id="durationLabel">Runs for 1 hour</span>
+                        </span>
+                        <span id="midnightNote" class="hidden inline-flex items-center gap-1.5 bg-amber-100 text-amber-800 font-medium px-2.5 py-1 rounded-full">
+                            <i class="fa fa-moon"></i> Continues past midnight
+                        </span>
+                    </div>
+                    <p id="timeError" class="field-error" role="alert">
+                        <i class="fa fa-circle-exclamation"></i>
+                        <span></span>
+                    </p>
 
                     <!-- Program Name -->
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-3">
+                        <label for="programName" class="block text-sm font-semibold text-slate-700 mb-3">
                             <i class="fa fa-microphone mr-2 text-rose-500"></i>Program name
                         </label>
-                        <input type="text" id="programName" placeholder="Enter program name"
+                        <input type="text" id="programName" placeholder="e.g. Morning Drive" autocomplete="off"
+                               aria-describedby="programNameHint"
                                class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-all placeholder-slate-400">
+                        <p id="programNameHint" class="text-xs text-slate-400 mt-2">
+                            Use the name exactly as it is announced on air.
+                        </p>
+                        <p id="nameTransformHint" class="hidden text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mt-2">
+                            <i class="fa fa-circle-info mr-1"></i>
+                            Saved as <span id="nameTransformValue" class="font-mono font-medium"></span>
+                        </p>
+                        <p id="nameError" class="field-error" role="alert">
+                            <i class="fa fa-circle-exclamation"></i>
+                            <span>Enter a program name.</span>
+                        </p>
                     </div>
 
-                    <!-- Submit Button -->
-                    <div class="pt-4">
-                        <button type="button" id="btnAdd"
-                                class="btnAdd w-full sm:w-auto px-8 py-3 bg-gradient-to-r from-rose-500 to-rose-600 text-white font-semibold rounded-xl shadow-lg shadow-rose-500/30 hover:shadow-rose-500/50 hover:from-rose-600 hover:to-rose-700 transition-all flex items-center justify-center gap-2">
+                    <!-- Submit -->
+                    <div class="pt-2">
+                        <button type="submit" id="btnAdd"
+                                class="px-8 py-3 bg-gradient-to-r from-rose-500 to-rose-600 text-white font-semibold rounded-xl shadow-lg shadow-rose-500/30 hover:shadow-rose-500/50 hover:from-rose-600 hover:to-rose-700 transition-all flex items-center justify-center gap-2">
                             <i class="fa fa-plus"></i>
                             Add Program
                         </button>
@@ -273,14 +437,15 @@
             </div>
 
             <!-- Info Card -->
-            <div class="mt-8 bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-6 border border-amber-200">
-                <h3 class="font-semibold text-amber-800 mb-2 flex items-center">
+            <div id="tipsCard" class="mt-6 sm:mt-8 bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-5 sm:p-6 border border-amber-200">
+                <h3 class="font-semibold text-amber-800 mb-3 flex items-center">
                     <i class="fa fa-lightbulb mr-2"></i>Tips
                 </h3>
-                <ul class="text-sm text-amber-700 space-y-1">
-                    <li>• Programs that run past midnight (e.g., 23:00 to 01:00) are supported</li>
-                    <li>• Make sure the program name matches exactly what's on Prime Radio</li>
-                    <li>• You can edit programs after adding them</li>
+                <ul class="text-sm text-amber-700 space-y-1.5 list-none">
+                    <li><i class="fa fa-angle-right mr-1.5 text-amber-500"></i>Programs that run past midnight (e.g. 23:00 to 01:00) are supported.</li>
+                    <li><i class="fa fa-angle-right mr-1.5 text-amber-500"></i>Spaces in a program name are stored as underscores.</li>
+                    <li><i class="fa fa-angle-right mr-1.5 text-amber-500"></i>Overlapping schedules are rejected — one program per time slot.</li>
+                    <li><i class="fa fa-angle-right mr-1.5 text-amber-500"></i>You can delete a schedule from the list above at any time.</li>
                 </ul>
             </div>
         </div>
@@ -296,351 +461,966 @@
         </div>
     </footer>
 
+    <!-- Undo toast -->
+    <div id="undoToast" class="fixed bottom-4 left-1/2 -translate-x-1/2 z-[9998] w-[calc(100%-2rem)] max-w-md sm:left-auto sm:right-6 sm:translate-x-0"
+         role="status" aria-live="polite">
+        <div class="bg-slate-900 text-white rounded-xl shadow-2xl px-4 py-3 flex items-center gap-3">
+            <i class="fa fa-trash-can text-slate-400 flex-shrink-0"></i>
+            <p id="undoMessage" class="text-sm flex-1 min-w-0 truncate">Program deleted.</p>
+            <button type="button" id="undoBtn"
+                    class="flex-shrink-0 text-sm font-semibold text-rose-400 hover:text-rose-300 transition-colors">
+                Undo
+            </button>
+            <button type="button" id="undoClose" aria-label="Dismiss"
+                    class="flex-shrink-0 text-slate-500 hover:text-slate-300 transition-colors">
+                <i class="fa fa-xmark"></i>
+            </button>
+        </div>
+    </div>
+
     <!-- Custom Dialog Box -->
-    <div id="custom-dialog-box" class="fixed inset-0 z-[9999] hidden">
-        <!-- Backdrop -->
+    <div id="custom-dialog-box" class="fixed inset-0 z-[9999] hidden" aria-hidden="true">
         <div class="modal-backdrop absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
 
-        <!-- Modal Content -->
         <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
-            <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full pointer-events-auto transform transition-all duration-300 scale-95 opacity-0"
-                 id="modal-content">
+            <div class="modal-scroll bg-white rounded-2xl shadow-2xl max-w-md w-full pointer-events-auto transform transition-all duration-300 scale-95 opacity-0"
+                 id="modal-content"
+                 role="dialog"
+                 aria-modal="true"
+                 aria-labelledby="textH"
+                 aria-describedby="textB">
 
-                <!-- Header -->
                 <div class="flex items-center justify-between p-6 border-b border-slate-100">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 bg-rose-100 rounded-xl flex items-center justify-center">
-                            <i class="fa fa-question text-rose-500"></i>
+                    <div class="flex items-center space-x-3 min-w-0">
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" id="dialog-icon">
+                            <i class="fa fa-question text-slate-500"></i>
                         </div>
-                        <h3 id="textH" class="text-lg font-bold text-slate-800">Confirm</h3>
+                        <h3 id="textH" class="text-lg font-bold text-slate-800 truncate">Confirm</h3>
                     </div>
-                    <button id="modal-close-btn"
-                            class="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
+                    <button id="modal-close-btn" aria-label="Close dialog"
+                            class="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors flex-shrink-0">
                         <i class="fa fa-times"></i>
                     </button>
                 </div>
 
-                <!-- Body -->
                 <div class="p-6">
                     <p id="textB" class="text-slate-600 leading-relaxed whitespace-pre-line">Are you sure you want to proceed?</p>
                 </div>
 
-                <!-- Footer -->
-                <div class="flex gap-3 p-6 border-t border-slate-100 bg-slate-50 rounded-b-2xl">
-                    <button id="modal-no-btn"
+                <div class="modal-actions flex gap-3 p-6 border-t border-slate-100 bg-slate-50 rounded-b-2xl">
+                    <button id="modal-no-btn" type="button"
                             class="flex-1 px-5 py-2.5 bg-slate-100 text-slate-700 font-medium rounded-xl hover:bg-slate-200 transition-colors">
-                        No
+                        Cancel
                     </button>
-                    <button id="modal-yes-btn"
+                    <button id="modal-yes-btn" type="button"
                             class="flex-1 px-5 py-2.5 bg-gradient-to-r from-rose-500 to-rose-600 text-white font-medium rounded-xl hover:from-rose-600 hover:to-rose-700 transition-all shadow-md hover:shadow-lg">
-                        Yes
+                        Confirm
                     </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <script src="script.js"></script>
     <script>
-        // Set current year dynamically
-        document.getElementById('currentYear').textContent = new Date().getFullYear();
+    (function () {
+        'use strict';
 
-        // Mobile menu toggle
-        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
-            var menu = document.getElementById('mobile-menu');
-            menu.classList.toggle('hidden');
-        });
+        const DAYS = [
+            { full: 'Sunday',   abbr: 'Sun' },
+            { full: 'Monday',   abbr: 'Mon' },
+            { full: 'Tuesday',  abbr: 'Tue' },
+            { full: 'Wednesday',abbr: 'Wed' },
+            { full: 'Thursday', abbr: 'Thu' },
+            { full: 'Friday',   abbr: 'Fri' },
+            { full: 'Saturday', abbr: 'Sat' }
+        ];
 
-        // Function to populate hours and minutes
-        function populateHoursAndMinutes() {
-            for (let i = 0; i < 24; i++) {
-                var am, hh;
-                if (i == 0) {
-                    am = "midnight";
-                    hh = "";
-                } else if (i < 12) {
-                    am = "am";
-                    hh = i;
-                } else if (i == 12) {
-                    am = "noon";
-                    hh = "";
-                } else {
-                    am = "pm";
-                    hh = (i - 12);
-                }
-                if (hh < 10 && hh !== "") {
-                    hh = "0" + hh;
-                }
-                $(".hourSelect").append(`<option value="${i}">${hh} ${am}</option>`);
+        const listEl   = document.getElementById('recordedProgramsList');
+        const countEl  = document.getElementById('programCount');
+        const formEl   = document.getElementById('programForm');
+        const statusEl = document.getElementById('formStatus');
+        const btnAdd   = document.getElementById('btnAdd');
+        const nameEl   = document.getElementById('programName');
+        const daysEl   = document.getElementById('daysContainer');
+
+        let undoTimer = null;
+        let pendingUndo = null;
+        let editingOriginal = null;
+
+        /* ------------------------------------------------------------------
+           Formatters
+        ------------------------------------------------------------------ */
+
+        function hour12(h) {
+            const t = gT(h);
+            return t.am === 'midnight' || t.am === 'noon' ? t.am : t.h + ' ' + t.am;
+        }
+
+        function clockLabel(pair) {
+            const [h, m] = pair;
+            const t = gT(h);
+            return t.am === 'midnight' || t.am === 'noon'
+                ? t.am
+                : t.h + ':' + gM(m) + ' ' + t.am;
+        }
+
+        /** Mirrors server-side sanitizeProgramName so the user sees the truth. */
+        function toStoredName(name) {
+            return name.trim().replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '_').substring(0, 100);
+        }
+
+        /* ------------------------------------------------------------------
+           Inline validation helpers (review finding M1)
+        ------------------------------------------------------------------ */
+
+        function setFieldError(inputEl, errorEl, message) {
+            if (inputEl) {
+                inputEl.classList.add('is-invalid');
+                inputEl.setAttribute('aria-invalid', 'true');
             }
-
-            for (let i = 0; i < 59; i++) {
-                var min = i;
-                if (min < 10) {
-                    min = "0" + min;
+            if (errorEl) {
+                if (message) {
+                    const span = errorEl.querySelector('span');
+                    if (span) span.textContent = message;
                 }
-                $(".minuteSelect").append(`<option value="${i}">${min}</option>`);
+                errorEl.classList.add('is-visible');
             }
         }
 
-        // Function to clone and populate days with modern styling
+        function clearFieldError(inputEl, errorEl) {
+            if (inputEl) {
+                inputEl.classList.remove('is-invalid');
+                inputEl.removeAttribute('aria-invalid');
+            }
+            if (errorEl) errorEl.classList.remove('is-visible');
+        }
+
+        function clearAllErrors() {
+            clearFieldError(nameEl, document.getElementById('nameError'));
+            clearFieldError(document.getElementById('startHour'), document.getElementById('timeError'));
+            document.getElementById('startMinute').classList.remove('is-invalid');
+            document.getElementById('endHour').classList.remove('is-invalid');
+            document.getElementById('endMinute').classList.remove('is-invalid');
+            clearGroupError();
+        }
+
+        function setGroupError(message) {
+            const err = document.getElementById('daysError');
+            daysEl.classList.add('is-invalid-group');
+            if (message) {
+                const span = err.querySelector('span');
+                if (span) span.textContent = message;
+            }
+            err.classList.add('is-visible');
+        }
+
+        function clearGroupError() {
+            daysEl.classList.remove('is-invalid-group');
+            document.getElementById('daysError').classList.remove('is-visible');
+        }
+
+        function showStatus(tone, title, detail) {
+            const tones = {
+                success: { box: 'bg-emerald-50 border-emerald-200', icon: 'fa-check-circle text-emerald-500', head: 'text-emerald-800', body: 'text-emerald-700' },
+                error:   { box: 'bg-red-50 border-red-200',           icon: 'fa-exclamation-circle text-red-500', head: 'text-red-800', body: 'text-red-700' },
+                info:    { box: 'bg-slate-50 border-slate-200',       icon: 'fa-circle-info text-slate-400', head: 'text-slate-800', body: 'text-slate-600' }
+            };
+            const t = tones[tone] || tones.info;
+
+            // Built with DOM APIs and textContent — never string HTML.
+            const wrap = document.createElement('div');
+            wrap.className = t.box + ' border rounded-xl p-4 flex items-start gap-3';
+
+            const icon = document.createElement('div');
+            icon.className = 'w-8 h-8 rounded-lg bg-white/70 flex items-center justify-center flex-shrink-0';
+            const glyph = document.createElement('i');
+            glyph.className = 'fa ' + t.icon;
+            icon.appendChild(glyph);
+
+            const body = document.createElement('div');
+            body.className = 'min-w-0';
+            const head = document.createElement('p');
+            head.className = 'font-semibold ' + t.head;
+            head.textContent = title;
+            body.appendChild(head);
+
+            if (detail) {
+                const p = document.createElement('p');
+                p.className = 'text-sm mt-1 ' + t.body;
+                p.textContent = detail;
+                body.appendChild(p);
+            }
+
+            wrap.appendChild(icon);
+            wrap.appendChild(body);
+            statusEl.innerHTML = '';
+            statusEl.appendChild(wrap);
+            statusEl.classList.add('is-visible');
+        }
+
+        function clearStatus() {
+            statusEl.classList.remove('is-visible');
+            statusEl.innerHTML = '';
+        }
+
+        /* ------------------------------------------------------------------
+           Populate controls
+        ------------------------------------------------------------------ */
+
         function populateDays() {
-            const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-            const dayIcons = {
-                "Sunday": "fa-sun",
-                "Monday": "fa-moon",
-                "Tuesday": "fa-fire",
-                "Wednesday": "fa-bolt",
-                "Thursday": "fa-graduation-cap",
-                "Friday": "fa-star",
-                "Saturday": "fa-umbrella"
-            };
-            const dayColors = {
-                "Sunday": "from-amber-400 to-amber-500",
-                "Monday": "from-slate-400 to-slate-500",
-                "Tuesday": "from-orange-400 to-orange-500",
-                "Wednesday": "from-yellow-400 to-yellow-500",
-                "Thursday": "from-emerald-400 to-emerald-500",
-                "Friday": "from-pink-400 to-pink-500",
-                "Saturday": "from-cyan-400 to-cyan-500"
-            };
+            const frag = document.createDocumentFragment();
 
-            days.forEach(function (day) {
-                const colorClass = dayColors[day];
-                const iconClass = dayIcons[day];
-                $('#daysContainer').append(`
-                    <label class="day-checkbox-label relative">
-                        <input type="checkbox" class="dayCheckbox sr-only peer" data-day="${day}" value="${day}">
-                        <div class="px-4 py-3 rounded-xl border-2 border-slate-200 cursor-pointer transition-all duration-200
-                                    peer-checked:border-rose-500 peer-checked:bg-rose-50
-                                    hover:border-rose-300 hover:bg-rose-50/50
-                                    flex flex-col items-center gap-1">
-                            <i class="fa ${iconClass} text-slate-400 peer-checked:text-rose-500"></i>
-                            <span class="text-sm font-medium text-slate-600 peer-checked:text-rose-600">${day}</span>
-                        </div>
-                    </label>
-                `);
+            DAYS.forEach(function (day) {
+                const label = document.createElement('label');
+                label.className = 'day-tile';
+                label.dataset.day = day.full;
+
+                const input = document.createElement('input');
+                input.type = 'checkbox';
+                input.value = day.full;
+                input.className = 'sr-only';
+
+                const inner = document.createElement('span');
+                inner.className = 'day-tile__inner flex flex-col items-center justify-center gap-0.5';
+
+                const abbr = document.createElement('span');
+                abbr.className = 'day-tile__abbr';
+                abbr.textContent = day.abbr;
+                inner.appendChild(abbr);
+
+                const sr = document.createElement('span');
+                sr.className = 'sr-only';
+                sr.textContent = day.full;
+                inner.appendChild(sr);
+
+                const check = document.createElement('span');
+                check.className = 'day-tile__check';
+                check.setAttribute('aria-hidden', 'true');
+                const checkIcon = document.createElement('i');
+                checkIcon.className = 'fa fa-check';
+                check.appendChild(checkIcon);
+
+                label.appendChild(input);
+                label.appendChild(inner);
+                label.appendChild(check);
+                frag.appendChild(label);
+            });
+
+            daysEl.appendChild(frag);
+
+            daysEl.addEventListener('change', function (e) {
+                if (e.target.type !== 'checkbox') return;
+                e.target.closest('.day-tile').classList.toggle('is-selected', e.target.checked);
+                clearGroupError();
+                updateDayHint();
             });
         }
 
-        // Function to format program card
-        function formatProgramCard(program) {
-            const daysBadges = program.days.map(day =>
-                `<span class="px-2 py-1 bg-rose-100 text-rose-700 text-xs rounded-full">${day}</span>`
-            ).join('');
-
-            return `
-                <div class="bg-slate-50 rounded-xl p-4 border border-slate-100 hover:border-rose-200 hover:bg-rose-50/50 transition-all duration-200">
-                    <div class="flex items-start justify-between mb-2">
-                        <h4 class="font-bold text-slate-800">${program.prog}</h4>
-                        <div class="w-8 h-8 bg-rose-100 rounded-lg flex items-center justify-center">
-                            <i class="fa fa-radio text-rose-500"></i>
-                        </div>
-                    </div>
-                    <div class="flex flex-wrap gap-1 mb-2">${daysBadges}</div>
-                    <div class="flex items-center gap-4 text-sm text-slate-500">
-                        <span><i class="fa fa-play-circle text-emerald-500 mr-1"></i>${gT(program.start[0]).h}:${gM(program.start[1])}${gT(program.start[0]).am}</span>
-                        <span><i class="fa fa-stop-circle text-red-500 mr-1"></i>${gT(program.end[0]).h}:${gM(program.end[1])}${gT(program.end[0]).am}</span>
-                    </div>
-                </div>
-            `;
+        function setAllDays(checked) {
+            daysEl.querySelectorAll('input[type=checkbox]').forEach(function (cb) {
+                cb.checked = checked;
+                cb.closest('.day-tile').classList.toggle('is-selected', checked);
+            });
+            clearGroupError();
+            updateDayHint();
         }
 
-        // Function to fetch and display recorded programs
-        async function fetchRecordedPrograms() {
-            try {
-                const response = await fetch("/recordedPrograms");
-                if (!response.ok) {
-                    throw new Error("Network response was not ok");
-                }
-                const data = await response.json();
-                const programsList = document.getElementById("recordedProgramsList");
-                programsList.innerHTML = "";
+        function updateDayHint() {
+            const n = daysEl.querySelectorAll('input[type=checkbox]:checked').length;
+            if (n === 0) clearGroupError();
+        }
 
-                if (data.listings.length === 0) {
-                    programsList.innerHTML = `
-                        <div class="text-center py-8">
-                            <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <i class="fa fa-calendar text-slate-400 text-2xl"></i>
-                            </div>
-                            <p class="text-slate-500">No programs scheduled yet</p>
-                            <p class="text-slate-400 text-sm">Add your first program below</p>
-                        </div>
-                    `;
-                } else {
-                    data.listings.forEach(program => {
-                        programsList.innerHTML += formatProgramCard(program);
-                    });
+        function populateHoursAndMinutes() {
+            const hourSel = ['#startHour', '#endHour'].map(function (s) { return document.querySelector(s); });
+            const minSel  = ['#startMinute', '#endMinute'].map(function (s) { return document.querySelector(s); });
+
+            hourSel.forEach(function (sel) {
+                for (let i = 0; i < 24; i++) {
+                    const t = gT(i);
+                    const text = (t.am === 'midnight' || t.am === 'noon')
+                        ? t.am
+                        : t.h + ' ' + t.am;
+                    const opt = document.createElement('option');
+                    opt.value = String(i);
+                    opt.textContent = text;
+                    sel.appendChild(opt);
                 }
-            } catch (error) {
-                console.error("Failed to fetch recorded programs:", error);
-                document.getElementById("recordedProgramsList").innerHTML = `
-                    <div class="text-center py-8">
-                        <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i class="fa fa-exclamation-triangle text-red-500 text-2xl"></i>
-                        </div>
-                        <p class="text-slate-500">Failed to load programs</p>
-                    </div>
-                `;
+            });
+
+            minSel.forEach(function (sel) {
+                for (let i = 0; i < 60; i++) {
+                    const opt = document.createElement('option');
+                    opt.value = String(i);
+                    opt.textContent = gM(i);
+                    sel.appendChild(opt);
+                }
+            });
+
+            // Sensible defaults: 09:00 → 10:00
+            document.getElementById('startHour').value = '9';
+            document.getElementById('startMinute').value = '0';
+            document.getElementById('endHour').value = '10';
+            document.getElementById('endMinute').value = '0';
+        }
+
+        /* ------------------------------------------------------------------
+           Live duration readout
+        ------------------------------------------------------------------ */
+
+        function updateDuration() {
+            const start = [parseInt(document.getElementById('startHour').value, 10),
+                           parseInt(document.getElementById('startMinute').value, 10)];
+            const end   = [parseInt(document.getElementById('endHour').value, 10),
+                           parseInt(document.getElementById('endMinute').value, 10)];
+
+            document.getElementById('durationLabel').textContent = 'Runs for ' + formatDuration(start, end);
+            document.getElementById('midnightNote').classList.toggle('hidden', start[0] <= end[0]);
+            clearFieldError(document.getElementById('startHour'), document.getElementById('timeError'));
+        }
+
+        function updateNameHint() {
+            const raw = nameEl.value.trim();
+            const hint = document.getElementById('nameTransformHint');
+            if (!raw) {
+                hint.classList.add('hidden');
+                clearFieldError(nameEl, document.getElementById('nameError'));
+                return;
+            }
+            const stored = toStoredName(raw);
+            if (stored !== raw) {
+                document.getElementById('nameTransformValue').textContent = stored;
+                hint.classList.remove('hidden');
+            } else {
+                hint.classList.add('hidden');
             }
         }
 
-        $(document).ready(async function () {
-            populateDays();
-            populateHoursAndMinutes();
-            await fetchRecordedPrograms();
+        /* ------------------------------------------------------------------
+           Program list rendering (review finding H2 — no innerHTML)
+        ------------------------------------------------------------------ */
+
+        /* An overflow container that cannot take focus is unreachable by keyboard,
+   so the strip becomes focusable and announces itself as a list. */
+function setScrollerMode(on) {
+            if (on) {
+                listEl.classList.add('is-scroller');
+                listEl.setAttribute('data-strip', '');
+                listEl.setAttribute('tabindex', '0');
+                listEl.setAttribute('role', 'list');
+                listEl.setAttribute('aria-label', 'Scheduled programs');
+            } else {
+                listEl.classList.remove('is-scroller');
+                listEl.removeAttribute('data-strip');
+                listEl.removeAttribute('tabindex');
+                listEl.removeAttribute('role');
+                listEl.removeAttribute('aria-label');
+            }
+        }
+
+        function renderSkeleton() {
+            listEl.setAttribute('aria-busy', 'true');
+            setScrollerMode(false);
+            listEl.innerHTML = '';
+            for (let i = 0; i < 2; i++) {
+                const wrap = document.createElement('div');
+                wrap.className = 'rounded-xl border border-slate-100 p-4 space-y-3';
+                wrap.setAttribute('aria-hidden', 'true');
+                ['h-4 w-1/3', 'flex gap-2', 'h-3 w-1/2'].forEach(function (mod) {
+                    const row = document.createElement('div');
+                    row.className = 'skeleton ' + mod;
+                    wrap.appendChild(row);
+                });
+                listEl.appendChild(wrap);
+            }
+        }
+
+        function renderEmpty() {
+            listEl.setAttribute('aria-busy', 'false');
+            setScrollerMode(false);
+            listEl.innerHTML = '';
+
+            const wrap = document.createElement('div');
+            wrap.className = 'text-center py-8';
+
+            const bubble = document.createElement('div');
+            bubble.className = 'w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4';
+            const glyph = document.createElement('i');
+            glyph.className = 'fa fa-calendar text-slate-400 text-2xl';
+            bubble.appendChild(glyph);
+
+            const p1 = document.createElement('p');
+            p1.className = 'text-slate-500';
+            p1.textContent = 'No programs scheduled yet';
+
+            const p2 = document.createElement('p');
+            p2.className = 'text-slate-400 text-sm';
+            p2.textContent = 'Add your first program below';
+
+            wrap.appendChild(bubble);
+            wrap.appendChild(p1);
+            wrap.appendChild(p2);
+            listEl.appendChild(wrap);
+        }
+
+        function renderError() {
+            listEl.setAttribute('aria-busy', 'false');
+            setScrollerMode(false);
+            listEl.innerHTML = '';
+
+            const wrap = document.createElement('div');
+            wrap.className = 'text-center py-8';
+
+            const bubble = document.createElement('div');
+            bubble.className = 'w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4';
+            const glyph = document.createElement('i');
+            glyph.className = 'fa fa-exclamation-triangle text-red-500 text-2xl';
+            bubble.appendChild(glyph);
+
+            const p1 = document.createElement('p');
+            p1.className = 'text-slate-600';
+            p1.textContent = 'Could not load your programs';
+
+            const p2 = document.createElement('p');
+            p2.className = 'text-slate-400 text-sm mt-1';
+            p2.textContent = 'Check your connection and try again.';
+
+            const retry = document.createElement('button');
+            retry.type = 'button';
+            retry.className = 'mt-4 inline-flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-700 text-sm font-medium rounded-xl hover:bg-slate-200 transition-colors';
+            const retryIcon = document.createElement('i');
+            retryIcon.className = 'fa fa-rotate-right';
+            retry.appendChild(retryIcon);
+            retry.appendChild(document.createTextNode('Try again'));
+            retry.addEventListener('click', fetchRecordedPrograms);
+
+            wrap.appendChild(bubble);
+            wrap.appendChild(p1);
+            wrap.appendChild(p2);
+            wrap.appendChild(retry);
+            listEl.appendChild(wrap);
+        }
+
+        const DAY_ABBR = {
+            Sunday: 'Sun', Monday: 'Mon', Tuesday: 'Tue', Wednesday: 'Wed',
+            Thursday: 'Thu', Friday: 'Fri', Saturday: 'Sat'
+        };
+
+        const WEEKDAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+
+        /* Condense selected days into the shortest truthful label. A row of
+           seven day chips used to wrap across several lines of vertical
+           space; plain text keeps every program on one compact row. */
+        function summariseDays(days) {
+            const list = Array.isArray(days) ? days : [];
+            if (list.length === 7) return 'Every day';
+            if (list.length === 5 && WEEKDAYS.every(function (d) { return list.indexOf(d) !== -1; })) {
+                return 'Weekdays';
+            }
+            return list.map(function (d) { return DAY_ABBR[d] || String(d).slice(0, 3); }).join(' · ');
+        }
+
+        /* Compact range for narrow rows: "9–10am". Falls back to the full form
+   whenever minutes are involved, so nothing is ever lost. */
+function compactTimeRange(start, end) {
+    const s = gT(start[0]);
+    const e = gT(end[0]);
+    const plain = s.am === 'am' || s.am === 'pm';
+
+    if (plain && s.am === e.am && start[1] === 0 && end[1] === 0) {
+        return s.h + '–' + e.h + s.am;
+    }
+    return clockLabel(start) + ' → ' + clockLabel(end);
+}
+
+function buildProgramCard(program) {
+    const card = document.createElement('div');
+    card.className = 'program-card';
+    card.setAttribute('role', 'listitem');
+
+    /* Vertical card inside the horizontal strip */
+    const name = document.createElement('p');
+    name.className = 'program-card__name';
+    name.textContent = program.prog;          // textContent — never HTML
+    name.title = program.prog;
+    card.appendChild(name);
+
+    const timeShort = document.createElement('span');
+    timeShort.className = 'program-card__time program-card__time--compact';
+    timeShort.textContent = compactTimeRange(program.start, program.end);
+    card.appendChild(timeShort);
+
+    const timeFull = document.createElement('span');
+    timeFull.className = 'program-card__time program-card__time--full';
+    timeFull.textContent = clockLabel(program.start) + ' → ' + clockLabel(program.end);
+    card.appendChild(timeFull);
+
+    const days = document.createElement('span');
+    days.className = 'program-card__days';
+    days.textContent = summariseDays(program.days);
+    card.appendChild(days);
+
+    const dur = document.createElement('span');
+    dur.className = 'program-card__duration';
+    dur.textContent = formatDuration(program.start, program.end);
+    card.appendChild(dur);
+
+            const del = document.createElement('button');
+            del.type = 'button';
+            del.className = 'program-card__action program-card__action--danger';
+            del.setAttribute('aria-label', 'Delete ' + program.prog);
+            del.title = 'Delete ' + program.prog;
+            const delIcon = document.createElement('i');
+            delIcon.className = 'fa fa-trash-can text-xs';
+            del.appendChild(delIcon);
+            del.appendChild(document.createTextNode('Delete'));
+            del.addEventListener('click', function () { handleDelete(program); });
+
+            const edit = document.createElement('button');
+            edit.type = 'button';
+            edit.className = 'program-card__action';
+            edit.setAttribute('aria-label', 'Edit ' + program.prog);
+            edit.title = 'Edit ' + program.prog;
+            const editIcon = document.createElement('i');
+            editIcon.className = 'fa fa-pen text-xs';
+            edit.appendChild(editIcon);
+            edit.appendChild(document.createTextNode('Edit'));
+            edit.addEventListener('click', function () { startEdit(program); });
+
+            const actions = document.createElement('div');
+            actions.className = 'flex items-center gap-1';
+            actions.appendChild(edit);
+            actions.appendChild(del);
+            card.appendChild(actions);
+
+            return card;
+        }
+
+        /* ------------------------------------------------------------------
+           Edit mode
+        ------------------------------------------------------------------ */
+
+        function setSubmitLabel(label) {
+            const icon = editingOriginal ? 'fa-check' : 'fa-plus';
+            btnAdd.innerHTML = '<i class="fa ' + icon + ' mr-2"></i>' + label;
+        }
+
+        function startEdit(program) {
+            if (!isLoggedIn()) {
+                customAlert(
+                    'You need to be logged in to edit a scheduled program.',
+                    'Login required',
+                    { tone: 'info', icon: 'fa-lock' }
+                ).then(function () { showLoginModal(); });
+                return;
+            }
+
+            editingOriginal = program.prog;
+
+            daysEl.querySelectorAll('input[type=checkbox]').forEach(function (cb) {
+                const on = (program.days || []).indexOf(cb.value) !== -1;
+                cb.checked = on;
+                cb.closest('.day-tile').classList.toggle('is-selected', on);
+            });
+
+            document.getElementById('startHour').value = String(program.start[0]);
+            document.getElementById('startMinute').value = String(program.start[1]);
+            document.getElementById('endHour').value = String(program.end[0]);
+            document.getElementById('endMinute').value = String(program.end[1]);
+
+            nameEl.value = program.prog;
+            updateNameHint();
+            updateDuration();
+            clearAllErrors();
+            clearStatus();
+
+            document.getElementById('editTargetName').textContent = program.prog;
+            document.getElementById('editBanner').classList.remove('hidden');
+            setSubmitLabel('Update Program');
+
+            formEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            nameEl.focus();
+        }
+
+        function cancelEdit(keepStatus) {
+            editingOriginal = null;
+            document.getElementById('editBanner').classList.add('hidden');
+            setSubmitLabel('Add Program');
+            nameEl.value = '';
+            setAllDays(false);
+            updateNameHint();
+            updateDuration();
+            clearAllErrors();
+            if (!keepStatus) clearStatus();
+        }
+
+        async function fetchRecordedPrograms() {
+            renderSkeleton();
+            try {
+                const response = await fetch('/recordedPrograms');
+                if (!response.ok) throw new Error('bad response');
+
+                const data = await response.json();
+                const listings = Array.isArray(data.listings) ? data.listings : [];
+
+                listEl.setAttribute('aria-busy', 'false');
+                listEl.innerHTML = '';
+                countEl.textContent = listings.length + (listings.length === 1 ? ' program' : ' programs');
+
+                if (listings.length === 0) {
+                    renderEmpty();
+                    return;
+                }
+
+                setScrollerMode(true);
+
+                const frag = document.createDocumentFragment();
+                listings.forEach(function (program) {
+                    frag.appendChild(buildProgramCard(program));
+                });
+                listEl.appendChild(frag);
+                listEl.scrollLeft = 0;
+
+            } catch (error) {
+                countEl.textContent = '—';
+                renderError();
+            }
+        }
+
+        /* ------------------------------------------------------------------
+           Delete + undo (review finding H4)
+        ------------------------------------------------------------------ */
+
+        function hideUndo() {
+            const toast = document.getElementById('undoToast');
+            toast.classList.remove('is-visible');
+            if (undoTimer) { clearTimeout(undoTimer); undoTimer = null; }
+            pendingUndo = null;
+        }
+
+        function showUndo(message) {
+            const toast = document.getElementById('undoToast');
+            document.getElementById('undoMessage').textContent = message;
+            toast.classList.add('is-visible');
+            if (undoTimer) clearTimeout(undoTimer);
+            undoTimer = setTimeout(hideUndo, 8000);
+        }
+
+        async function handleDelete(program) {
+            // The schedule list is public, so this button is reachable while
+            // signed out. Catch that here rather than letting the request 401.
+            if (!isLoggedIn()) {
+                await customAlert(
+                    'You need to be logged in to remove a scheduled program.',
+                    'Login required',
+                    { tone: 'info', icon: 'fa-lock' }
+                );
+                showLoginModal();
+                return;
+            }
+
+            const ok = await customConfirm(
+                'This will remove "' + program.prog + '" from your schedule. You can undo this straight afterwards.',
+                'Delete program?',
+                { tone: 'danger', icon: 'fa-trash-can', confirmText: 'Delete', danger: true }
+            );
+            if (!ok) return;
+
+            try {
+                const response = await fetch('/deleteProgram', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
+                    body: JSON.stringify({ prog: program.prog })
+                });
+
+                if (!response.ok) throw new Error('delete failed');
+
+                pendingUndo = program;
+                await fetchRecordedPrograms();
+                showUndo('"' + program.prog + '" deleted.');
+
+            } catch (error) {
+                showStatus('error', 'Could not delete the program', 'Please try again in a moment.');
+            }
+        }
+
+        document.getElementById('undoBtn').addEventListener('click', async function () {
+            if (!pendingUndo) return;
+            const program = pendingUndo;
+            hideUndo();
+
+            try {
+                const response = await fetch('/newProgram', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
+                    body: JSON.stringify({
+                        days: program.days,
+                        start: program.start,
+                        end: program.end,
+                        prog: program.prog
+                    })
+                });
+                if (!response.ok) throw new Error('undo failed');
+
+                await fetchRecordedPrograms();
+                showStatus('success', 'Restored', '"' + program.prog + '" is back on your schedule.');
+            } catch (error) {
+                showStatus('error', 'Could not restore the program', 'Please add it again manually.');
+            }
         });
 
-        async function captureData() {
-            var selectedDays = [];
-            document.querySelectorAll('input[type=checkbox]:checked').forEach(function (checkbox) {
-                selectedDays.push(checkbox.value);
-            });
-            if (selectedDays.length == 0) {
-                customAlert("Please, select the days the program is hosted");
-                return;
-            }
+        document.getElementById('undoClose').addEventListener('click', hideUndo);
 
-            var startHour = parseInt($("#startHour").val(), 10);
-            var startMinute = parseInt($("#startMinute").val(), 10);
-            var endHour = parseInt($('#endHour').val(), 10);
-            var endMinute = parseInt($("#endMinute").val(), 10);
+        /* ------------------------------------------------------------------
+           Submit (review findings C1, C2, C3, H1, M2, M3, L3)
+        ------------------------------------------------------------------ */
 
-            // Validate parsed values
-            if (isNaN(startHour) || isNaN(startMinute) || isNaN(endHour) || isNaN(endMinute)) {
-                await customAlert("Please select valid start and end times");
-                return;
+        function setBusy(isBusy, label) {
+            btnAdd.disabled = isBusy;
+            if (isBusy) {
+                btnAdd.innerHTML = '<i class="fa fa-spinner animate-spin mr-2"></i>' + label;
+            } else {
+                // Restore whichever mode we are in — the label depends on it.
+                setSubmitLabel(editingOriginal ? 'Update Program' : 'Add Program');
             }
+        }
 
-            // Validate time logic
-            // Case 1: End time is less than start time (past midnight, like 23:00 to 01:00)
-            // This is valid - program runs past midnight
-            if (startHour > endHour) {
-                // Valid - program runs past midnight
-            }
-            // Case 2: Same hour - end minute must be greater than start minute
-            else if (startHour == endHour && startMinute >= endMinute) {
-                await customAlert("Program is running in the same hour so end minute must be greater than start minute.\n\nExample: 09:00 to 10:00 is valid, but 09:00 to 09:00 is not.");
-                return;
-            }
-            // Case 3: Normal case - end time is after start time
-            // If we reach here, the times are valid
+        function collectForm() {
+            const selectedDays = Array.prototype.slice
+                .call(daysEl.querySelectorAll('input[type=checkbox]:checked'))
+                .map(function (cb) { return cb.value; });
 
-            var programName = document.getElementById("programName").value;
-            if (programName == "") {
-                await customAlert("Please enter program name");
-                return;
-            }
-            programName = programName.trim().replace(/\s+/g, '_');
+            const startHour = parseInt(document.getElementById('startHour').value, 10);
+            const startMinute = parseInt(document.getElementById('startMinute').value, 10);
+            const endHour = parseInt(document.getElementById('endHour').value, 10);
+            const endMinute = parseInt(document.getElementById('endMinute').value, 10);
+            const programName = nameEl.value.trim();
 
-            var programData = {
-                days: selectedDays,
+            return {
+                selectedDays: selectedDays,
                 start: [startHour, startMinute],
                 end: [endHour, endMinute],
-                prog: programName
+                programName: programName,
+                storedName: toStoredName(programName)
             };
-            var con = await customConfirm("Confirm details:\n" + programName + " will run from " + gT(startHour).h + ":" + gM(startMinute) + "" + gT(startHour).am + " and ends at " + gT(endHour).h + ":" + gM(endMinute) + "" + gT(endHour).am);
+        }
 
-                if (con) {
-                    // Check if logged in first
-                    if (!isLoggedIn()) {
-                        await customAlert('You need to be logged in to add a program. Please click the Login button in the navigation bar.', 'Login Required');
-                        $(".btnAdd").html('<i class="fa fa-plus mr-2"></i>Add Program');
-                        $(".btnAdd").prop("disabled", false);
+        function validate(data) {
+            clearAllErrors();
+            let firstInvalid = null;
+
+            if (data.selectedDays.length === 0) {
+                setGroupError('Select at least one day the program is hosted.');
+                firstInvalid = firstInvalid || daysEl.querySelector('input');
+            }
+
+            const s = data.start, e = data.end;
+            const sameHour = s[0] === e[0];
+            const zeroLength = sameHour && s[1] >= e[1];
+
+            if (zeroLength) {
+                setFieldError(
+                    document.getElementById('endMinute'),
+                    document.getElementById('timeError'),
+                    'Start and end land in the same hour, so the end minute must come after the start minute.'
+                );
+                firstInvalid = firstInvalid || document.getElementById('endMinute');
+            }
+
+            if (!data.programName) {
+                setFieldError(nameEl, document.getElementById('nameError'), 'Enter a program name.');
+                firstInvalid = firstInvalid || nameEl;
+            }
+
+            if (firstInvalid && typeof firstInvalid.focus === 'function') {
+                firstInvalid.focus();
+            }
+
+            return !firstInvalid;
+        }
+
+        async function handleSubmit(e) {
+            e.preventDefault();
+            clearStatus();
+
+            // C2 — authentication is a precondition, checked before any work.
+            if (!isLoggedIn()) {
+                showStatus('info', 'Sign in required',
+                    'Log in to add a program to the schedule.');
+                await customAlert(
+                    'You need to be logged in before adding a program.',
+                    'Login required',
+                    { tone: 'info', icon: 'fa-lock' }
+                );
+                showLoginModal();
+                return;
+            }
+
+            const data = collectForm();
+
+            if (!validate(data)) return;
+
+            const isEdit = editingOriginal !== null;
+
+            const summary =
+                data.storedName + '\n\n' +
+                'When: ' + data.selectedDays.join(', ') + '\n' +
+                'From: ' + clockLabel(data.start) + '\n' +
+                'Until: ' + clockLabel(data.end) + '\n' +
+                'Duration: ' + formatDuration(data.start, data.end) +
+                (isEdit ? '\n\nThis replaces the existing "' + editingOriginal + '" schedule.' : '');
+
+            const confirmed = await customConfirm(
+                summary,
+                isEdit ? 'Confirm these changes?' : 'Confirm this schedule?',
+                {
+                    tone: 'info',
+                    icon: isEdit ? 'fa-pen' : 'fa-calendar-check',
+                    cancelText: 'Keep editing',
+                    confirmText: isEdit ? 'Save changes' : 'Add program'
+                }
+            );
+
+            if (!confirmed) {
+                showStatus('info', 'No changes saved', 'Adjust the details and try again when ready.');
+                nameEl.focus();
+                return;
+            }
+
+            setBusy(true, isEdit ? 'Updating...' : 'Saving...');
+
+            try {
+                const body = isEdit
+                    ? {
+                        original: editingOriginal,
+                        prog: data.storedName,
+                        days: data.selectedDays,
+                        start: data.start,
+                        end: data.end
+                    }
+                    : {
+                        days: data.selectedDays,
+                        start: data.start,
+                        end: data.end,
+                        prog: data.storedName
+                    };
+
+                const response = await fetch(isEdit ? '/updateProgram' : '/newProgram', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
+                    body: JSON.stringify(body)
+                });
+
+                const payload = await response.json().catch(function () { return {}; });
+
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        clearAuthToken();
+                        // H1 — actually open the login dialog we just promised.
+                        showStatus('error', 'Session expired', 'Sign in again to continue adding programs.');
+                        await customAlert(
+                            'Your session has expired. Sign in again to continue.',
+                            'Session expired',
+                            { tone: 'danger', icon: 'fa-triangle-exclamation' }
+                        );
+                        showLoginModal();
                         return;
                     }
 
-                    $(".btnAdd").html('<i class="fa fa-spinner animate-spin mr-2"></i>Loading data on server...');
-                    $(".btnAdd").prop("disabled", true);
-                    fetch('/newProgram', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': 'Bearer ' + localStorage.getItem('authToken')
-                        },
-                        body: JSON.stringify(programData),
-                    })
-                    .then(async (response) => {
-                        const data = await response.json();
-                        if (!response.ok) {
-                            // Handle specific error cases with user-friendly messages
-                            if (response.status === 401) {
-                                clearAuthToken();
-                                throw new Error('Your session has expired. Please log in again to continue.\n\nClick OK to log in now.');
-                            } else if (response.status === 400 && data.errors) {
-                                let errorMsg = 'Please fix the following:\n\n';
-                                data.errors.forEach(function(err, i) {
-                                    errorMsg += (i + 1) + '. ' + err + '\n';
-                                });
-                                if (data.hint) {
-                                    errorMsg += '\n' + data.hint;
-                                }
-                                throw new Error(errorMsg);
-                            } else if (response.status === 409 && data.hint) {
-                                throw new Error(data.message + '\n\n' + data.hint);
-                            } else {
-                                throw new Error(data.message || 'Something went wrong. Please try again.\n\nIf this keeps happening, please try refreshing the page.');
-                            }
-                        }
-                        return data;
-                    })
-                    .then(async (data) => {
-                        await customAlert('Program "' + programData.prog + '" has been added successfully!\n\nYou can now add another program or go back to the home page.', 'Success!');
-                        var con2 = await customConfirm('Would you like to add another program?');
-                        if (con2) {
-                            document.getElementById("programName").value = "";
-                            document.querySelectorAll('input[type=checkbox]:checked').forEach(function (cb) {
-                                cb.checked = false;
-                            });
-                            $(".btnAdd").html('<i class="fa fa-plus mr-2"></i>Add Program');
-                            $(".btnAdd").prop("disabled", false);
-                        } else {
-                            window.location.href = '/try.html';
-                        }
-                    })
-                    .catch(async (error) => {
-                        await customAlert(error.message, 'Error');
-                        $(".btnAdd").html('<i class="fa fa-plus mr-2"></i>Add Program');
-                        $(".btnAdd").prop("disabled", false);
-                    });
-                } else {
-                    await customAlert("You can make more changes in the program until you're sure.", "Hint");
+                    if (response.status === 409) {
+                        throw new Error((payload.message || 'This schedule conflicts with an existing program.') +
+                            (payload.hint ? '\n\n' + payload.hint : ''));
+                    }
+
+                    if (response.status === 400 && Array.isArray(payload.errors) && payload.errors.length) {
+                        throw new Error('Please fix the following:\n\n' +
+                            payload.errors.map(function (err, i) { return (i + 1) + '. ' + err; }).join('\n') +
+                            (payload.hint ? '\n\n' + payload.hint : ''));
+                    }
+
+                    throw new Error(payload.message ||
+                        'Something went wrong while saving. Please try again.');
                 }
 
-            console.log("Captured Program Data:", programData);
+                // C3 — refresh in place; no full page reload.
+                await fetchRecordedPrograms();
+
+                if (isEdit) {
+                    const renamed = payload.renamed && editingOriginal !== data.storedName;
+                    showStatus('success',
+                        '"' + data.storedName + '" updated',
+                        (renamed ? 'Renamed from "' + editingOriginal + '". ' : '') +
+                        formatTimeRange(data.start, data.end) + ' · ' +
+                        formatDuration(data.start, data.end) + ' · ' +
+                        data.selectedDays.length + (data.selectedDays.length === 1 ? ' day' : ' days'));
+                    cancelEdit(true);
+                } else {
+                    showStatus('success',
+                        '"' + data.storedName + '" is scheduled',
+                        formatTimeRange(data.start, data.end) + ' · ' + formatDuration(data.start, data.end) +
+                        ' · ' + data.selectedDays.length + (data.selectedDays.length === 1 ? ' day' : ' days'));
+
+                    // Keep the times so a follow-up entry is one edit away.
+                    setAllDays(false);
+                    nameEl.value = '';
+                    updateNameHint();
+                    clearAllErrors();
+                }
+                nameEl.focus();
+
+            } catch (error) {
+                showStatus('error', 'Could not save the program', null);
+                await customAlert(error.message, 'Not saved', {
+                    tone: 'danger',
+                    icon: 'fa-triangle-exclamation'
+                });
+            } finally {
+                setBusy(false);
+            }
         }
 
-        function gT(h) {
-            var am;
-            if (h == 0) {
-                h = 12;
-                am = "midnight";
-            } else if (h > 12) {
-                h = h - 12;
-                am = "pm";
-            } else if (h == 12) {
-                h = h;
-                am = "noon";
+        /* ------------------------------------------------------------------
+           Auth-aware form affordance
+        ------------------------------------------------------------------ */
+
+        document.addEventListener('auth:changed', function () {
+            if (!isLoggedIn()) {
+                showStatus('info', 'You are signed out',
+                    'Log in to add, or remove scheduled programs.');
             } else {
-                h = h;
-                am = "am";
+                clearStatus();
             }
-            return { h: h, am: am };
-        }
-
-        function gM(m) {
-            if (m < 10) {
-                m = "0" + m;
-            }
-            return m;
-        }
-
-        // Add click handler for the Add button
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('btnAdd').addEventListener('click', captureData);
         });
+
+        /* ------------------------------------------------------------------
+           Wiring
+        ------------------------------------------------------------------ */
+
+        document.getElementById('cancelEditBtn').addEventListener('click', function () {
+            cancelEdit();
+            formEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+
+        document.getElementById('selectAllDays').addEventListener('click', function () { setAllDays(true); });
+        document.getElementById('clearDays').addEventListener('click', function () { setAllDays(false); });
+
+        ['#startHour', '#startMinute', '#endHour', '#endMinute'].forEach(function (sel) {
+            document.querySelector(sel).addEventListener('change', updateDuration);
+        });
+
+        nameEl.addEventListener('input', updateNameHint);
+
+        formEl.addEventListener('submit', handleSubmit);
+
+        /* ------------------------------------------------------------------
+           Boot
+        ------------------------------------------------------------------ */
+
+        populateDays();
+        populateHoursAndMinutes();
+        updateDuration();
+        fetchRecordedPrograms();
+    })();
     </script>
 </body>
 </html>

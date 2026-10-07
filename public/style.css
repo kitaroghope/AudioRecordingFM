@@ -1,9 +1,16 @@
-/* Custom Dialog Box */
+/* ==========================================================================
+   Prime Radio — AudioRecordingFM
+   Custom styles. Tailwind handles layout; this file handles the things
+   Tailwind utilities can't express cleanly (animations, skeletons, focus
+   rings, day tiles, program cards, reduced-motion).
+   ========================================================================== */
+
+/* ---------- Custom Dialog Box ---------- */
 #custom-dialog-box {
   background: rgba(0, 0, 0, 0.5);
 }
 
-/* Equalizer Animation */
+/* ---------- Equalizer Animation ---------- */
 @keyframes bounce {
   0%, 100% { transform: scaleY(0.4); }
   50% { transform: scaleY(1); }
@@ -13,7 +20,7 @@
   animation: bounce 1s ease-in-out infinite;
 }
 
-/* Custom Audio Player Styling */
+/* ---------- Custom Audio Player Styling ---------- */
 audio {
   width: 100%;
   height: 40px;
@@ -30,7 +37,7 @@ audio::-webkit-media-controls-mute-button {
   filter: invert(1);
 }
 
-/* Modal Animations */
+/* ---------- Modal Animations ---------- */
 #modal-content {
   transform: scale(0.95);
   opacity: 0;
@@ -46,29 +53,29 @@ audio::-webkit-media-controls-mute-button {
   opacity: 0;
 }
 
-/* Smooth scroll behavior */
+/* ---------- Smooth scroll ---------- */
 html {
   scroll-behavior: smooth;
 }
 
-/* Selection styling */
+/* ---------- Selection ---------- */
 ::selection {
   background: #F47288;
   color: white;
 }
 
-/* Focus outline for accessibility */
+/* ---------- Focus outline ---------- */
 :focus-visible {
   outline: 2px solid #F47288;
   outline-offset: 2px;
 }
 
-/* Log Console Enhancements */
+/* ---------- Log Console ---------- */
 .log-console {
   scroll-behavior: smooth;
 }
 
-/* Card hover enhancements */
+/* ---------- Card hover ---------- */
 .card-hover {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
@@ -77,13 +84,13 @@ html {
   transform: translateY(-4px);
 }
 
-/* Button loading state */
+/* ---------- Disabled buttons ---------- */
 button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
-/* Loading spinner */
+/* ---------- Spinner ---------- */
 @keyframes spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
@@ -91,4 +98,525 @@ button:disabled {
 
 .animate-spin {
   animation: spin 1s linear infinite;
+}
+
+/* ==========================================================================
+   ADDITIONS FOR FEEDBACK & USABILITY
+   ========================================================================== */
+
+/* ---------- Modal scroll safety on short screens ---------- */
+#custom-dialog-box .modal-scroll {
+  max-height: calc(100dvh - 2rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+@media (max-height: 640px) {
+  #custom-dialog-box .modal-scroll {
+    max-height: calc(100dvh - 1rem);
+  }
+  #custom-dialog-box .modal-scroll .p-6 {
+    padding: 1rem;
+  }
+}
+
+/* ---------- Dialog icon tone follows intent ---------- */
+#dialog-icon-neutral,
+#dialog-icon-danger,
+#dialog-icon-success,
+#dialog-icon-info {
+  transition: background-color .2s ease;
+}
+
+/* ==========================================================================
+   FORM FEEDBACK
+   ========================================================================== */
+
+/* Inline error messages — reserved space is not reserved (no layout shift),
+   the element is simply absent until there is an error to show. */
+.field-error {
+  display: none;
+  align-items: center;
+  gap: .4rem;
+  margin-top: .5rem;
+  font-size: .8125rem;
+  line-height: 1.45;
+  color: #b91c1c;
+}
+
+.field-error.is-visible {
+  display: flex;
+  animation: fieldShake .32s ease;
+}
+
+@keyframes fieldShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-3px); }
+  75% { transform: translateX(3px); }
+}
+
+/* Invalid field treatment */
+.is-invalid {
+  border-color: #f87171 !important;
+  background-color: #fef2f2 !important;
+}
+
+.is-invalid:focus {
+  --tw-ring-color: #ef4444 !important;
+}
+
+/* Group invalid treatment (day tiles) */
+.is-invalid-group {
+  border-color: #f87171 !important;
+}
+
+/* ---------- Success banner ---------- */
+#formStatus {
+  display: none;
+}
+
+#formStatus.is-visible {
+  display: block;
+  animation: slideDown .28s ease;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================================================================
+   DAY SELECTOR
+   ========================================================================== */
+
+/* Mobile: a calendar-like 4-column week grid. All seven days visible with
+   no horizontal scrolling and no cramped 2-column stacking. */
+.day-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: .5rem;
+}
+
+@media (min-width: 640px) {
+  .day-grid {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: .625rem;
+  }
+}
+
+.day-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: .125rem;
+  min-height: 3.25rem;
+  padding: .5rem .25rem;
+  border: 2px solid #e2e8f0;
+  border-radius: .75rem;
+  background: #f8fafc;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: border-color .18s ease, background-color .18s ease,
+              transform .12s ease, box-shadow .18s ease;
+}
+
+.day-tile:active {
+  transform: scale(.96);
+}
+
+.day-tile__abbr {
+  font-size: .8125rem;
+  font-weight: 600;
+  color: #475569;
+  letter-spacing: .01em;
+}
+
+@media (min-width: 640px) {
+  .day-tile__abbr { font-size: .75rem; }
+}
+
+/* Checkmark badge for selected days */
+.day-tile__check {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 1.125rem;
+  height: 1.125rem;
+  border-radius: 9999px;
+  background: #e11d48;
+  color: #fff;
+  font-size: .625rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: scale(.5);
+  transition: opacity .18s ease, transform .18s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .2);
+}
+
+.day-tile.is-selected {
+  border-color: #f43f5e;
+  background: #fff1f2;
+  box-shadow: 0 2px 8px -2px rgba(244, 63, 94, .35);
+}
+
+.day-tile.is-selected .day-tile__abbr {
+  color: #be123c;
+}
+
+.day-tile.is-selected .day-tile__check {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.day-tile:focus-within {
+  outline: 2px solid #F47288;
+  outline-offset: 2px;
+}
+
+/* The visually-hidden native checkbox remains focusable for keyboard users */
+.day-tile input:focus-visible ~ .day-tile__inner {
+  outline: 2px solid #F47288;
+  outline-offset: 2px;
+}
+
+/* ==========================================================================
+   PROGRAM LIST — horizontal scroller
+   --------------------------------------------------------------------------
+   Programs flow across instead of stacking down, so the page never grows a
+   long vertical scroll as the schedule fills up. Each card keeps its full
+   detail; the strip just moves sideways.
+
+   The strip is keyboard scrollable (tabindex + overflow-x), which matters:
+   an overflow container that cannot receive focus is unreachable for anyone
+   navigating by keyboard. Edge fades hint that there is more to the side.
+   ========================================================================== */
+
+.scroller-wrap {
+  position: relative;
+}
+
+/* Edge fades — shown only while the wrapped element is a strip */
+.scroller-wrap:has(> [data-strip])::before,
+.scroller-wrap:has(> [data-strip])::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2.25rem;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0;
+  transition: opacity .2s ease;
+}
+
+.scroller-wrap:has(> [data-strip]:hover)::before,
+.scroller-wrap:has(> [data-strip]:hover)::after {
+  opacity: 1;
+}
+
+.scroller-wrap:has(> [data-strip])::before {
+  left: 0;
+  background: linear-gradient(90deg, #ffffff 15%, rgba(255, 255, 255, 0));
+}
+
+.scroller-wrap:has(> [data-strip])::after {
+  right: 0;
+  background: linear-gradient(270deg, #ffffff 15%, rgba(255, 255, 255, 0));
+}
+
+/* Any element marked data-strip flows horizontally and is focusable,
+   so keyboard users can reach and scroll it. */
+[data-strip] {
+  display: flex;
+  gap: .625rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x proximity;
+  scroll-padding-inline: .25rem;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Hide the native scrollbar on touch devices — swiping is the affordance */
+@media (pointer: coarse) {
+  [data-strip] {
+    scrollbar-width: none;
+  }
+
+  [data-strip]::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (pointer: fine) {
+  [data-strip] {
+    scrollbar-width: thin;
+    scrollbar-color: #fecdd3 transparent;
+    padding-bottom: .5rem;
+  }
+
+  [data-strip]::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  [data-strip]::-webkit-scrollbar-thumb {
+    background: #fecdd3;
+    border-radius: 9999px;
+  }
+}
+
+/* ---------- Episode strips (landing page) ---------- */
+.episodes-strip {
+  gap: 1rem;
+}
+
+.episodes-strip > .episode-card {
+  flex: 0 0 auto;
+  width: 15rem;
+  scroll-snap-align: start;
+}
+
+@media (min-width: 640px) {
+  .episodes-strip > .episode-card {
+    width: 17.5rem;
+  }
+}
+
+.program-card {
+  animation: cardIn .32s ease both;
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+  width: 9.5rem;
+  min-height: 7rem;
+  display: flex;
+  flex-direction: column;
+  gap: .1875rem;
+  padding: .625rem .75rem;
+  border-radius: .875rem;
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+  transition: border-color .18s ease, background-color .18s ease;
+}
+
+.program-card:hover {
+  border-color: #fecdd3;
+  background: #fff1f2;
+}
+
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.program-card__name {
+  font-size: .8125rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: #1e293b;
+  /* Clamp to two lines, and always reserve both, so one short title cannot
+     make its card shorter than the rest of the strip */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  min-height: 2.6em;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+
+.program-card__time {
+  font-size: .6875rem;
+  font-weight: 600;
+  color: #475569;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.program-card__time--compact {
+  display: none;
+}
+
+.program-card__days {
+  min-width: 0;
+  font-size: .6875rem;
+  color: #94a3b8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.program-card__duration {
+  font-size: .6875rem;
+  color: #cbd5e1;
+  white-space: nowrap;
+}
+
+.program-card__action {
+  margin-top: auto;
+  align-self: flex-end;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: .25rem;
+  padding: .1875rem .4375rem;
+  border-radius: .4375rem;
+  font-size: .6875rem;
+  font-weight: 500;
+  color: #94a3b8;
+  transition: color .16s ease, background-color .16s ease;
+}
+
+.program-card__action:hover {
+  color: #475569;
+  background: #f1f5f9;
+}
+
+.program-card__action--danger:hover {
+  color: #e11d48;
+  background: #ffe4e6;
+}
+
+@media (min-width: 640px) {
+  .program-card {
+    width: 11.5rem;
+    padding: .75rem .875rem;
+  }
+
+  .program-card__name {
+    font-size: .875rem;
+  }
+
+  .program-card__time,
+  .program-card__days,
+  .program-card__duration {
+    font-size: .75rem;
+  }
+
+  .program-card__time--compact {
+    display: none;
+  }
+
+  .program-card__time--full {
+    display: inline;
+  }
+}
+
+/* ---------- Skeleton loading ---------- */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: #f1f5f9;
+  border-radius: .5rem;
+}
+
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, .65) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  animation: shimmer 1.4s infinite;
+}
+
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
+}
+
+/* ==========================================================================
+   UNDO TOAST
+   ========================================================================== */
+
+#undoToast {
+  transform: translateY(120%);
+  transition: transform .3s cubic-bezier(.32, .72, 0, 1);
+}
+
+#undoToast.is-visible {
+  transform: translateY(0);
+}
+
+/* ==========================================================================
+   MOBILE REFINEMENTS
+   ========================================================================== */
+
+/* Comfortable touch targets on small screens */
+@media (max-width: 639px) {
+  /* Stack dialog actions full-width for reliable thumb reach */
+  #custom-dialog-box .modal-actions {
+    flex-direction: column-reverse;
+  }
+
+  #custom-dialog-box .modal-actions > button {
+    width: 100%;
+    min-height: 3rem;
+  }
+
+  /* Full-width primary form action */
+  #btnAdd {
+    width: 100%;
+    min-height: 3rem;
+  }
+
+  /* Keep the tips readable rather than dense */
+  #tipsCard li {
+    margin-bottom: .375rem;
+  }
+}
+
+/* Very small screens — keep everything from overflowing */
+@media (max-width: 360px) {
+  .day-grid {
+    gap: .375rem;
+  }
+
+  .day-tile {
+    min-height: 2.875rem;
+    padding: .375rem .125rem;
+  }
+
+  .day-tile__abbr {
+    font-size: .75rem;
+  }
+}
+
+/* ==========================================================================
+   REDUCED MOTION
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+  }
+
+  .skeleton::after {
+    display: none;
+  }
+
+  #undoToast {
+    transition: none;
+  }
+}
+
+/* ---------- Print ---------- */
+@media print {
+  nav, footer, #custom-dialog-box, #login-modal, #undoToast, #btnAdd {
+    display: none !important;
+  }
 }
