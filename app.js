@@ -421,9 +421,24 @@ app.post('/stop-record', verifyToken, async (req, res) => {
   }
 });
 
-app.post('/newProgram', verifyToken, requireRole('admin'), recorder.addProgram);
-app.post('/updateProgram', verifyToken, requireRole('admin'), recorder.updateProgram);
-app.post('/deleteProgram', verifyToken, requireRole('admin'), recorder.deleteProgram);
+// After a successful schedule mutation, refresh the cache that backs
+// /recordedPrograms. Without this the list endpoint keeps serving the old
+// values for up to an hour, so an edit reports success but renders stale data.
+function mutateProgram(handler) {
+  return function (req, res, next) {
+    Promise.resolve(handler(req, res, next))
+      .then(function () {
+        if (res.statusCode >= 200 && res.statusCode < 300) {
+          ensureProgramsLoaded(true).catch(() => {});
+        }
+      })
+      .catch(next);
+  };
+}
+
+app.post('/newProgram', verifyToken, requireRole('admin'), mutateProgram(recorder.addProgram));
+app.post('/updateProgram', verifyToken, requireRole('admin'), mutateProgram(recorder.updateProgram));
+app.post('/deleteProgram', verifyToken, requireRole('admin'), mutateProgram(recorder.deleteProgram));
 
 // FTP Manager page
 app.get('/ftp-manager', async (req, res) => {
