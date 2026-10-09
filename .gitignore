@@ -1,1 +1,10 @@
 node_modules/
+graphify-out/
+.graphify_python
+
+# Local server logs
+server.log
+server-error.log
+
+# Live recording chunks written while the recorder is running
+temp_stream_chunks/
