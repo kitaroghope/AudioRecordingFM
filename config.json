@@ -1,27 +1,27 @@
 {
     "mongoDB":{
-        "url":"mongodb+srv://kitaroghope:kitasrog@cluster0.9uort.mongodb.net/?retryWrites=true&w=majority"
+        "url":""
     },
     "mySQL":{
         "host": "sql311.epizy.com",
-        "user": "epiz_34259151",
-        "password": "eZbstto3xgVPuTS",
+        "user": "",
+        "password": "",
         "database": "epiz_34259151_newlugandahymnal"
     },
     "ftp":{
         "host":"ftpupload.net",
-        "password":"eZbstto3xgVPuTS",
+        "password":"",
         "port":"21",
-        "username":"epiz_34259151"
+        "username":""
     },
     "mailer":{
-        "user": "kitahope@yandex.ru",
-        "pass": "0757@Janerogz"
+        "user": "",
+        "pass": ""
       },
-    "sessionSecret": "huddypro",
+    "sessionSecret": "",
     "radios":{
         "cbs":"https://s5.voscast.com:9909/EYOBUJJAJJA",
-        "prime":"https://video2.getstreamhosting.com:8036/stream",
+        "prime":"https://stream10.awr.live/listen/primeradio/web",
         "avento":"https://radio1.avventohome.org/listen/avventoradio/radio.ogg",
         "galaxy":"https://sc.galaxyfm.co.ug/stream/1/",
         "powerFM":"https://securestreams5.autopo.st:1941/stream/1/",

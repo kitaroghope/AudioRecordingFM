@@ -1,4 +1,7 @@
 node_modules/
+.env
+.env.*
+!.env.example
 graphify-out/
 .graphify_python
 
@@ -8,3 +11,8 @@ server-error.log
 
 # Live recording chunks written while the recorder is running
 temp_stream_chunks/
+
+# Local DNS workaround (see the file header). Machine-specific: this box's
+# Node points at a 127.0.0.1 stub that refuses SRV, so Mongo Atlas cannot be
+# resolved. Run locally with:  node -r ./dev-dns.js app.js
+dev-dns.js

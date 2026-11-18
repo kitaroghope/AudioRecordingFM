@@ -41,11 +41,13 @@ const CONFIG_PATH = path.join(__dirname, '..', 'config.json');
 
 // Do not hammer the directory after a failed repair.
 const DISCOVERY_COOLDOWN_MS = 60 * 60 * 1000;
+const DISCOVERY_FAILURE_COOLDOWN_MS = 5 * 60 * 1000;
 
 const state = {
   running: false,
   lastCheckAt: null,
   lastDiscoveryAt: null,
+  lastDiscoveryFailureAt: null,
   consecutiveFailures: 0,
   lastRepair: null,
   lastResult: null
@@ -219,6 +221,33 @@ function pickBestStream(streams) {
     return scored.length ? scored[0].url : null;
 }
 
+function getStreamRecords(payload) {
+    const result = payload && payload.result;
+    const candidates = [
+        result && result.streams,
+        payload && payload.streams,
+        payload && payload.data && payload.data.streams,
+        result && result.data && result.data.streams
+    ];
+
+    for (const streams of candidates) {
+        if (Array.isArray(streams)) return streams;
+    }
+
+    return [];
+}
+
+function normalizeStreamRecords(streams) {
+    return streams.map(function (stream) {
+        if (typeof stream === 'string') return { url: stream };
+        if (!stream || typeof stream !== 'object') return null;
+
+        const url = stream.url || stream.streamUrl || stream.listenUrl ||
+            stream.source || stream.src;
+        return url ? Object.assign({}, stream, { url: url }) : null;
+    }).filter(Boolean);
+}
+
 /**
  * Ask radio.co.ug's backend for Prime Radio's current stream list.
  *
@@ -273,7 +302,7 @@ async function discoverPrimeStream() {
         throw new Error('directory API returned no result');
     }
 
-    const chosen = pickBestStream(result.streams);
+    const chosen = pickBestStream(normalizeStreamRecords(getStreamRecords(payload)));
     if (!chosen) {
         throw new Error('no usable http(s) stream in directory response');
     }
@@ -351,12 +380,20 @@ async function checkPrimeStream() {
             return { repaired: false, ok: false, url: current, detail: 'cooldown, retrying in ' + mins + 'm' };
         }
 
-        state.lastDiscoveryAt = Date.now();
+        const sinceFailure = Date.now() - (state.lastDiscoveryFailureAt || 0);
+        if (state.lastDiscoveryFailureAt && sinceFailure < DISCOVERY_FAILURE_COOLDOWN_MS) {
+            const mins = Math.max(1, Math.ceil((DISCOVERY_FAILURE_COOLDOWN_MS - sinceFailure) / 60000));
+            state.lastResult = { url: current, ok: false, reason: probe.reason, checkedAt: state.lastCheckAt };
+            return { repaired: false, ok: false, url: current, detail: 'discovery retry cooldown, retrying in ' + mins + 'm' };
+        }
 
         let candidate;
         try {
             candidate = await discoverPrimeStream();
+            state.lastDiscoveryAt = Date.now();
+            state.lastDiscoveryFailureAt = null;
         } catch (error) {
+            state.lastDiscoveryFailureAt = Date.now();
             console.error('[STREAM-HEALTH] could not read the directory: ' + error.message);
             state.lastResult = { url: current, ok: false, reason: probe.reason, checkedAt: state.lastCheckAt };
             return { repaired: false, ok: false, url: current, detail: 'discovery failed: ' + error.message };
