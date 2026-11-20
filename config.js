@@ -1,56 +1,36 @@
-/**
- * Configuration Module - Centralized configuration with environment variable support
- * @module config
- */
+/** Centralized configuration loaded from environment variables and .env. */
+require('dotenv').config({ path: require('path').join(__dirname, '.env') });
 
-require('dotenv').config();
-
-const fs = require('fs');
-const path = require('path');
-
-// Load base config from config.json
-const configPath = path.join(__dirname, 'config.json');
-let baseConfig = {};
-
-if (fs.existsSync(configPath)) {
-    baseConfig = require('./config.json');
-}
-
-// Environment variable resolver with fallback to config.json
-const env = (key, defaultValue = null) => {
-    return process.env[key] || defaultValue;
-};
+const env = (key, defaultValue = null) => process.env[key] || defaultValue;
 
 module.exports = {
-    mongoDB: {
-        url: env('MONGODB_URL', baseConfig.mongoDB?.url)
-    },
+    mongoDB: { url: env('MONGODB_URL') },
     mySQL: {
-        host: env('MYSQL_HOST', baseConfig.mySQL?.host),
-        user: env('MYSQL_USER', baseConfig.mySQL?.user),
-        password: env('MYSQL_PASSWORD', baseConfig.mySQL?.password),
-        database: env('MYSQL_DATABASE', baseConfig.mySQL?.database)
+        host: env('MYSQL_HOST', 'sql311.epizy.com'),
+        user: env('MYSQL_USER'),
+        password: env('MYSQL_PASSWORD'),
+        database: env('MYSQL_DATABASE', 'epiz_34259151_newlugandahymnal')
     },
     ftp: {
-        host: env('FTP_HOST', baseConfig.ftp?.host),
-        port: env('FTP_PORT', baseConfig.ftp?.port || '21'),
-        username: env('FTP_USERNAME', baseConfig.ftp?.username),
-        password: env('FTP_PASSWORD', baseConfig.ftp?.password)
+        host: env('FTP_HOST', 'ftpupload.net'),
+        port: env('FTP_PORT', '21'),
+        username: env('FTP_USERNAME'),
+        password: env('FTP_PASSWORD')
     },
-    mailer: {
-        user: env('MAILER_USER', baseConfig.mailer?.user),
-        pass: env('MAILER_PASS', baseConfig.mailer?.pass)
-    },
+    mailer: { user: env('MAILER_USER'), pass: env('MAILER_PASS') },
     jwt: {
-        secret: env('JWT_SECRET', baseConfig.sessionSecret || 'dev_secret_change_in_production'),
+        secret: env('JWT_SECRET', 'dev_secret_change_in_production'),
         expiresIn: env('JWT_EXPIRES_IN', '24h')
     },
-    server: {
-        port: env('PORT', '3000'),
-        nodeEnv: env('NODE_ENV', 'development')
-    },
-    cors: {
-        origins: env('CORS_ORIGINS', '*').split(',').map(o => o.trim())
-    },
-    radios: baseConfig.radios || {}
+    server: { port: env('PORT', '3000'), nodeEnv: env('NODE_ENV', 'development') },
+    cors: { origins: env('CORS_ORIGINS', '*').split(',').map(o => o.trim()) },
+    radios: {
+        cbs: env('RADIO_CBS_URL', 'https://s5.voscast.com:9909/EYOBUJJAJJA'),
+        prime: env('RADIO_PRIME_URL', 'https://stream10.awr.live/listen/primeradio/web'),
+        avento: env('RADIO_AVENTO_URL', 'https://radio1.avventohome.org/listen/avventoradio/radio.ogg'),
+        galaxy: env('RADIO_GALAXY_URL', 'https://sc.galaxyfm.co.ug/stream/1/'),
+        powerFM: env('RADIO_POWER_FM_URL', 'https://securestreams5.autopo.st:1941/stream/1/'),
+        bukedde: env('RADIO_BUKEDDE_URL', 'https://stream.hydeinnovations.com:2020/stream/bukeddefm/stream'),
+        pearlFM: env('RADIO_PEARL_FM_URL', 'https://dc4.serverse.com/proxy/pearlfm/stream/1/')
+    }
 };

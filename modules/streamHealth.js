@@ -5,7 +5,7 @@
  * Problem
  * -------
  * Prime Radio's icecast host (video2.getstreamhosting.com) is given a fresh
- * port whenever the broadcaster moves. The URL in config.json goes stale and
+ * port whenever the broadcaster moves. The configured URL goes stale and
  * the recorder then loops forever against a dead socket, recording nothing.
  *
  * Approach
@@ -17,7 +17,7 @@
  *    by instant.audio) for the station's current stream list.
  * 3. Verify the candidate URL actually serves audio BEFORE swapping it in.
  *    A repair is never allowed to replace a known-bad URL with an unverified one.
- * 4. Persist to config.json with a surgical text replacement, and update the
+ * 4. Persist to .env with a surgical text replacement, and update the
  *    in-memory config so the running process picks it up without a restart.
  */
 
@@ -37,7 +37,7 @@ const FALLBACK_API_BASE = 'https://api.instant.audio/';
 const FALLBACK_DOMAIN_ID = '132';
 const FALLBACK_SLUG = '91-9-prime-uganda';
 
-const CONFIG_PATH = path.join(__dirname, '..', 'config.json');
+const ENV_PATH = path.join(__dirname, '..', '.env');
 
 // Do not hammer the directory after a failed repair.
 const DISCOVERY_COOLDOWN_MS = 60 * 60 * 1000;
@@ -314,31 +314,26 @@ async function discoverPrimeStream() {
 /* Persistence                                                                */
 /* -------------------------------------------------------------------------- */
 
-/**
- * Replace only the prime value inside config.json.
- *
- * A full parse/stringify round-trip would rewrite the whole file, which is
- * noisy and risks reformatting credentials. This touches one value and leaves
- * every other byte alone.
- *
- * @param {string} newUrl
- * @returns {boolean} true if the file was written.
- */
+/** Update RADIO_PRIME_URL in .env without changing other settings. */
 function persistPrimeStreamUrl(newUrl) {
-    const original = fs.readFileSync(CONFIG_PATH, 'utf8');
-    const pattern = /("prime"\s*:\s*")([^"]*)(")/g;
+    let original = '';
+    try {
+        original = fs.readFileSync(ENV_PATH, 'utf8');
+    } catch (error) {
+        if (error.code !== 'ENOENT') throw error;
+    }
+    const pattern = /^[ \t]*(?:export[ \t]+)?RADIO_PRIME_URL[ \t]*=.*$/gm;
     const matches = original.match(pattern);
-
-    if (!matches || matches.length !== 1) {
-        console.error('[STREAM-HEALTH] config.json has ' +
-            (matches ? matches.length : 0) + ' "prime" keys, expected 1 — not writing');
+    if (matches && matches.length > 1) {
+        console.error('[STREAM-HEALTH] .env has multiple RADIO_PRIME_URL entries — not writing');
         return false;
     }
-
-    const updated = original.replace(pattern, '$1' + newUrl + '$3');
-    if (updated === original) return false;
-
-    fs.writeFileSync(CONFIG_PATH, updated, 'utf8');
+    const line = 'RADIO_PRIME_URL=' + JSON.stringify(newUrl);
+    const updated = matches
+        ? original.replace(pattern, () => line)
+        : original + (original && !original.endsWith('\n') ? '\n' : '') + line + '\n';
+    if (updated === original) return true;
+    fs.writeFileSync(ENV_PATH, updated, 'utf8');
     return true;
 }
 
@@ -422,7 +417,7 @@ async function checkPrimeStream() {
         try {
             persisted = persistPrimeStreamUrl(candidate);
         } catch (error) {
-            console.error('[STREAM-HEALTH] could not write config.json: ' + error.message);
+            console.error('[STREAM-HEALTH] could not write .env: ' + error.message);
         }
 
         // Hot-apply: config.radios is a live object shared by every module that
@@ -436,7 +431,7 @@ async function checkPrimeStream() {
         console.log('[STREAM-HEALTH] repaired Prime Radio stream:\n' +
             '    from: ' + current + '\n' +
             '    to:   ' + candidate + '\n' +
-            '    config.json ' + (persisted ? 'updated' : 'NOT written (in-memory only)') +
+            '    .env ' + (persisted ? 'updated' : 'NOT written (in-memory only)') +
             ' — recorder will use the new URL immediately.');
 
         return { repaired: true, ok: true, from: current, to: candidate, persisted };
